@@ -216,6 +216,13 @@ function initBulkActions() {
             triggerExportModal();
         });
     }
+
+    const groupByBlockBtn = document.getElementById('groupByBlock');
+    if (groupByBlockBtn) {
+        groupByBlockBtn.addEventListener('click', function() {
+            groupNotesByBlock();
+        });
+    }
 }
 
 function updateBulkActionsUI() {
@@ -249,7 +256,7 @@ function triggerExportModal() {
         "1"
     );
     
-    if (choice === null) return; // Người dùng ấn Hủy
+    if (choice === null) return; 
     
     let csvContent = '';
     
@@ -272,7 +279,6 @@ function triggerExportModal() {
         return;
     }
     
-    // Tạo file Blob xử lý tốt bảng mã tiếng Trung và tiếng Việt không lỗi font
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -281,7 +287,33 @@ function triggerExportModal() {
     URL.revokeObjectURL(link.href);
 }
 
-// ===== 6. TẢI DỮ LIỆU TỰ ĐỘNG =====
+// ===== 6. NHÓM NOTES THEO ĐOẠN =====
+function groupNotesByBlock() {
+    const grouped = {};
+    notes.forEach(n => {
+        const key = n.block || 'Unknown';
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(n);
+    });
+    
+    const container = document.getElementById('notesList');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    Object.keys(grouped).forEach(block => {
+        const groupDiv = document.createElement('div');
+        groupDiv.style.cssText = 'margin:1rem 0; padding:1rem; border:1px solid #f2dae0; border-radius:12px; background:#fffdfd;';
+        groupDiv.innerHTML = `<h4 style="margin-bottom:0.8rem; color:#4d2d35; border-bottom:1px dashed #f2dae0; padding-bottom:0.4rem;">📍 Đoạn ${block} (${grouped[block].length} ghi chú)</h4>`;
+        
+        grouped[block].forEach(note => {
+            const item = createNoteItem(note);
+            groupDiv.appendChild(item);
+        });
+        container.appendChild(groupDiv);
+    });
+}
+
+// ===== 7. TẢI DỮ LIỆU TỰ ĐỘNG =====
 function autoLoadSavedData() {
     if (activeDocName && docVault[activeDocName]) {
         parseDocumentCSV(docVault[activeDocName]);
@@ -304,7 +336,7 @@ function autoLoadSavedData() {
     renderSidebarLists();
 }
 
-// ===== 7. RENDER SIDEBAR LISTS =====
+// ===== 8. RENDER SIDEBAR LISTS =====
 function renderSidebarLists() {
     const docList = document.getElementById('historyDocsList');
     const termList = document.getElementById('historyTermsList');
@@ -374,7 +406,7 @@ function renderSidebarLists() {
     }
 }
 
-// ===== 8. PHÂN TÍCH CÚ PHÁP FILE CSV =====
+// ===== 9. PHÂN TÍCH CÚ PHÁP FILE CSV =====
 function parseCSVLine(text) {
     const lines = text.split(/\r\n|\n/);
     return lines.map(line => {
@@ -396,14 +428,13 @@ function parseCSVLine(text) {
     }).filter(row => row.length > 0 && row.some(cell => cell !== ''));
 }
 
+// ĐÃ LƯỢC BỎ HOÀN TOÀN PHẦN RENDER TRÍCH YẾU (SUM UP) THỪA
 function parseDocumentCSV(csvText) {
     const rows = parseCSVLine(csvText);
     const container = document.getElementById('originalContainer');
-    const summary = document.getElementById('summaryContainer');
     
-    if (!container || !summary) return;
+    if (!container) return;
     container.innerHTML = '';
-    summary.innerHTML = '<div class="card">';
     
     let blockCount = 0;
     let lastBlock = null;
@@ -441,18 +472,10 @@ function parseDocumentCSV(csvText) {
             block.innerHTML = `<div class="zh">${zh}</div><div class="vi">${vi}</div>`;
             container.appendChild(block);
             lastBlock = block;
-
-            if (zh.length > 5) {
-                summary.firstChild.innerHTML += `<div class="bilingual-block" style="border-left-color: #d48291; margin: 0.8rem 0;">
-                    <div class="zh" style="font-size:0.98rem;">🎯 <strong>${zh.substring(0, 45)}...</strong></div>
-                    <div class="vi" style="font-size:0.92rem;">${vi}</div>
-                </div>`;
-            }
             blockCount++;
         }
     });
-    summary.firstChild.innerHTML += '</div>';
-    console.log(`📄 Đã tải ${blockCount} đoạn văn bản`);
+    console.log(`📄 Đã tải ${blockCount} đoạn văn bản nguyên văn.`);
 }
 
 function parseTermCSV(csvText) {
@@ -514,14 +537,25 @@ function shuffleQuestions() {
     });
 }
 
-// ===== 9. HỆ THỐNG HIGHLIGHT & FIX ĐỊNH VỊ POPUP CHÍNH XÁC =====
+// ===== 10. HỆ THỐNG HIGHLIGHT & ĐỊNH VỊ CỐ ĐỊNH BÊN PHẢI CHỐNG LỖI ZOOM MÀN HÌNH =====
 function initHighlightSystem() {
     const popup = document.getElementById('notePopup');
     if (!popup) return;
 
     let isPopupOpen = false;
+    let selectedColor = 'yellow'; 
 
-    function showPopup(text, blockIdx, x, y) {
+    // Bộ lắng nghe sự kiện click chọn màu thẻ học nâng cấp
+    const colorSpans = document.querySelectorAll('#colorOptions span');
+    colorSpans.forEach(span => {
+        span.addEventListener('click', function() {
+            colorSpans.forEach(s => s.classList.remove('active'));
+            this.classList.add('active');
+            selectedColor = this.dataset.color; 
+        });
+    });
+
+    function showPopup(text, blockIdx, parentBlock) {
         const preview = document.getElementById('selectedTextPreview');
         if (preview) preview.textContent = text.length > 100 ? text.substring(0, 100) + '...' : text;
         
@@ -531,26 +565,33 @@ function initHighlightSystem() {
         const textarea = document.getElementById('noteContent');
         if (textarea) textarea.value = '';
 
-        // FIX: Đặt tọa độ sát với luồng text, loại bỏ lỗi lệch xa
-        let left = x + window.scrollX;
-        let top = y + window.scrollY + 8; // Đệm nhẹ 8px dưới chân chữ bôi đen
+        // Reset về màu vàng mặc định mỗi lần mở popup mới
+        colorSpans.forEach(s => s.classList.remove('active'));
+        const defaultSpan = document.querySelector('#colorOptions span[data-color="yellow"]');
+        if (defaultSpan) defaultSpan.classList.add('active');
+        selectedColor = 'yellow';
 
-        const popupWidth = 340;
-        const popupHeight = 300;
-        
-        if (left + popupWidth > window.innerWidth + window.scrollX) {
-            left = x + window.scrollX - popupWidth;
-        }
-        if (top + popupHeight > window.innerHeight + window.scrollY) {
-            top = y + window.scrollY - popupHeight - 15;
-        }
-        if (left < 10) left = 10;
-        if (top < 10) top = 10;
+        const tabOriginal = document.getElementById('tab-original');
+        const tabRect = tabOriginal.getBoundingClientRect();
 
-        popup.style.display = 'block';
-        popup.style.left = left + 'px';
-        popup.style.top = top + 'px';
-        
+        if (parentBlock && parentBlock !== 'N/A') {
+            const blockRect = parentBlock.getBoundingClientRect();
+
+            // Đặt định vị cố định sang hẳn bên phải khối text, cách ra 40px cố định
+            let left = blockRect.right - tabRect.left + 40;
+            let top = blockRect.top - tabRect.top;
+
+            const popupWidth = 340;
+            if (left + popupWidth > tabRect.width) {
+                left = tabRect.width - popupWidth - 20;
+                top = blockRect.bottom - tabRect.top + 10;
+            }
+
+            popup.style.display = 'block';
+            popup.style.left = left + 'px';
+            popup.style.top = top + 'px';
+        }
+
         isPopupOpen = true;
         isPopupVisible = true;
         selectedText = text;
@@ -586,17 +627,18 @@ function initHighlightSystem() {
         }
 
         let blockIdx = 'N/A';
+        let parentBlock = null;
         let parent = selection.anchorNode.parentNode;
         while (parent && parent !== document.body) {
             if (parent.classList && parent.classList.contains('bilingual-block')) {
                 blockIdx = parent.dataset.block || parent.dataset.index || 'N/A';
+                parentBlock = parent;
                 break;
             }
             parent = parent.parentNode;
         }
 
-        const rect = selection.getRangeAt(0).getBoundingClientRect();
-        showPopup(text, blockIdx, rect.left, rect.bottom);
+        showPopup(text, blockIdx, parentBlock);
     });
 
     document.addEventListener('mousedown', function(e) {
@@ -615,7 +657,10 @@ function initHighlightSystem() {
     });
 
     const saveBtn = document.getElementById('saveNoteBtn');
-    if (saveBtn) saveBtn.addEventListener('click', saveNote);
+    if (saveBtn) {
+        saveBtn.replaceWith(saveBtn.cloneNode(true));
+        document.getElementById('saveNoteBtn').addEventListener('click', saveNote);
+    }
 
     function saveNote() {
         if (!selectedText) return;
@@ -627,7 +672,7 @@ function initHighlightSystem() {
             id: Date.now(),
             text: selectedText,
             comment: comment || '(Không có ghi chú)',
-            color: 'yellow',
+            color: selectedColor, // Đồng bộ màu sắc đã chọn
             block: selectedBlock,
             time: new Date().toLocaleString('vi-VN')
         });
@@ -636,7 +681,6 @@ function initHighlightSystem() {
         hidePopup();
         window.getSelection().removeAllRanges();
         
-        // Render thông báo Toast nhanh
         const toast = document.createElement('div');
         toast.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#e3a6b2; color:white; padding:12px 24px; border-radius:8px; font-weight:bold; z-index:100000;';
         toast.textContent = '✅ Đã lưu ghi chú!';
@@ -646,6 +690,10 @@ function initHighlightSystem() {
             toast.style.transition = 'opacity 0.3s';
             setTimeout(() => toast.remove(), 300);
         }, 1500);
+
+        if (document.getElementById('tab-notes').classList.contains('active')) {
+            renderNotes();
+        }
     }
 
     const cancelBtn = document.getElementById('cancelPopupBtn');
@@ -655,18 +703,32 @@ function initHighlightSystem() {
     if (closeBtn) closeBtn.addEventListener('click', hidePopup);
 }
 
-// ===== 10. RENDER NOTES & FIX LỖI CHỮ X LẸM NỘI DUNG (CHUYỂN THÀNH THÙNG RÁC) =====
+// ===== 11. RENDER NOTES & ĐỒNG BỘ MÀU NỀN PASTEL CHUẨN =====
 function createNoteItem(note) {
     const div = document.createElement('div');
     div.className = 'note-item';
     
-    // Khung cơ bản đảm bảo khoảng đệm padding-right để không bao giờ bị lẹm nút xóa
-    let baseStyle = 'position:relative; padding:1rem; padding-right:2.5rem; margin:0.5rem 0; border:1px solid #f2dae0; border-radius:8px; background:#fffcfd;';
+    // Bản đồ gán màu sắc nhẹ nhàng
+    const colorMap = {
+        'yellow': '#fffdf2',
+        'green': '#f3faf5',
+        'blue': '#f2f8fd',
+        'pink': '#fff5f7'
+    };
+    const colorBorderMap = {
+        'yellow': '#f2dae0',
+        'green': '#c3ebd0',
+        'blue': '#cce3f7',
+        'pink': '#f7cbd6'
+    };
+    
+    const bgColor = colorMap[note.color] || '#fffcfd';
+    const borderColor = colorBorderMap[note.color] || '#f2dae0';
+    
+    let baseStyle = `position:relative; padding:1rem; padding-right:2.5rem; margin:0.5rem 0; border:1px solid ${borderColor}; border-radius:8px; background:${bgColor};`;
     div.style.cssText = baseStyle;
     
     const isChecked = selectedNotes.has(note.id) ? 'checked' : '';
-    
-    // Nút xóa sử dụng biểu tượng thùng rác ở góc phải
     const deleteButtonHTML = `<button onclick="deleteNote(${note.id})" style="position:absolute; top:0.8rem; right:0.6rem; background:none; border:none; color:#bd4f60; cursor:pointer; font-size:1.1rem; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="Xóa ghi chú">🗑️</button>`;
     
     let content = '';
@@ -738,7 +800,6 @@ function createNoteItem(note) {
     
     div.innerHTML = content;
     
-    // Gắn sự kiện lắng nghe sự thay đổi của checkbox
     const cb = div.querySelector('.note-checkbox');
     if (cb) {
         cb.addEventListener('change', function() {
@@ -759,7 +820,7 @@ function renderNotes() {
     if (!container) return;
     
     if (notes.length === 0) {
-        container.innerHTML = '<p class="empty-message">📭 Chưa có ghi chú nào trong kho lưu trữ.</p>';
+        container.innerHTML = '<p class="empty-message">📭 Chưa có ghi chú nào được lưu.</p>';
         return;
     }
     
@@ -777,13 +838,13 @@ function renderNotes() {
 window.deleteNote = function(id) {
     if (confirm('Bạn có chắc chắn muốn xóa ghi chú này không?')) {
         notes = notes.filter(n => n.id !== id);
-        selectedNotes.delete(id); // Xóa khỏi bộ nhớ chọn hàng loạt nếu có
+        selectedNotes.delete(id); 
         localStorage.setItem('studyNotes_v5', JSON.stringify(notes));
         renderNotes();
     }
 };
 
-// ===== 11. TRÌNH KIỂM TRA TRẮC NGHIỆM (QUIZ ENGINE) =====
+// ===== 12. TRÌNH KIỂM TRA TRẮC NGHIỆM (QUIZ ENGINE) =====
 function initQuizEngine() {
     const checkBtn = document.getElementById('checkAnswersBtn');
     if (checkBtn) checkBtn.addEventListener('click', submitQuizScore);
@@ -982,14 +1043,14 @@ function revealAnswers() {
     });
 }
 
-// ===== 12. BIỂU ĐỒ TIẾN ĐỘ =====
+// ===== 13. BIỂU ĐỒ TIẾN ĐỘ =====
 function renderQuizChart() {
     const rows = document.getElementById('chartRows');
     if (!rows) return;
     rows.innerHTML = '';
     
     if (scoreHistory.length === 0) {
-        rows.innerHTML = '<p style="font-size:0.88rem; font-style:italic;">📊 Chưa có dữ liệu hiệu suất</p>';
+        rows.innerHTML = '<p style="font-size:0.88rem; font-style:italic;">📊 Chưa có dữ liệu</p>';
         return;
     }
     
