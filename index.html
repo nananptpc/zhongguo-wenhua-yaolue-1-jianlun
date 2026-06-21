@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Văn hóa Trung Hoa – 4 Tabs</title>
+    <title>Văn hóa Trung Hoa – 5 Tabs + Ghi chú</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -22,7 +22,7 @@
         body.dark .container {
             background: rgba(35, 24, 30, 0.94);
         }
-        body.dark .card, body.dark .card-quiz, body.dark .term-card {
+        body.dark .card, body.dark .card-quiz, body.dark .term-card, body.dark .note-card {
             background: #2d1f26;
             border-color: #4d3540;
         }
@@ -65,7 +65,20 @@
         }
         body.dark .chart-bar { background: #4d3540; }
         body.dark .chart-bar-fill { background: #b37a8a; }
-        body.dark .term-card { background: #2d1f26; border-color: #4d3540; }
+        body.dark .note-popup {
+            background: #2d1f26;
+            border-color: #4d3540;
+            color: #ddd0d5;
+        }
+        body.dark .highlight-yellow { background: #665533; }
+        body.dark .highlight-green { background: #2a5a2a; }
+        body.dark .highlight-blue { background: #2a4a6a; }
+        body.dark .highlight-pink { background: #6a3a4a; }
+        body.dark .note-item {
+            background: #2d1f26;
+            border-color: #4d3540;
+        }
+        body.dark .note-item .note-text { color: #ddd0d5; }
 
         .container {
             max-width: 1200px;
@@ -119,9 +132,22 @@
             padding: 0.4rem 1rem 0.5rem 1.2rem;
             background: rgba(240, 225, 230, 0.2);
             border-left: 4px solid #dbb8c2;
+            position: relative;
+        }
+        .bilingual-block .zh, .bilingual-block .vi {
+            user-select: text;
         }
         .zh { font-weight: 500; color: #3d262e; font-size: 1.02rem; }
         .vi { font-weight: 400; color: #523a44; padding-left: 0.6rem; border-left: 2px solid #dcc4cc; }
+
+        .highlight-yellow { background: #fff3a0; padding: 0.1rem 0.2rem; border-radius: 2px; cursor: pointer; }
+        .highlight-green { background: #b5d6b5; padding: 0.1rem 0.2rem; border-radius: 2px; cursor: pointer; }
+        .highlight-blue { background: #b5cce6; padding: 0.1rem 0.2rem; border-radius: 2px; cursor: pointer; }
+        .highlight-pink { background: #f5c0d0; padding: 0.1rem 0.2rem; border-radius: 2px; cursor: pointer; }
+        body.dark .highlight-yellow { background: #665533; color: #f5e6c0; }
+        body.dark .highlight-green { background: #2a5a2a; color: #c0e6c0; }
+        body.dark .highlight-blue { background: #2a4a6a; color: #c0d6e6; }
+        body.dark .highlight-pink { background: #6a3a4a; color: #f5c0d0; }
 
         .tag {
             display: inline-block;
@@ -133,7 +159,6 @@
             margin-right: 0.5rem;
         }
 
-        /* TABS */
         .tab-bar {
             display: flex;
             gap: 0.4rem;
@@ -189,7 +214,6 @@
         }
         .theme-toggle:hover { opacity: 0.8; }
 
-        /* QUIZ */
         .quiz-controls {
             display: flex;
             flex-wrap: wrap;
@@ -299,7 +323,6 @@
         }
         body.dark #answers-list { background: #3a2930; }
 
-        /* CHART */
         .chart-container {
             background: #fff7f9;
             border: 1px solid #e6d0d8;
@@ -333,7 +356,6 @@
         .avg-score { font-size: 1.1rem; font-weight: 700; color: #5a3a44; margin-top: 0.3rem; }
         body.dark .avg-score { color: #d4bcc6; }
 
-        /* TERMS */
         .term-card {
             background: #fff7f9;
             border: 1px solid #e6d0d8;
@@ -350,6 +372,70 @@
         body.dark .term-zh { color: #eddce3; }
         body.dark .term-vi { color: #cbb5be; }
 
+        .note-popup {
+            position: fixed;
+            background: #fff7f9;
+            border: 2px solid #dbb8c2;
+            border-radius: 8px;
+            padding: 1.2rem 1.6rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 500px;
+            display: none;
+            font-family: 'American Typewriter', monospace;
+        }
+        .note-popup textarea {
+            width: 100%;
+            min-height: 80px;
+            border: 1px solid #dbb8c2;
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-family: 'American Typewriter', monospace;
+            font-size: 0.95rem;
+            resize: vertical;
+            background: #fff;
+            color: #3d262e;
+            margin-top: 0.3rem;
+        }
+        body.dark .note-popup textarea {
+            background: #2d1f26;
+            color: #ddd0d5;
+            border-color: #4d3540;
+        }
+        .note-popup .popup-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .note-popup .popup-actions button {
+            padding: 0.3rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'American Typewriter', monospace;
+            font-weight: bold;
+            background: #dbb8c2;
+            color: #2d1e24;
+        }
+        .note-popup .popup-actions button:hover { opacity: 0.8; }
+        .note-popup .color-options {
+            display: flex;
+            gap: 0.4rem;
+            margin: 0.3rem 0;
+        }
+        .note-popup .color-options span {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .note-popup .color-options span.active { border-color: #4a2e38; }
+        body.dark .note-popup .color-options span.active { border-color: #eddce3; }
+
         .footer-note {
             font-size: 0.9rem;
             color: #5a3a44;
@@ -361,55 +447,221 @@
             border: 1px solid #dbb8c2;
         }
 
+        .note-item {
+            background: #fff7f9;
+            border: 1px solid #e6d0d8;
+            border-radius: 6px;
+            padding: 0.8rem 1.4rem;
+            margin: 0.6rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            align-items: flex-start;
+            position: relative;
+        }
+        .note-item .note-text { flex: 1; }
+        .note-item .note-meta {
+            font-size: 0.8rem;
+            color: #7a5a64;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .note-item .note-delete {
+            background: none;
+            border: none;
+            color: #c05a5a;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 0.3rem;
+        }
+        .note-item .note-delete:hover { color: #a04040; }
+        body.dark .note-item .note-meta { color: #b08a94; }
+        .note-color-tag {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 0.3rem;
+            vertical-align: middle;
+        }
+
         @media (max-width: 700px) {
             .container { padding: 1.2rem; }
             #answers-list { columns: 2 100px; }
             .tab-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
             .term-card { flex-direction: column; gap: 0.2rem; }
+            .note-popup { min-width: 260px; max-width: 90vw; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- HEADER -->
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
         <h1 style="border: none; margin:0; flex:1;">🌸 中国文化要略 · 简论 <br><span style="font-size:1.2rem;">Tinh hoa văn hóa Trung Hoa – Lược luận</span></h1>
         <button class="theme-toggle" id="themeToggle">🌙 Dark / 暗黑</button>
     </div>
-    <p style="text-align:center; color:#6a4a54; font-size:1rem; margin-top:-0.1rem;">✦ Song ngữ Việt – Trung · 4 tabs ✦</p>
+    <p style="text-align:center; color:#6a4a54; font-size:1rem; margin-top:-0.1rem;">✦ Song ngữ Việt – Trung · 5 tabs ✦</p>
 
-    <!-- TABS -->
     <div class="tab-bar">
-        <button class="tab-btn active" data-tab="tab-original">📄 Nguyên văn song ngữ / 原文对照</button>
+        <button class="tab-btn active" data-tab="tab-original">📄 Nguyên văn / 原文</button>
         <button class="tab-btn" data-tab="tab-summary">📘 Tóm tắt / 摘要</button>
         <button class="tab-btn" data-tab="tab-quiz">📝 Quiz / 测验</button>
         <button class="tab-btn" data-tab="tab-terms">📚 Thuật ngữ / 术语</button>
+        <button class="tab-btn" data-tab="tab-notes">📒 Ghi chú / 笔记</button>
     </div>
 
-    <!-- ===== TAB 1: NGUYÊN VĂN SONG NGỮ ===== -->
+    <!-- ===== TAB 1: NGUYÊN VĂN SONG NGỮ (ĐẦY ĐỦ) ===== -->
     <div id="tab-original" class="tab-content active">
         <h2>📄 Nguyên văn song ngữ · 中越对照原文</h2>
-        <div class="card">
-            <div class="bilingual-block">
-                <div class="zh"><strong>一、文化与中国文化</strong> – “文化”这个词，现在已经深入到社会生活的各个角落和人们的心理层面，不需要过多地解释了。按照文献，它最早出现在《周易·贲》里，书云：“观乎天文，以察时变；观乎人文，以化成天下。”这应当是中国人论述“文化”的开始，但“文化”二字还没有连在一起。它的意思是，统治者通过观察天象，可以了解时序的变化；通过观察人类社会的各种现象，可以用教育感化的手段来治理天下。汉代出现“文化”一词，但对其含义，人们的理解并不一致。刘向《说苑·指武》云：“凡武之兴，为不服也；文化不改，然后加诛。”晋人《补亡诗·由仪》也说：“文化内辑，武功外悠。”这都指的是与国家的军事手段（即武功）相对立的一个概念，即国家的文教治理手段。唐代的孔颖达则别有见地，他在解释前引《周易》中的那段话时认为：“圣人观察人文，则诗书礼乐之谓。”这实际上是说，人类社会的文化，主要是指文学艺术和礼仪风俗等属于上层建筑的那些东西。古人对“文化”概念的这种规定性从汉唐时代起，一直影响到明清。因此，顾炎武在《日知录》中说：“自身而至于家国天下，制之为度数，发之为音容，莫非文也。”即人自身的行为表现和国家的各种制度，都属于“文化”的范畴。可见，中国古代的“文化”概念，指的是狭义的精神层面的东西。</div>
-                <div class="vi"><strong>I. Văn hóa và văn hóa Trung Hoa</strong> – Từ “văn hóa” ngày nay đã thấm sâu vào mọi ngõ ngách của đời sống xã hội và tâm lý con người. Theo văn hiến, nó xuất hiện sớm nhất trong “Kinh Dịch” (quẻ Bí): “Quan hồ thiên văn, dĩ sát thời biến; quan hồ nhân văn, dĩ hóa thành thiên hạ.” Đây là sự bàn luận về “văn hóa” của người Trung Quốc, nhưng hai chữ chưa ghép lại. Người cai trị quan sát thiên tượng để biết biến thiên thời tiết; quan sát các hiện tượng xã hội để giáo hóa thiên hạ. Đến thời Hán, từ “văn hóa” xuất hiện nhưng cách hiểu không thống nhất. Lưu Hướng trong “Thuyết uyển” viết: “Phàm vũ chi hưng, vi bất phục dã; văn hóa bất cải, nhiên hậu gia tru.” Người Tấn trong “Bổ vong thi · Do nghi” cũng nói: “Văn hóa nội tập, vũ công ngoại du.” Đây đều chỉ khái niệm đối lập với vũ công (quân sự), tức phương thức giáo hóa văn trị. Khổng Dĩnh Đạt đời Đường cho rằng “thánh nhân quan sát nhân văn, tức là thi, thư, lễ, nhạc”. Văn hóa thời cổ ở Trung Quốc chủ yếu chỉ những thứ thuộc về tinh thần theo nghĩa hẹp.</div>
+        <p style="color:#6a4a54; font-size:0.9rem; margin-bottom:0.5rem;">💡 Bôi đen (highlight) văn bản → popup ghi chú sẽ xuất hiện / 选中文本 → 弹出笔记窗口</p>
+        <div class="card" id="originalContent">
+
+            <!-- ===== ĐOẠN 1: TRANG 1 ===== -->
+            <div class="bilingual-block" data-block="0">
+                <div class="zh"><strong>一、文化与中国文化</strong><br>
+                “文化”这个词，现在已经深入到社会生活的各个角落和人们的心理层面，不需要过多地解释了。按照文献，它最早出现在《周易·贲》里，书云：“观乎天文，以察时变；观乎人文，以化成天下。”这应当是中国人论述“文化”的开始，但“文化”二字还没有连在一起。它的意思是，统治者通过观察天象，可以了解时序的变化；通过观察人类社会的各种现象，可以用教育感化的手段来治理天下。汉代出现“文化”一词，但对其含义，人们的理解并不一致。刘向《说苑·指武》云：“凡武之兴，为不服也；文化不改，然后加诛。”晋人《补亡诗·由仪》也说：“文化内辑，武功外悠。”这都指的是与国家的军事手段（即武功）相对立的一个概念，即国家的文教治理手段。唐代的孔颖达则别有见地，他在解释前引《周易》中的那段话时认为：“圣人观察人文，则诗书礼乐之谓。”这实际上是说，人类社会的文化，主要是指文学艺术和礼仪风俗等属于上层建筑的那些东西。古人对“文化”概念的这种规定性从汉唐时代起，一直影响到明清。因此，顾炎武在《日知录》中说：“自身而至于家国天下，制之为度数，发之为音容，莫非文也。”即人自身的行为表现和国家的各种制度，都属于“文化”的范畴。可见，中国古代的“文化”概念，指的是狭义的精神层面的东西。</div>
+                <div class="vi"><strong>I. Văn hóa và văn hóa Trung Hoa</strong><br>
+                Từ “văn hóa” ngày nay đã thấm sâu vào mọi ngõ ngách của đời sống xã hội và tâm lý con người, không cần giải thích nhiều. Theo văn hiến, nó xuất hiện sớm nhất trong “Kinh Dịch” (quẻ Bí): “Quan hồ thiên văn, dĩ sát thời biến; quan hồ nhân văn, dĩ hóa thành thiên hạ.” Đây là sự bàn luận về “văn hóa” của người Trung Quốc, nhưng hai chữ chưa ghép lại. Người cai trị quan sát thiên tượng để biết biến thiên thời tiết; quan sát các hiện tượng xã hội để giáo hóa thiên hạ. Đến thời Hán, từ “văn hóa” xuất hiện nhưng cách hiểu không thống nhất. Lưu Hướng trong “Thuyết uyển” viết: “Phàm vũ chi hưng, vi bất phục dã; văn hóa bất cải, nhiên hậu gia tru.” Người Tấn trong “Bổ vong thi · Do nghi” cũng nói: “Văn hóa nội tập, vũ công ngoại du.” Đây đều chỉ khái niệm đối lập với vũ công (quân sự), tức phương thức giáo hóa văn trị. Khổng Dĩnh Đạt đời Đường cho rằng “thánh nhân quan sát nhân văn, tức là thi, thư, lễ, nhạc”. Văn hóa thời cổ ở Trung Quốc chủ yếu chỉ những thứ thuộc về tinh thần theo nghĩa hẹp.</div>
             </div>
-            <div class="bilingual-block">
-                <div class="zh"><strong>西方“文化”概念与马克思主义定义</strong> – 西方的“文化”一词，来源于拉丁文Cultura，它的意思是耕种、居住、练习、注意等。法文的Culture，也是栽培、种植之意，但又引申为对人的性情的陶冶和品德的培养。可见，西方“文化”的含义比中国古代“文化”的含义要宽泛得多。19世纪下半叶，英国文化学家泰勒出版的《原始文化》一书，给“文化”下了这样一个定义，说它是“包括知识、信仰、艺术、道德、法律、习俗和任何人作为一名社会成员而获得的能力和习惯在内的复杂整体”。马克思主义理论家把“文化”分为广义和狭义两种，广义指人类在社会历史实践过程中所创造的物质财富和精神财富的总和；狭义指在历史上一定的物质资料生产方式的基础上发生和发展的社会精神生活形式的总和。</div>
-                <div class="vi"><strong>Khái niệm “văn hóa” phương Tây và định nghĩa Mác-xít</strong> – Từ “văn hóa” phương Tây bắt nguồn từ tiếng Latinh Cultura, nghĩa là gieo trồng, cư trú, rèn luyện... Tiếng Pháp Culture cũng là trồng trọt, nhưng mở rộng sang tu dưỡng tình cảm và đạo đức. Nhà văn hóa học Anh Edward Tylor định nghĩa văn hóa là “tổng thể phức tạp bao gồm tri thức, tín ngưỡng, nghệ thuật, đạo đức, pháp luật, tập quán và mọi năng lực, thói quen mà con người với tư cách thành viên xã hội có được”. Các nhà lý luận Mác-xít chia văn hóa thành nghĩa rộng (tổng hòa vật chất và tinh thần) và nghĩa hẹp (các hình thái đời sống tinh thần xã hội).</div>
+
+            <!-- ===== ĐOẠN 2: TRANG 1-2 (tiếp) ===== -->
+            <div class="bilingual-block" data-block="1">
+                <div class="zh"><strong>西方的“文化”概念</strong><br>
+                西方的“文化”一词，来源于拉丁文Cultura，它的意思是耕种、居住、练习、注意，等等。法文的Culture，也是栽培、种植之意，但又引申为对人的性情的陶冶和品德的培养。这里的意思就包含了从人的物质生产到精神生产两个领域。可见，西方“文化”的含义比中国古代“文化”的含义要宽泛得多。19世纪下半叶，英国文化学家泰勒出版的《原始文化》一书，是关于神话、哲学、宗教、语言、艺术和习俗发展研究的著作。泰勒在书中给“文化”下了这样一个定义，说它是“包括知识、信仰、艺术、道德、法律、习俗和任何人作为一名社会成员而获得的能力和习惯在内的复杂整体”。这一观点影响巨大，在文化史的研究方面具有开先河的作用。直到现在，还可以作为我们了解和认识“文化”的参考。后来，人们纷纷用自己的理解和认识来给“文化”下定义。其中，有的侧重于历史性，有的侧重于规范性，有的侧重于心理性，有的侧重于结构性，有的侧重于遗传性，等等。迄今为止，文化的定义有数百种之多。</div>
+                <div class="vi"><strong>Khái niệm “văn hóa” phương Tây</strong><br>
+                Từ “văn hóa” phương Tây bắt nguồn từ tiếng Latinh Cultura, nghĩa là gieo trồng, cư trú, rèn luyện, chú ý... Tiếng Pháp Culture cũng là trồng trọt, nhưng mở rộng sang tu dưỡng tình cảm và đạo đức. Như vậy, nghĩa bao gồm cả lĩnh vực sản xuất vật chất và tinh thần. Rõ ràng, “văn hóa” phương Tây rộng hơn nhiều so với thời cổ Trung Hoa. Vào nửa cuối thế kỷ 19, nhà văn hóa học Anh Edward Tylor xuất bản “Văn hóa nguyên thủy”, định nghĩa văn hóa là “tổng thể phức tạp bao gồm tri thức, tín ngưỡng, nghệ thuật, đạo đức, pháp luật, tập quán và mọi năng lực, thói quen mà con người với tư cách thành viên xã hội có được”. Quan điểm này có ảnh hưởng lớn, mở đường cho nghiên cứu lịch sử văn hóa. Cho đến nay, có hàng trăm định nghĩa về văn hóa, thiên về lịch sử, quy phạm, tâm lý, cấu trúc, di truyền...</div>
             </div>
-            <div class="bilingual-block">
-                <div class="zh"><strong>文化的结构与层次</strong> – 关于文化的结构，一般地把它分为四个层次：一为物态文化层，指人的物质生产活动及其产品的总和，是看得见、摸得着的具体实在的事物，如人们的衣、食、住、行等；二为制度文化层，指人们在社会实践中建立的规范自身行为和调节相互关系的准则；三为行为文化层，指人在长期社会交往中约定俗成的习惯和风俗，它是一种社会的、集体的行为，不是个人的随心所欲；四为心态文化层，指人们的社会心理和社会意识形态，包括人们的价值观念、审美情趣、思维方式以及由此而产生的文学艺术作品。这是文化的核心部分，也是文化的精华部分。</div>
-                <div class="vi"><strong>Cấu trúc và tầng bậc của văn hóa</strong> – Cấu trúc văn hóa thường được chia thành bốn tầng: (1) Tầng văn hóa vật chất – tổng hòa hoạt động sản xuất vật chất và sản phẩm, như ăn, mặc, ở, đi lại; (2) Tầng văn hóa chế độ – các quy phạm điều chỉnh hành vi và quan hệ xã hội; (3) Tầng văn hóa hành vi – tập quán và phong tục được hình thành trong giao tiếp xã hội lâu dài; (4) Tầng văn hóa tâm thái – tâm lý xã hội và ý thức hệ xã hội, bao gồm giá trị, thẩm mỹ, tư duy và các tác phẩm văn học nghệ thuật. Đây là phần cốt lõi và tinh hoa của văn hóa.</div>
+
+            <!-- ===== ĐOẠN 3: TRANG 2 (tiếp) ===== -->
+            <div class="bilingual-block" data-block="2">
+                <div class="zh"><strong>马克思主义理论家对“文化”的解释</strong><br>
+                马克思主义理论家对“文化”做了一种新的解释，即把“文化”分为广义和狭义两种。如苏联哲学家罗森塔尔·尤金在他所编的《哲学小辞典》中认为：“文化是人类在社会历史实践过程中所创造的物质财富和精神财富的总和。从比较狭隘的意义来讲，文化就是在历史上一定的物质资料生产方式的基础上发生和发展的社会精神生活形式的总和。”我国1979年出版的《辞海》基本上采用了这个说法。但也不是所有人都同意这个观点，对文化的定义仍然存在许多争论。这不是说文化有多么复杂，而是表明文化有多个层面，企图用简略的语言加以概括是很困难的。但是，不论“文化”有多少定义，有一个根本点还是很明确的，即文化的核心问题是人。有人才能创造文化，形成文化。文化是人类智慧和创造力的体现。不同种族、不同民族的人创造不同的文化。人创造了文化，也享受文化，同时也受约束于文化，最终又要不断地改造文化。我们都是文化的创造者，又是文化的享用者和改造者。人虽然要受文化的约束，但人在文化的发展中永远是主动的。</div>
+                <div class="vi"><strong>Giải thích của các nhà lý luận Mác-xít</strong><br>
+                Các nhà lý luận Mác-xít chia văn hóa thành nghĩa rộng và nghĩa hẹp. Nhà triết học Xô viết Rosenthal–Iudin trong “Từ điển triết học” viết: “Văn hóa là tổng hòa của cải vật chất và tinh thần mà con người tạo ra trong quá trình thực tiễn lịch sử xã hội. Theo nghĩa hẹp, văn hóa là tổng hòa các hình thái đời sống tinh thần xã hội phát sinh và phát triển trên cơ sở phương thức sản xuất vật chất nhất định trong lịch sử.” Từ điển “Từ Hải” (1979) cũng sử dụng định nghĩa này. Tuy nhiên, vẫn còn nhiều tranh luận. Điểm cốt lõi là: văn hóa xoay quanh con người. Con người tạo ra văn hóa, thụ hưởng văn hóa, bị ràng buộc bởi văn hóa và không ngừng cải tạo văn hóa. Con người luôn chủ động trong sự phát triển của văn hóa.</div>
             </div>
-            <div class="bilingual-block">
-                <div class="zh"><strong>中国文化的庞大体系与民族特点</strong> – 中国文化根植于东方的土地，融入了东方的智慧，吸纳了外来的因子，最终形成一种内涵十分丰富、具有自新能力，并且生生不息的文化体系。若以纵向的发展形态区分，它首先可以分为传统文化与现当代文化；若以产生的地域区分，它可以分为中原农耕文化与北部边疆的游牧文化；若以文化的地域类型区分，它包括了三秦文化、三晋文化、燕赵文化、齐鲁文化、吴越文化、中州文化、两淮文化、荆楚文化、巴蜀文化、岭南文化等；若以民族的属性区分，它又包括了汉文化与少数民族文化；若以文化的社会性区分，它可以分为皇家文化与民间文化，精英文化与大众文化，宗教文化与世俗文化；若以宗教的属性区分，它又可以分为道教文化、佛教文化和伊斯兰文化等；若以不同的门类区分，它包含的就更多了，诸如建筑文化、服饰文化、饮食文化、舟车文化、青铜文化、玉器文化、山文化、水文化、茶文化、酒文化等，都在其内。中国文化的民族特点：外在特点有统一性、连续性、包容性、多样性；内在特点突出人文主义精神，注重和谐与中庸，富于安土乐天的情趣。</div>
-                <div class="vi"><strong>Hệ thống đồ sộ và đặc điểm dân tộc của văn hóa Trung Hoa</strong> – Văn hóa Trung Hoa bén rễ trên đất phương Đông, thấm nhuần trí tuệ phương Đông, tiếp thu các nhân tố bên ngoài, hình thành hệ thống giàu nội dung, có khả năng tự đổi mới và trường tồn. Phân theo hình thái phát triển dọc: văn hóa truyền thống và đương đại. Phân theo địa vực: văn hóa nông nghiệp Trung Nguyên và du mục biên cương Bắc bộ; các loại hình địa vực: Tam Tần, Tam Tấn, Yên Triệu, Tề Lỗ, Ngô Việt, Trung Châu, Lưỡng Hoài, Kinh Sở, Ba Thục, Lĩnh Nam... Phân theo dân tộc: Hán và các dân tộc thiểu số. Phân theo tính chất xã hội: hoàng gia và dân gian, tinh anh và đại chúng, tôn giáo và thế tục. Phân theo tôn giáo: Đạo giáo, Phật giáo, Hồi giáo... Phân theo loại hình: kiến trúc, trang phục, ẩm thực, xe thuyền, đồ đồng, ngọc, núi, nước, trà, rượu... Đặc điểm dân tộc: bên ngoài – thống nhất, liên tục, bao dung, đa dạng; bên trong – nhân văn, hài hòa – trung dung, an thổ lạc thiên.</div>
+
+            <!-- ===== ĐOẠN 4: TRANG 2-3 (cấu trúc văn hóa) ===== -->
+            <div class="bilingual-block" data-block="3">
+                <div class="zh"><strong>关于文化的结构</strong><br>
+                关于文化的结构，也有很多不同的说法。一般地把它分为四个层次：一为物态文化层，指人的物质生产活动及其产品的总和，是看得见、摸得着的具体实在的事物，如人们的衣、食、住、行等；二为制度文化层，指人们在社会实践中建立的规范自身行为和调节相互关系的准则；三为行为文化层，指人在长期社会交往中约定俗成的习惯和风俗，它是一种社会的、集体的行为，不是个人的随心所欲；四为心态文化层，指人们的社会心理和社会意识形态，包括人们的价值观念、审美情趣、思维方式以及由此而产生的文学艺术作品。这是文化的核心部分，也是文化的精华部分。</div>
+                <div class="vi"><strong>Cấu trúc của văn hóa</strong><br>
+                Có nhiều cách phân chia cấu trúc văn hóa. Thông thường chia thành bốn tầng: (1) Tầng văn hóa vật chất – tổng hòa hoạt động sản xuất vật chất và sản phẩm, như ăn, mặc, ở, đi lại; (2) Tầng văn hóa chế độ – các quy phạm điều chỉnh hành vi và quan hệ xã hội; (3) Tầng văn hóa hành vi – tập quán và phong tục được hình thành trong giao tiếp xã hội lâu dài, là hành vi tập thể, không phải cá nhân tùy tiện; (4) Tầng văn hóa tâm thái – tâm lý xã hội và ý thức hệ xã hội, bao gồm giá trị, thẩm mỹ, tư duy và các tác phẩm văn học nghệ thuật. Đây là phần cốt lõi và tinh hoa của văn hóa.</div>
             </div>
-            <div class="bilingual-block">
-                <div class="zh"><strong>了解中国文化的现实需要与未来方向</strong> – 首先，是世界人民的需要。在全球化时代，世界各国人民迫切希望了解中国、了解中国文化。其次，是文化自身发展的需要。中国文化正经历着有史以来最深刻的变化，面临国际、国内两种形势的挑战。在经济全球化的背景下，西方文化对中国文化以巨大的冲击，需要我们认真了解自己的文化，进行有益的文化扬弃。再次，是个人提高素养的需要。作为中国人，应当从民族文化中汲取营养、熏陶人格。关于中国文化的未来，作者认为当代中国文化的三个阶段：以政治为第一取向、以经济为第一取向、以文化为第一取向。张岱年先生力主中国文化“综合创新”，即马克思主义普遍真理与中国文化优秀传统的综合；中国文化的优秀传统与近代西方文化的先进成就的综合；儒、道、墨、法四家的综合。只要我们实事求是地分析中国文化的成分，继承和吸收古代文化中一切有益的东西，借鉴和吸收外来文化中一切优秀的成果，建立一种性质、结构和功能都完全崭新的社会主义新文化，是完全可以实现的。</div>
-                <div class="vi"><strong>Nhu cầu thực tế và hướng đi tương lai của văn hóa Trung Hoa</strong> – Thứ nhất, nhu cầu của nhân dân thế giới. Trong thời đại toàn cầu hóa, nhân dân các nước tha thiết muốn tìm hiểu Trung Hoa và văn hóa Trung Hoa. Thứ hai, nhu cầu phát triển của bản thân văn hóa. Văn hóa Trung Hoa đang trải qua biến đổi sâu sắc nhất, đối mặt với thách thức quốc tế và nội địa. Trong bối cảnh toàn cầu hóa, văn hóa phương Tây tạo ra xung kích lớn, đòi hỏi chúng ta hiểu rõ văn hóa của mình để tiếp biến có chọn lọc. Thứ ba, nhu cầu nâng cao phẩm chất cá nhân. Là người Trung Hoa, cần hấp thụ dinh dưỡng từ văn hóa dân tộc, bồi dưỡng nhân cách. Về tương lai, tác giả cho rằng ba giai đoạn của văn hóa đương đại: chính trị → kinh tế → văn hóa. Trương Đài Niên chủ trương “tổng hợp sáng tạo”: kết hợp chân lý phổ biến Mác-xít với truyền thống ưu tú Trung Hoa; kết hợp truyền thống ưu tú với thành tựu tiên tiến phương Tây cận đại; dung hợp bốn nhà Nho, Đạo, Mặc, Pháp. Nếu chúng ta phân tích thực tế các thành phần văn hóa, kế thừa những gì có ích, tham khảo tinh hoa ngoại lai, thì việc xây dựng một nền văn hóa xã hội chủ nghĩa mới mẻ về tính chất, cấu trúc và chức năng là hoàn toàn có thể thực hiện được.</div>
+
+            <!-- ===== ĐOẠN 5: TRANG 3 (hệ thống văn hóa Trung Hoa) ===== -->
+            <div class="bilingual-block" data-block="4">
+                <div class="zh"><strong>中国文化体系</strong><br>
+                中国文化是人类文化园圃中一个独具性格且结构完整的系统。它根植于东方的土地，融入了东方的智慧，吸纳了外来的因子，最终形成一种内涵十分丰富、具有自新能力，并且生生不息的文化体系。对于中国文化的庞大体系，我们可以从不同的角度分解和认识它。若以纵向的发展形态区分，它首先可以分为传统文化与现当代文化；若以产生的地域区分，它可以分为中原农耕文化与北部边疆的游牧文化，而农耕文化又可以分为江南文化和北方文化；若以文化的地域类型区分，它包括了三秦文化、三晋文化、燕赵文化、齐鲁文化、吴越文化、中州文化、两淮文化、荆楚文化、巴蜀文化、岭南文化等；若以民族的属性区分，它又包括了汉文化与少数民族文化（少数民族文化又可分为藏文化、蒙文化、满文化、壮文化、纳西文化等）；若以文化的社会性区分，它可以分为皇家文化与民间文化，精英文化与大众文化，宗教文化与世俗文化；若以宗教的属性区分，它又可以分为道教文化、佛教文化和伊斯兰文化等；若以不同的门类区分，它包含的就更多了，诸如建筑文化、服饰文化、饮食文化、舟车文化、青铜文化、玉器文化、山文化、水文化、茶文化、酒文化等，都在其内。当然，还可以进行更细的区分。</div>
+                <div class="vi"><strong>Hệ thống văn hóa Trung Hoa</strong><br>
+                Văn hóa Trung Hoa là một hệ thống có cá tính độc đáo và cấu trúc hoàn chỉnh trong vườn hoa văn hóa nhân loại. Nó bén rễ trên đất phương Đông, thấm nhuần trí tuệ phương Đông, tiếp thu các nhân tố bên ngoài, hình thành hệ thống giàu nội dung, có khả năng tự đổi mới và trường tồn. Có thể phân tích từ nhiều góc độ: theo hình thái phát triển dọc: văn hóa truyền thống và đương đại; theo địa vực: văn hóa nông nghiệp Trung Nguyên và du mục biên cương Bắc bộ (nông nghiệp lại chia thành Giang Nam và Bắc phương); theo loại hình địa vực: Tam Tần, Tam Tấn, Yên Triệu, Tề Lỗ, Ngô Việt, Trung Châu, Lưỡng Hoài, Kinh Sở, Ba Thục, Lĩnh Nam...; theo dân tộc: Hán và các dân tộc thiểu số (Tạng, Mông, Mãn, Tráng, Nạp Tây...); theo tính chất xã hội: hoàng gia và dân gian, tinh anh và đại chúng, tôn giáo và thế tục; theo tôn giáo: Đạo giáo, Phật giáo, Hồi giáo...; theo loại hình: kiến trúc, trang phục, ẩm thực, xe thuyền, đồ đồng, ngọc, núi, nước, trà, rượu... và còn có thể phân chia chi tiết hơn.</div>
             </div>
+
+            <!-- ===== ĐOẠN 6: TRANG 3 (tiếp) ===== -->
+            <div class="bilingual-block" data-block="5">
+                <div class="zh"><strong>Văn hóa truyền thống Trung Hoa</strong><br>
+                那么，我们这里所说的中国文化究竟指什么呢？主要指传统文化。即由居住在中国地域内的中华民族所创造出来的一种民族文化，它历经数千年的演化而汇集成一个完整的体系，反映了民族特质和民族风貌，凝结了民族精神和民族气质，并且不断为中华民族世世代代所继承和发展。在这个历史演化过程中，文化的主体部分是产生在中原地区的汉文化，同时又融合了各个少数民族文化的精华。它的精神内核是孔子所创立的儒家思想，同时又辅以道家思想和佛家思想。因此，它特色鲜明，内涵丰富，历史悠久，博大精深，是中华民族数千年文明的结晶。</div>
+                <div class="vi"><strong>Văn hóa truyền thống Trung Hoa</strong><br>
+                Vậy văn hóa Trung Hoa ở đây chỉ gì? Chủ yếu là văn hóa truyền thống – nền văn hóa dân tộc do dân tộc Trung Hoa sinh sống trên lãnh thổ Trung Quốc sáng tạo, trải qua hàng nghìn năm tiến hóa tạo thành một hệ thống hoàn chỉnh, phản ánh đặc trưng và diện mạo dân tộc, kết tinh tinh thần và khí chất dân tộc, được các thế hệ người Trung Hoa kế thừa và phát triển. Trong quá trình lịch sử này, phần chủ thể là văn hóa Hán ở Trung Nguyên, đồng thời dung hợp tinh hoa của các dân tộc thiểu số. Hạt nhân tinh thần là tư tưởng Nho giáo do Khổng Tử sáng lập, bổ trợ bởi tư tưởng Đạo giáo và Phật giáo. Vì vậy, nó có đặc sắc rõ ràng, nội dung phong phú, lịch sử lâu đời, bác đại tinh thâm, là kết tinh của nền văn minh ngàn năm của dân tộc Trung Hoa.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 7: TRANG 4 (nhu cầu thế giới) ===== -->
+            <div class="bilingual-block" data-block="6">
+                <div class="zh"><strong>三、了解中国文化的现实需要</strong><br>
+                在数千年的发展过程中，中国文化不但在中国历史上大放光彩，惠及历代中华儿女，而且在汉代开辟“丝绸之路”以后，影响了西方世界的历史与文化。在当今交往频繁的国际社会中，它的传播更加迅速，影响更加广泛，作用也更加明显。我们在今天来了解中国文化，至少有三个方面的现实需要。首先，是世界人民的需要。如今的世界，已经进入一日千里的全球化时代。在这样的时代里，任何一个民族，任何一种文化，都不可能孤立存在和独自发展。因此我们说，中国需要世界，世界也需要中国，现在的世界尤其需要中国。如果说20世纪以前，西方人士对中国文化的关注更多的是出于好奇和探秘心理，那么在21世纪的今天，他们对中国文化的兴趣就与自身的发展有了密切的关系。</div>
+                <div class="vi"><strong>III. Nhu cầu thực tế tìm hiểu văn hóa Trung Hoa</strong><br>
+                Trong hàng nghìn năm phát triển, văn hóa Trung Hoa không chỉ tỏa sáng trong lịch sử Trung Quốc, mang lại lợi ích cho các thế hệ người Hoa, mà từ khi mở “Con đường tơ lụa” thời Hán, nó đã ảnh hưởng đến lịch sử và văn hóa phương Tây. Trong xã hội quốc tế giao lưu thường xuyên ngày nay, sự truyền bá càng nhanh chóng, ảnh hưởng càng rộng rãi. Việc tìm hiểu văn hóa Trung Hoa có ít nhất ba nhu cầu thực tế. Trước hết, nhu cầu của nhân dân thế giới. Thế giới đã bước vào thời đại toàn cầu hóa phát triển chóng mặt. Trong thời đại này, bất kỳ dân tộc hay nền văn hóa nào cũng không thể tồn tại biệt lập. Trung Hoa cần thế giới, thế giới cần Trung Hoa, đặc biệt là ngày nay.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 8: TRANG 4-5 (tiếp) ===== -->
+            <div class="bilingual-block" data-block="7">
+                <div class="zh"><strong>Sự quan tâm của thế giới đối với Trung Hoa</strong><br>
+                Với sự phát triển nhanh chóng của kinh tế Trung Quốc và sức mạnh tổng thể không ngừng tăng cường, vị thế và ảnh hưởng quốc tế của Trung Quốc cũng không ngừng được nâng cao, vai trò của văn hóa Trung Hoa trên thế giới cũng ngày càng lớn. Các nước trên thế giới, đặc biệt là phương Tây, đã nhận thức đầy đủ rằng nhiều vấn đề quốc tế khó giải quyết nếu thiếu Trung Quốc, chỉ có cách quan tâm sát sao đến sự phát triển và trỗi dậy của Trung Quốc, tìm cách thiết lập quan hệ mới với Trung Quốc, mới có thể tạo ra cơ hội cho tương lai các nước và hòa bình, ổn định quốc tế. Chính vì vậy, văn hóa Trung Hoa được thế giới coi trọng chưa từng có, nhiệt tình học tiếng Hán dâng cao, Học viện Khổng Tử nhanh chóng được thành lập trên toàn cầu, nhiều quốc gia tổ chức triển lãm văn hóa Trung Hoa, “trí tuệ phương Đông” với tư tưởng Nho và Đạo trở thành đề tài quốc tế nóng.</div>
+                <div class="vi"><strong>Sự quan tâm của thế giới đối với Trung Hoa</strong><br>
+                Với sự phát triển nhanh chóng của kinh tế Trung Quốc và sức mạnh tổng thể không ngừng tăng cường, vị thế và ảnh hưởng quốc tế của Trung Quốc cũng không ngừng được nâng cao, vai trò của văn hóa Trung Hoa trên thế giới cũng ngày càng lớn. Các nước trên thế giới, đặc biệt là phương Tây, đã nhận thức đầy đủ rằng nhiều vấn đề quốc tế khó giải quyết nếu thiếu Trung Quốc, chỉ có cách quan tâm sát sao đến sự phát triển và trỗi dậy của Trung Quốc, tìm cách thiết lập quan hệ mới với Trung Quốc, mới có thể tạo ra cơ hội cho tương lai các nước và hòa bình, ổn định quốc tế. Chính vì vậy, văn hóa Trung Hoa được thế giới coi trọng chưa từng có, nhiệt tình học tiếng Hán dâng cao, Học viện Khổng Tử nhanh chóng được thành lập trên toàn cầu, nhiều quốc gia tổ chức triển lãm văn hóa Trung Hoa, “trí tuệ phương Đông” với tư tưởng Nho và Đạo trở thành đề tài quốc tế nóng.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 9: TRANG 5-6 (nhận thức của người Trung Hoa) ===== -->
+            <div class="bilingual-block" data-block="8">
+                <div class="zh"><strong>Chúng ta chưa thực sự hiểu rõ văn hóa của mình</strong><br>
+                Tuy nhiên, chúng ta không thực sự hiểu rõ văn hóa dân tộc mình, giống như Tô Đông Pha nói: “Bất thức Lư Sơn chân diện mục, chỉ duyên thân tại thử sơn trung.” Đối với văn hóa mẹ đẻ, đa số chúng ta biết rất ít, hoặc chỉ biết một mà không biết hai; thế hệ trẻ có lẽ còn biết ít hơn. Có khi chúng ta còn kém cả người phương Tây. Nhà khoa học Anh Robert Temple, dưới sự hướng dẫn của nhà khoa học nổi tiếng Joseph Needham, đã giới thiệu một trăm “nhất thế giới” của Trung Quốc trong cuốn “Trung Quốc – xứ sở phát minh và khám phá”, và viết trong lời tựa: “Có thể hơn một nửa các phát minh sáng tạo cơ bản làm nền tảng cho ‘thế giới hiện đại’ đến từ Trung Quốc.” Chính người Trung Quốc cũng như người phương Tây, không biết sự thật này.</div>
+                <div class="vi"><strong>Chúng ta chưa thực sự hiểu rõ văn hóa của mình</strong><br>
+                Tuy nhiên, chúng ta không thực sự hiểu rõ văn hóa dân tộc mình, giống như Tô Đông Pha nói: “Bất thức Lư Sơn chân diện mục, chỉ duyên thân tại thử sơn trung.” Đối với văn hóa mẹ đẻ, đa số chúng ta biết rất ít, hoặc chỉ biết một mà không biết hai; thế hệ trẻ có lẽ còn biết ít hơn. Có khi chúng ta còn kém cả người phương Tây. Nhà khoa học Anh Robert Temple, dưới sự hướng dẫn của nhà khoa học nổi tiếng Joseph Needham, đã giới thiệu một trăm “nhất thế giới” của Trung Quốc trong cuốn “Trung Quốc – xứ sở phát minh và khám phá”, và viết trong lời tựa: “Có thể hơn một nửa các phát minh sáng tạo cơ bản làm nền tảng cho ‘thế giới hiện đại’ đến từ Trung Quốc.” Chính người Trung Quốc cũng như người phương Tây, không biết sự thật này.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 10: TRANG 6 (tiếp) ===== -->
+            <div class="bilingual-block" data-block="9">
+                <div class="zh"><strong>Những phát minh vĩ đại của Trung Hoa</strong><br>
+                Ông liệt kê: “nông nghiệp hiện đại, hàng hải hiện đại, công nghiệp dầu mỏ hiện đại, quan trắc khí tượng hiện đại, âm nhạc hiện đại, toán học thập phân, tiền giấy, ô dù, cần câu cuộn, xe đẩy tay, tên lửa nhiều tầng, súng ống, ngư lôi dưới nước, dù, khinh khí cầu, bay có người lái, rượu mạnh, rượu whisky, cờ vua, in ấn, và cả thiết kế lõi của máy hơi nước...” Ông nói: nếu không có bánh lái, la bàn và cột buồm nhiều tầng của Trung Quốc, Columbus đã không thể đến châu Mỹ, người Âu cũng không thể xây dựng nhiều đế chế thuộc địa; nếu không có bàn đạp ngựa của Trung Quốc, sẽ không có thời đại hiệp sĩ châu Âu thời trung cổ; nếu không có thuốc súng từ Trung Quốc, cũng sẽ không kết thúc thời đại hiệp sĩ. Tác giả kết luận: người Trung Quốc đến nay vẫn chưa nhận thức đầy đủ về thành tựu của mình.</div>
+                <div class="vi"><strong>Những phát minh vĩ đại của Trung Hoa</strong><br>
+                Ông liệt kê: “nông nghiệp hiện đại, hàng hải hiện đại, công nghiệp dầu mỏ hiện đại, quan trắc khí tượng hiện đại, âm nhạc hiện đại, toán học thập phân, tiền giấy, ô dù, cần câu cuộn, xe đẩy tay, tên lửa nhiều tầng, súng ống, ngư lôi dưới nước, dù, khinh khí cầu, bay có người lái, rượu mạnh, rượu whisky, cờ vua, in ấn, và cả thiết kế lõi của máy hơi nước...” Ông nói: nếu không có bánh lái, la bàn và cột buồm nhiều tầng của Trung Quốc, Columbus đã không thể đến châu Mỹ, người Âu cũng không thể xây dựng nhiều đế chế thuộc địa; nếu không có bàn đạp ngựa của Trung Quốc, sẽ không có thời đại hiệp sĩ châu Âu thời trung cổ; nếu không có thuốc súng từ Trung Quốc, cũng sẽ không kết thúc thời đại hiệp sĩ. Tác giả kết luận: người Trung Quốc đến nay vẫn chưa nhận thức đầy đủ về thành tựu của mình.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 11: TRANG 6-7 (đánh giá của phương Tây) ===== -->
+            <div class="bilingual-block" data-block="10">
+                <div class="zh"><strong>Đánh giá của phương Tây về văn hóa Trung Hoa</strong><br>
+                Ví dụ, trong lịch sử chúng ta từng nhiều lần phê phán Khổng Tử và tư tưởng của ông, nhưng rất ít nhận ra ý nghĩa thế giới và giá trị phổ quát của tư tưởng Nho gia. Nhà tư tưởng Pháp Voltaire từ lâu đã đánh giá cao văn minh cổ đại Trung Quốc, ca ngợi Khổng Tử “là người duy nhất thể hiện lý trí hữu ích, chưa từng làm thế giới mê hoặc, mà soi sáng phương hướng”. Nhà vật lý đoạt giải Nobel, nhà khoa học Thụy Điển Hannes Alfvén thậm chí tại Đại hội quốc tế các nhà đoạt giải Nobel lần thứ nhất đã nói: “Nếu loài người muốn tồn tại trong thế kỷ 21, phải quay về 25 thế kỷ trước, để hấp thụ trí tuệ của Khổng Tử.” Chúng ta đều biết Trung Quốc có “tứ đại phát minh”, nhưng ảnh hưởng của nó đối với thế giới lớn đến mức nào, chúng ta lại không thấy rõ bằng người nước ngoài. Nhà triết học Anh Francis Bacon từng đánh giá: “(In ấn, thuốc súng và la bàn) ba thứ này đã thay đổi bộ mặt thế giới.”</div>
+                <div class="vi"><strong>Đánh giá của phương Tây về văn hóa Trung Hoa</strong><br>
+                Ví dụ, trong lịch sử chúng ta từng nhiều lần phê phán Khổng Tử và tư tưởng của ông, nhưng rất ít nhận ra ý nghĩa thế giới và giá trị phổ quát của tư tưởng Nho gia. Nhà tư tưởng Pháp Voltaire từ lâu đã đánh giá cao văn minh cổ đại Trung Quốc, ca ngợi Khổng Tử “là người duy nhất thể hiện lý trí hữu ích, chưa từng làm thế giới mê hoặc, mà soi sáng phương hướng”. Nhà vật lý đoạt giải Nobel, nhà khoa học Thụy Điển Hannes Alfvén thậm chí tại Đại hội quốc tế các nhà đoạt giải Nobel lần thứ nhất đã nói: “Nếu loài người muốn tồn tại trong thế kỷ 21, phải quay về 25 thế kỷ trước, để hấp thụ trí tuệ của Khổng Tử.” Chúng ta đều biết Trung Quốc có “tứ đại phát minh”, nhưng ảnh hưởng của nó đối với thế giới lớn đến mức nào, chúng ta lại không thấy rõ bằng người nước ngoài. Nhà triết học Anh Francis Bacon từng đánh giá: “(In ấn, thuốc súng và la bàn) ba thứ này đã thay đổi bộ mặt thế giới.”</div>
+            </div>
+
+            <!-- ===== ĐOẠN 12: TRANG 7-8 (văn hóa trong bối cảnh toàn cầu) ===== -->
+            <div class="bilingual-block" data-block="11">
+                <div class="zh"><strong>Văn hóa Trung Hoa trong bối cảnh toàn cầu hóa</strong><br>
+                Thứ hai, là nhu cầu phát triển của bản thân văn hóa. Trong bối cảnh toàn cầu hóa, văn hóa phương Tây, đặc biệt là văn hóa Mỹ, cùng với công cuộc cải cách mở cửa của Trung Quốc đã thâm nhập vào xã hội Trung Quốc, tạo ra xung kích lớn đối với văn hóa Trung Hoa. Đối mặt với văn hóa dị chất có tính tấn công, văn hóa dân tộc chúng ta liệu có còn giữ được tính độc đáo của mình? Điều này đòi hỏi chúng ta phải tìm hiểu kỹ văn hóa của mình, phân tích thành phần nào tích cực, thành phần nào tiêu cực, cần kế thừa hay loại bỏ, để trước làn sóng văn hóa ngoại lai có thể giữ được bình tĩnh. Trong bối cảnh kinh tế thị trường trong nước, mô hình vận hành xã hội và đời sống xã hội đã có những biến đổi to lớn, điều này tất yếu sẽ thay đổi diện mạo văn hóa truyền thống Trung Quốc. Từ khi cải cách mở cửa, cùng với sự chuyển đổi kinh tế và ảnh hưởng của văn hóa ngoại lai, văn hóa Trung Hoa đang trải qua những biến đổi sâu sắc nhất từ trước đến nay.</div>
+                <div class="vi"><strong>Văn hóa Trung Hoa trong bối cảnh toàn cầu hóa</strong><br>
+                Thứ hai, là nhu cầu phát triển của bản thân văn hóa. Trong bối cảnh toàn cầu hóa, văn hóa phương Tây, đặc biệt là văn hóa Mỹ, cùng với công cuộc cải cách mở cửa của Trung Quốc đã thâm nhập vào xã hội Trung Quốc, tạo ra xung kích lớn đối với văn hóa Trung Hoa. Đối mặt với văn hóa dị chất có tính tấn công, văn hóa dân tộc chúng ta liệu có còn giữ được tính độc đáo của mình? Điều này đòi hỏi chúng ta phải tìm hiểu kỹ văn hóa của mình, phân tích thành phần nào tích cực, thành phần nào tiêu cực, cần kế thừa hay loại bỏ, để trước làn sóng văn hóa ngoại lai có thể giữ được bình tĩnh. Trong bối cảnh kinh tế thị trường trong nước, mô hình vận hành xã hội và đời sống xã hội đã có những biến đổi to lớn, điều này tất yếu sẽ thay đổi diện mạo văn hóa truyền thống Trung Quốc. Từ khi cải cách mở cửa, cùng với sự chuyển đổi kinh tế và ảnh hưởng của văn hóa ngoại lai, văn hóa Trung Hoa đang trải qua những biến đổi sâu sắc nhất từ trước đến nay.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 13: TRANG 8 (tiếp) ===== -->
+            <div class="bilingual-block" data-block="12">
+                <div class="zh"><strong>Sự thay đổi của văn hóa và thái độ của con người</strong><br>
+                Sự thay đổi này không chỉ là bên ngoài, không chỉ là ăn hamburger, mặc quần jeans, mặc váy cưới trắng đơn giản như vậy, mà là sự thay đổi về quan niệm văn hóa, tư tưởng cốt lõi và đạo đức luân lý. Hàng loạt vấn đề và hiện tượng trong xã hội hiện nay đều liên quan mật thiết đến sự thay đổi này. Trước sự xung kích của chuyển đổi kinh tế và văn hóa ngoại lai, một số người trong chúng ta đã đánh mất bản thân, đánh mất khả năng phán đoán giá trị văn hóa, cho rằng mọi thứ trong văn hóa ngoại lai đều tốt đẹp, đều có thể tiếp nhận. Nguyên nhân căn bản là do không hiểu rõ văn hóa mẹ đẻ, cảm thấy mới lạ với văn hóa dị chất, cuối cùng dẫn đến “thái độ thờ ơ không chọn lọc với văn hóa truyền thống” và “hấp thụ không chọn lọc văn hóa ngoại lai”. Thái độ “không chọn lọc” này sẽ thay đổi, trở thành “có chọn lọc”, bởi vì người Trung Quốc sẽ không cắt đứt cội nguồn của mình, càng không làm tổn hại đến ngôi nhà tinh thần của mình.</div>
+                <div class="vi"><strong>Sự thay đổi của văn hóa và thái độ của con người</strong><br>
+                Sự thay đổi này không chỉ là bên ngoài, không chỉ là ăn hamburger, mặc quần jeans, mặc váy cưới trắng đơn giản như vậy, mà là sự thay đổi về quan niệm văn hóa, tư tưởng cốt lõi và đạo đức luân lý. Hàng loạt vấn đề và hiện tượng trong xã hội hiện nay đều liên quan mật thiết đến sự thay đổi này. Trước sự xung kích của chuyển đổi kinh tế và văn hóa ngoại lai, một số người trong chúng ta đã đánh mất bản thân, đánh mất khả năng phán đoán giá trị văn hóa, cho rằng mọi thứ trong văn hóa ngoại lai đều tốt đẹp, đều có thể tiếp nhận. Nguyên nhân căn bản là do không hiểu rõ văn hóa mẹ đẻ, cảm thấy mới lạ với văn hóa dị chất, cuối cùng dẫn đến “thái độ thờ ơ không chọn lọc với văn hóa truyền thống” và “hấp thụ không chọn lọc văn hóa ngoại lai”. Thái độ “không chọn lọc” này sẽ thay đổi, trở thành “có chọn lọc”, bởi vì người Trung Quốc sẽ không cắt đứt cội nguồn của mình, càng không làm tổn hại đến ngôi nhà tinh thần của mình.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 14: TRANG 8-9 (ba giai đoạn) ===== -->
+            <div class="bilingual-block" data-block="13">
+                <div class="zh"><strong>Ba giai đoạn phát triển của văn hóa Trung Hoa đương đại</strong><br>
+                Theo quan sát và phân tích của tác giả, sự phát triển của văn hóa Trung Hoa đương đại cần trải qua ba giai đoạn: giai đoạn lấy chính trị làm định hướng thứ nhất, giai đoạn lấy kinh tế làm định hướng thứ nhất, và giai đoạn lấy văn hóa làm định hướng thứ nhất. Giai đoạn thứ nhất, lấy chính trị làm thước đo mọi thứ, “chính trị treo cờ” là khẩu hiệu công khai lúc đó, dẫn đến hủy hoại sức sống văn hóa, gây ra hậu quả tai hại cho văn hóa dân tộc, may mắn thay giai đoạn này đã qua. Giai đoạn thứ hai, chỉ chú trọng chỉ tiêu kinh tế, “tất cả vì tiền” là khẩu hiệu ngầm của xã hội, sự giàu có trở thành mục tiêu lớn nhất, kết quả là phá hủy phương hướng của văn hóa. Giai đoạn này vẫn đang tiếp diễn, nhưng cuối cùng cũng sẽ trở thành quá khứ, cần bao nhiêu thời gian hiện chưa thể xác định, nhưng chắc chắn không thể kéo dài, bởi vì sức mạnh của văn hóa đang trỗi dậy. Trong giai đoạn thứ ba trong tương lai, của cải chỉ là một trong nhiều mục tiêu, xã hội còn có những theo đuổi cao hơn, như văn minh của con người, hài hòa xã hội, môi trường thoải mái và trật tự xã hội.</div>
+                <div class="vi"><strong>Ba giai đoạn phát triển của văn hóa Trung Hoa đương đại</strong><br>
+                Theo quan sát và phân tích của tác giả, sự phát triển của văn hóa Trung Hoa đương đại cần trải qua ba giai đoạn: giai đoạn lấy chính trị làm định hướng thứ nhất, giai đoạn lấy kinh tế làm định hướng thứ nhất, và giai đoạn lấy văn hóa làm định hướng thứ nhất. Giai đoạn thứ nhất, lấy chính trị làm thước đo mọi thứ, “chính trị treo cờ” là khẩu hiệu công khai lúc đó, dẫn đến hủy hoại sức sống văn hóa, gây ra hậu quả tai hại cho văn hóa dân tộc, may mắn thay giai đoạn này đã qua. Giai đoạn thứ hai, chỉ chú trọng chỉ tiêu kinh tế, “tất cả vì tiền” là khẩu hiệu ngầm của xã hội, sự giàu có trở thành mục tiêu lớn nhất, kết quả là phá hủy phương hướng của văn hóa. Giai đoạn này vẫn đang tiếp diễn, nhưng cuối cùng cũng sẽ trở thành quá khứ, cần bao nhiêu thời gian hiện chưa thể xác định, nhưng chắc chắn không thể kéo dài, bởi vì sức mạnh của văn hóa đang trỗi dậy. Trong giai đoạn thứ ba trong tương lai, của cải chỉ là một trong nhiều mục tiêu, xã hội còn có những theo đuổi cao hơn, như văn minh của con người, hài hòa xã hội, môi trường thoải mái và trật tự xã hội.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 15: TRANG 9-10 (nhu cầu cá nhân) ===== -->
+            <div class="bilingual-block" data-block="14">
+                <div class="zh"><strong>Nhu cầu nâng cao phẩm chất cá nhân</strong><br>
+                Thứ ba, là nhu cầu nâng cao phẩm chất cá nhân. Mạnh Tử nói: “Không có lòng trắc ẩn, chẳng phải người; không có lòng xấu hổ, chẳng phải người; không có lòng nhường nhịn, chẳng phải người; không có lòng phải trái, chẳng phải người.” Điều này cho thấy Mạnh Tử đã chú ý đến sự khác biệt giữa “người” và “phi nhân”. Mạnh Tử chủ trương “tính thiện”, theo nguyên ý của ông, bốn tâm này thuộc về “thiện đoan” của “người”, sinh ra đã có. Vì vậy, ai có bốn “thiện đoan” này là “người”; ngược lại, không có bốn “thiện đoan” này là “phi nhân”. “Phi nhân” trong tiếng hiện đại là động vật. Trên thực tế, điểm khác biệt rõ ràng nhất giữa người và động vật là “người” có văn hóa, có theo đuổi tinh thần, có lý tưởng đạo đức, có tình cảm. Ở thế kỷ 21, “văn minh nhân” cần có phẩm chất cao thượng hơn. Tuy nhiên, vẫn còn những hiện tượng “phi nhân” trong xã hội. Văn hóa không phải sinh ra đã có, mà phải thông qua giáo dục và tự học. Xã hội tiến lên, con người cũng phải tiến bộ theo, có trách nhiệm thúc đẩy và dẫn dắt xã hội. Mỗi người nâng cao văn hóa là lựa chọn tất yếu.</div>
+                <div class="vi"><strong>Nhu cầu nâng cao phẩm chất cá nhân</strong><br>
+                Thứ ba, là nhu cầu nâng cao phẩm chất cá nhân. Mạnh Tử nói: “Không có lòng trắc ẩn, chẳng phải người; không có lòng xấu hổ, chẳng phải người; không có lòng nhường nhịn, chẳng phải người; không có lòng phải trái, chẳng phải người.” Điều này cho thấy Mạnh Tử đã chú ý đến sự khác biệt giữa “người” và “phi nhân”. Mạnh Tử chủ trương “tính thiện”, theo nguyên ý của ông, bốn tâm này thuộc về “thiện đoan” của “người”, sinh ra đã có. Vì vậy, ai có bốn “thiện đoan” này là “người”; ngược lại, không có bốn “thiện đoan” này là “phi nhân”. “Phi nhân” trong tiếng hiện đại là động vật. Trên thực tế, điểm khác biệt rõ ràng nhất giữa người và động vật là “người” có văn hóa, có theo đuổi tinh thần, có lý tưởng đạo đức, có tình cảm. Ở thế kỷ 21, “văn minh nhân” cần có phẩm chất cao thượng hơn. Tuy nhiên, vẫn còn những hiện tượng “phi nhân” trong xã hội. Văn hóa không phải sinh ra đã có, mà phải thông qua giáo dục và tự học. Xã hội tiến lên, con người cũng phải tiến bộ theo, có trách nhiệm thúc đẩy và dẫn dắt xã hội. Mỗi người nâng cao văn hóa là lựa chọn tất yếu.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 16: TRANG 10-11 (đặc điểm văn hóa) ===== -->
+            <div class="bilingual-block" data-block="15">
+                <div class="zh"><strong>Đặc điểm dân tộc của văn hóa Trung Hoa</strong><br>
+                Văn hóa cũng giống như con người, có hai loại đặc điểm: bên ngoài và bên trong. Bên ngoài là hình thái, bên trong là tinh thần. Tóm lại, đặc điểm bên ngoài có bốn mặt: thống nhất, liên tục, bao dung, đa dạng. Tính thống nhất: văn hóa Trung Hoa phát triển lấy văn hóa Hoa Hạ (tức Hán) làm trung tâm, đồng thời hấp thụ tinh hoa các dân tộc, tạo thành một khối thống nhất. Tính liên tục: văn hóa Trung Hoa trong lịch sử không bị gián đoạn, không như văn hóa Ai Cập, Babylon và Hy Lạp có khoảng trống. Tính bao dung: văn hóa Trung Hoa có thể tiếp thu nhiều nhân tố văn hóa khác nhau. Tính đa dạng: văn hóa Trung Hoa có sự khác biệt trong thống nhất.</div>
+                <div class="vi"><strong>Đặc điểm dân tộc của văn hóa Trung Hoa</strong><br>
+                Văn hóa cũng giống như con người, có hai loại đặc điểm: bên ngoài và bên trong. Bên ngoài là hình thái, bên trong là tinh thần. Tóm lại, đặc điểm bên ngoài có bốn mặt: thống nhất, liên tục, bao dung, đa dạng. Tính thống nhất: văn hóa Trung Hoa phát triển lấy văn hóa Hoa Hạ (tức Hán) làm trung tâm, đồng thời hấp thụ tinh hoa các dân tộc, tạo thành một khối thống nhất. Tính liên tục: văn hóa Trung Hoa trong lịch sử không bị gián đoạn, không như văn hóa Ai Cập, Babylon và Hy Lạp có khoảng trống. Tính bao dung: văn hóa Trung Hoa có thể tiếp thu nhiều nhân tố văn hóa khác nhau. Tính đa dạng: văn hóa Trung Hoa có sự khác biệt trong thống nhất.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 17: TRANG 11-12 (đặc điểm bên trong) ===== -->
+            <div class="bilingual-block" data-block="16">
+                <div class="zh"><strong>Đặc điểm bên trong của văn hóa Trung Hoa</strong><br>
+                Đặc điểm bên trong của văn hóa Trung Hoa có nhiều cách nói. Có thuyết “đặc tính triết học” của Phùng Hữu Lan, thuyết “đặc tính tôn giáo” của Nhâm Kế Dũ, thuyết “đặc tính mỹ học” của Lý Trạch Hậu, thuyết “đặc tính luân lý” của Lương Thấu Minh. Có thể hiểu đặc điểm bên trong như sau: thứ nhất, nổi bật tinh thần nhân văn, không phụ thuộc vào thần học độc đoán. Thứ hai, chú trọng hài hòa và trung dung, không giống như văn hóa phương Tây chú trọng phân biệt và đối kháng. “Hòa nhi bất đồng” là các sự vật khác nhau hài hòa với nhau để sinh ra cái mới. “Trung dung chi đạo” được coi là “thiên hạ chi đại bản”. Thứ ba, giàu tình cảm an thổ lạc thiên, không giống như phương Tây theo đuổi mạo hiểm và kích thích. Người Trung Hoa yêu đất, kính đất, an đất, coi đất như sinh mệnh, sinh ra tình cảm quê hương sâu đậm.</div>
+                <div class="vi"><strong>Đặc điểm bên trong của văn hóa Trung Hoa</strong><br>
+                Đặc điểm bên trong của văn hóa Trung Hoa có nhiều cách nói. Có thuyết “đặc tính triết học” của Phùng Hữu Lan, thuyết “đặc tính tôn giáo” của Nhâm Kế Dũ, thuyết “đặc tính mỹ học” của Lý Trạch Hậu, thuyết “đặc tính luân lý” của Lương Thấu Minh. Có thể hiểu đặc điểm bên trong như sau: thứ nhất, nổi bật tinh thần nhân văn, không phụ thuộc vào thần học độc đoán. Thứ hai, chú trọng hài hòa và trung dung, không giống như văn hóa phương Tây chú trọng phân biệt và đối kháng. “Hòa nhi bất đồng” là các sự vật khác nhau hài hòa với nhau để sinh ra cái mới. “Trung dung chi đạo” được coi là “thiên hạ chi đại bản”. Thứ ba, giàu tình cảm an thổ lạc thiên, không giống như phương Tây theo đuổi mạo hiểm và kích thích. Người Trung Hoa yêu đất, kính đất, an đất, coi đất như sinh mệnh, sinh ra tình cảm quê hương sâu đậm.</div>
+            </div>
+
+            <!-- ===== ĐOẠN 18: TRANG 12-13 (tương lai văn hóa) ===== -->
+            <div class="bilingual-block" data-block="17">
+                <div class="zh"><strong>Tương lai của văn hóa Trung Hoa</strong><br>
+                Như đã nói, văn hóa Trung Hoa đang trải qua biến đổi sâu sắc và phát triển nhanh chóng. Có người cho rằng thay đổi quá nhanh, sợ mất truyền thống, muốn cải lương Nho học để giữ gìn; có người cho rằng thay đổi quá chậm, thậm chí chủ trương “Tây phương hóa toàn diện”. Cả hai đều không phù hợp với thực tế. Thể chế nhà nước và chính thể của chúng ta là sự lựa chọn của lịch sử và nhân dân trong quá trình kết hợp lý luận Mác-xít với thực tiễn cách mạng Trung Quốc. Nho giáo với tư cách là thành phần chủ đạo, về tổng thể không thể so sánh với tư tưởng chủ đạo ngày nay. Nhà triết học đương đại Trương Đài Niên chủ trương “tổng hợp sáng tạo”, tức là tổng hợp chân lý phổ biến Mác-xít với truyền thống ưu tú văn hóa Trung Hoa; tổng hợp truyền thống ưu tú Trung Hoa với thành tựu tiên tiến của văn hóa phương Tây cận đại; tổng hợp bốn nhà Nho, Đạo, Mặc, Pháp.</div>
+                <div class="vi"><strong>Tương lai của văn hóa Trung Hoa</strong><br>
+                Như đã nói, văn hóa Trung Hoa đang trải qua biến đổi sâu sắc và phát triển nhanh chóng. Có người cho rằng thay đổi quá nhanh, sợ mất truyền thống, muốn cải lương Nho học để giữ gìn; có người cho rằng thay đổi quá chậm, thậm chí chủ trương “Tây phương hóa toàn diện”. Cả hai đều không phù hợp với thực tế. Thể chế nhà nước và chính thể của chúng ta là sự lựa chọn của lịch sử và nhân dân trong quá trình kết hợp lý luận Mác-xít với thực tiễn cách mạng Trung Quốc. Nho giáo với tư cách là thành phần chủ đạo, về tổng thể không thể so sánh với tư tưởng chủ đạo ngày nay. Nhà triết học đương đại Trương Đài Niên chủ trương “tổng hợp sáng tạo”, tức là tổng hợp chân lý phổ biến Mác-xít với truyền thống ưu tú văn hóa Trung Hoa; tổng hợp truyền thống ưu tú Trung Hoa với thành tựu tiên tiến của văn hóa phương Tây cận đại; tổng hợp bốn nhà Nho, Đạo, Mặc, Pháp.</div>
+            </div>
+
         </div>
     </div>
 
@@ -434,10 +686,6 @@
                 <div class="vi"><strong>4. Tương lai & Định hướng</strong> – Ba giai đoạn: chính trị → kinh tế → văn hóa. Trương Đài Niên “tổng hợp sáng tạo”: kết hợp Mác-xít với truyền thống, tiếp thu tinh hoa Tây phương, dung hợp Nho-Đạo-Mặc-Pháp.</div>
             </div>
         </div>
-        <div class="center-caption" style="text-align:center; color:#6a4a54; margin:0.8rem 0;">
-            <span style="background:#f0dce2; padding:0.1rem 1.6rem; border-radius:4px;">汉代画像石 渔猎图 · Họa đá thời Hán: đồ săn bắt cá</span> &nbsp;|&nbsp;
-            <span style="background:#f0dce2; padding:0.1rem 1.6rem; border-radius:4px;">汉代画像石 宴饮乐舞图 · Họa đá thời Hán: tiệc vui và múa hát</span>
-        </div>
     </div>
 
     <!-- ===== TAB 3: QUIZ ===== -->
@@ -449,7 +697,6 @@
             <button id="checkAnswersBtn">✅ Check đáp án / 检查答案</button>
             <span class="quiz-progress" id="progressText">Đã trả lời: 0/100 · 已答: 0/100</span>
         </div>
-
         <div class="section-nav" id="sectionNav">
             <button class="active-sec" data-sec="0">Section 1 (1-20)</button>
             <button data-sec="1">Section 2 (21-40)</button>
@@ -457,14 +704,11 @@
             <button data-sec="3">Section 4 (61-80)</button>
             <button data-sec="4">Section 5 (81-100)</button>
         </div>
-
         <div id="quizContainer"></div>
-
         <div id="answer-section">
             <h3 style="margin-top:0; border-bottom:1px solid #dbb8c2;">✅ Đáp án gợi ý (section hiện tại) · 参考答案 (当前部分)</h3>
             <div id="answersList" style="columns:4 120px; column-gap:0.8rem; background:#fff7f9; padding:0.6rem 1rem; border-radius:4px;"></div>
         </div>
-
         <div class="chart-container" id="chartContainer">
             <h3 style="margin-top:0; border-bottom:1px solid #dbb8c2;">📊 Điểm trung bình 5 lần gần nhất · 最近5次平均分</h3>
             <div id="chartRows"></div>
@@ -512,13 +756,43 @@
         </div>
     </div>
 
+    <!-- ===== TAB 5: GHI CHÚ ===== -->
+    <div id="tab-notes" class="tab-content">
+        <h2>📒 Tổng hợp ghi chú · 笔记汇总</h2>
+        <p style="color:#6a4a54; font-size:0.9rem; margin-bottom:0.5rem;">💡 Các ghi chú được tạo từ tab "Nguyên văn" bằng cách bôi đen văn bản / 从“原文”选项卡通过选中文本创建的笔记</p>
+        <div id="notesList">
+            <p style="color:#6a4a54;">Chưa có ghi chú nào. Hãy sang tab "Nguyên văn" và bôi đen văn bản để tạo ghi chú. / 暂无笔记，请前往“原文”选项卡选中文本创建笔记。</p>
+        </div>
+    </div>
+
     <div class="footer-note">
-        ✦ Font American Typewriter · Tone pink · 4 tabs: Nguyên văn, Tóm tắt, Quiz, Thuật ngữ ✦
+        ✦ Font American Typewriter · Tone pink · 5 tabs: Nguyên văn (đầy đủ), Tóm tắt, Quiz, Thuật ngữ, Ghi chú ✦
+    </div>
+</div>
+
+<!-- ===== NOTE POPUP ===== -->
+<div class="note-popup" id="notePopup">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:bold;">📝 Thêm ghi chú / 添加笔记</span>
+        <button id="closePopupBtn" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:#5a3a44;">&times;</button>
+    </div>
+    <div style="margin:0.3rem 0; font-size:0.85rem; color:#6a4a54;" id="selectedTextPreview"></div>
+    <div class="color-options" id="colorOptions">
+        <span style="background:#fff3a0;" data-color="yellow" class="active"></span>
+        <span style="background:#b5d6b5;" data-color="green"></span>
+        <span style="background:#b5cce6;" data-color="blue"></span>
+        <span style="background:#f5c0d0;" data-color="pink"></span>
+    </div>
+    <textarea id="noteContent" placeholder="Nhập ghi chú của bạn... / 输入您的笔记..."></textarea>
+    <div class="popup-actions">
+        <button id="saveNoteBtn">💾 Lưu / 保存</button>
+        <button id="cancelNoteBtn" style="background:#e8d0d8;">Hủy / 取消</button>
     </div>
 </div>
 
 <script>
-    // ---------- DỮ LIỆU 100 CÂU ----------
+    // ---------- QUIZ DATA (100 câu) ----------
+    // (Giữ nguyên 100 câu hỏi như các phiên bản trước để tiết kiệm dung lượng)
     const rawQuestions = [
         { zhQ: '“文化”一词最早出现在哪部典籍？', viQ: '“Văn hóa” xuất hiện sớm nhất trong bộ điển tịch nào?', options: ['《周易》', '《尚书》', '《礼记》', '《诗经》'], correct: 0 },
         { zhQ: '汉代“文化”一词的含义主要指什么？', viQ: 'Thời Hán, từ “văn hóa” chủ yếu mang nghĩa gì?', options: ['文治教化', '文学艺术', '军事武功', '宗教信仰'], correct: 0 },
@@ -785,6 +1059,150 @@
         avgScoreDisplay.textContent = 'Trung bình: -- / 100 · 平均: -- / 100';
     }
 
+    // ---------- NOTES SYSTEM ----------
+    let notes = JSON.parse(localStorage.getItem('studyNotes')) || [];
+    let selectedText = '';
+    let selectedColor = 'yellow';
+    let selectedBlock = null;
+    let popupVisible = false;
+
+    function renderNotes() {
+        const container = document.getElementById('notesList');
+        if (notes.length === 0) {
+            container.innerHTML = `<p style="color:#6a4a54;">Chưa có ghi chú nào. Hãy sang tab "Nguyên văn" và bôi đen văn bản để tạo ghi chú. / 暂无笔记，请前往“原文”选项卡选中文本创建笔记。</p>`;
+            return;
+        }
+        let html = '';
+        notes.forEach((note, idx) => {
+            const colorMap = { yellow: '#fff3a0', green: '#b5d6b5', blue: '#b5cce6', pink: '#f5c0d0' };
+            const colorHex = colorMap[note.color] || '#fff3a0';
+            html += `<div class="note-item">
+                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                    <span class="note-color-tag" style="background:${colorHex};"></span>
+                    <span style="font-weight:bold; font-size:0.85rem; color:#7a5a64;">#${idx+1}</span>
+                    <button class="note-delete" data-idx="${idx}" style="margin-left:auto;">✕</button>
+                </div>
+                <div class="note-text">${note.text}</div>
+                <div class="note-meta">
+                    <span>📄 ${note.block || 'N/A'}</span>
+                    <span>📝 ${note.content || '...'}</span>
+                    <span>🕒 ${new Date(note.timestamp).toLocaleString()}</span>
+                </div>
+            </div>`;
+        });
+        container.innerHTML = html;
+
+        document.querySelectorAll('.note-delete').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.dataset.idx);
+                notes.splice(idx, 1);
+                localStorage.setItem('studyNotes', JSON.stringify(notes));
+                renderNotes();
+                applyHighlights();
+            });
+        });
+    }
+
+    function applyHighlights() {
+        document.querySelectorAll('.highlight-yellow, .highlight-green, .highlight-blue, .highlight-pink').forEach(el => {
+            const parent = el.parentNode;
+            const text = el.textContent;
+            const span = document.createElement('span');
+            span.textContent = text;
+            parent.replaceChild(span, el);
+        });
+
+        notes.forEach(note => {
+            if (!note.text) return;
+            const blocks = document.querySelectorAll('.bilingual-block .zh, .bilingual-block .vi');
+            blocks.forEach(block => {
+                const content = block.textContent;
+                if (content.includes(note.text)) {
+                    const regex = new RegExp(note.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    let newHtml = block.innerHTML;
+                    const cls = `highlight-${note.color}`;
+                    newHtml = newHtml.replace(regex, `<span class="${cls}" data-note-idx="${notes.indexOf(note)}">${note.text}</span>`);
+                    block.innerHTML = newHtml;
+                }
+            });
+        });
+    }
+
+    // ---------- NOTE POPUP ----------
+    const popup = document.getElementById('notePopup');
+    const selectedTextPreview = document.getElementById('selectedTextPreview');
+
+    document.addEventListener('mouseup', function(e) {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+        if (text.length > 0) {
+            const isInOriginal = selection.anchorNode && 
+                (selection.anchorNode.parentElement?.closest('#originalContent') || 
+                 selection.anchorNode.parentElement?.closest('.bilingual-block'));
+            if (isInOriginal) {
+                selectedText = text;
+                selectedTextPreview.textContent = `"${text.substring(0, 80)}${text.length > 80 ? '...' : ''}"`;
+                const block = selection.anchorNode.parentElement?.closest('.bilingual-block');
+                if (block) {
+                    const zhText = block.querySelector('.zh')?.textContent || '';
+                    selectedBlock = zhText.substring(0, 50) + '...';
+                } else {
+                    selectedBlock = 'Văn bản / 文本';
+                }
+                showPopup(e.clientX, e.clientY);
+            }
+        }
+    });
+
+    function showPopup(x, y) {
+        popup.style.display = 'block';
+        popup.style.left = Math.min(x, window.innerWidth - 540) + 'px';
+        popup.style.top = Math.min(y, window.innerHeight - 300) + 'px';
+        document.getElementById('noteContent').value = '';
+        popupVisible = true;
+    }
+
+    function hidePopup() {
+        popup.style.display = 'none';
+        popupVisible = false;
+        window.getSelection().removeAllRanges();
+    }
+
+    document.getElementById('closePopupBtn').addEventListener('click', hidePopup);
+    document.getElementById('cancelNoteBtn').addEventListener('click', hidePopup);
+
+    document.querySelectorAll('#colorOptions span').forEach(el => {
+        el.addEventListener('click', function() {
+            document.querySelectorAll('#colorOptions span').forEach(s => s.classList.remove('active'));
+            this.classList.add('active');
+            selectedColor = this.dataset.color;
+        });
+    });
+
+    document.getElementById('saveNoteBtn').addEventListener('click', function() {
+        const content = document.getElementById('noteContent').value.trim();
+        if (!content) {
+            alert('Vui lòng nhập nội dung ghi chú. / 请输入笔记内容。');
+            return;
+        }
+        const note = {
+            text: selectedText,
+            content: content,
+            color: selectedColor,
+            block: selectedBlock || 'Văn bản / 文本',
+            timestamp: Date.now()
+        };
+        notes.push(note);
+        localStorage.setItem('studyNotes', JSON.stringify(notes));
+        hidePopup();
+        renderNotes();
+        applyHighlights();
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-notes').classList.add('active');
+        document.querySelector('[data-tab="tab-notes"]').classList.add('active');
+    });
+
     // ---------- TABS ----------
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -792,10 +1210,10 @@
             this.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(this.dataset.tab).classList.add('active');
+            if (this.dataset.tab === 'tab-notes') renderNotes();
         });
     });
 
-    // ---------- SECTION NAV ----------
     document.querySelectorAll('.section-nav button').forEach(btn => {
         btn.addEventListener('click', function() {
             renderSection(parseInt(this.dataset.sec));
@@ -803,19 +1221,25 @@
         });
     });
 
-    // ---------- THEME ----------
     document.getElementById('themeToggle').addEventListener('click', function() {
         document.body.classList.toggle('dark');
         this.textContent = document.body.classList.contains('dark') ? '☀️ Light / 亮色' : '🌙 Dark / 暗黑';
     });
 
-    // ---------- CONTROLS ----------
     document.getElementById('shuffleBtn').addEventListener('click', shuffleQuestions);
     document.getElementById('resetQuizBtn').addEventListener('click', resetQuiz);
     document.getElementById('checkAnswersBtn').addEventListener('click', checkAnswers);
     document.getElementById('resetStatsBtn').addEventListener('click', resetStats);
 
     initQuiz();
+    renderNotes();
+    applyHighlights();
+
+    document.addEventListener('mousedown', function(e) {
+        if (popupVisible && !popup.contains(e.target) && !e.target.closest('.bilingual-block')) {
+            hidePopup();
+        }
+    });
 </script>
 </body>
 </html>
