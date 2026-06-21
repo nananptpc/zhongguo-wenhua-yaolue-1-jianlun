@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Văn hóa Trung Hoa – 4 Tabs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'American Typewriter', 'Courier New', monospace;
+            background: #fce4e8;
+            color: #3d262e;
+            padding: 1.2rem;
+            line-height: 1.8;
+            transition: background 0.25s, color 0.25s;
+            min-height: 100vh;
+        }
+        body.dark {
+            background: #1e1419;
+            color: #ddd0d5;
+        }
+        body.dark .container {
+            background: rgba(35, 24, 30, 0.94);
+        }
+        body.dark .card, body.dark .card-quiz, body.dark .term-card {
+            background: #2d1f26;
+            border-color: #4d3540;
+        }
+        body.dark .bilingual-block {
+            background: rgba(60, 40, 50, 0.4);
+            border-left-color: #7a5a66;
+        }
+        body.dark .zh { color: #eddce3; }
+        body.dark .vi { color: #cbb5be; border-left-color: #6a4e58; }
+        body.dark .tag {
+            background: #4d3540;
+            color: #eddce3;
+        }
+        body.dark .footer-note {
+            background: #2d1f26;
+            color: #cbb5be;
+        }
+        body.dark .quiz-item {
+            background: #2d1f26;
+            border-color: #4d3540;
+        }
+        body.dark .quiz-item:hover { background: #3a2930; }
+        body.dark .quiz-options li.selected { background: #4d3540; }
+        body.dark .quiz-options li.correct-answer { background: #3a6b3a; color: #d4f0d4; }
+        body.dark .quiz-options li.wrong-answer { background: #7a3a3a; color: #f5d0d0; }
+        body.dark #answer-section { background: #2d1f26; color: #ddd0d5; }
+        body.dark #answers-list { background: #3a2930; }
+        body.dark button {
+            background: #4d3540;
+            color: #eddce3;
+        }
+        body.dark button:hover { background: #634a55; }
+        body.dark .tab-btn {
+            background: #2d1f26;
+            color: #cbb5be;
+        }
+        body.dark .tab-btn.active {
+            background: #4d3540;
+            color: #eddce3;
+        }
+        body.dark .chart-bar { background: #4d3540; }
+        body.dark .chart-bar-fill { background: #b37a8a; }
+        body.dark .term-card { background: #2d1f26; border-color: #4d3540; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 242, 245, 0.85);
+            padding: 2rem 2.2rem;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(120, 70, 90, 0.12);
+            transition: background 0.25s;
+        }
+        h1, h2, h3 {
+            font-family: 'American Typewriter', Georgia, serif;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: #4a2e38;
+            border-bottom: 2px solid #e2c8d0;
+            padding-bottom: 0.3rem;
+            margin-top: 1.8rem;
+        }
+        body.dark h1, body.dark h2, body.dark h3 {
+            color: #e6d0d8;
+            border-bottom-color: #5d4450;
+        }
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            border-bottom: 3px solid #dbb8c2;
+            margin-top: 0.2rem;
+            padding-bottom: 0.6rem;
+            color: #40262e;
+        }
+        body.dark h1 { color: #ecd6de; border-bottom-color: #7a5a66; }
+        h2 { font-size: 1.7rem; margin-top: 2rem; border-bottom: 1px solid #dbb8c2; }
+        h3 { font-size: 1.2rem; border-bottom: none; margin-top: 1.2rem; color: #5a3a44; }
+        body.dark h3 { color: #d4bcc6; }
+
+        .card {
+            background: #fff7f9;
+            border: 1px solid #e6d0d8;
+            border-radius: 6px;
+            padding: 1.2rem 1.6rem;
+            margin: 1rem 0;
+        }
+        body.dark .card { background: #2d1f26; border-color: #4d3540; }
+
+        .bilingual-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+            margin: 0.6rem 0;
+            padding: 0.4rem 1rem 0.5rem 1.2rem;
+            background: rgba(240, 225, 230, 0.2);
+            border-left: 4px solid #dbb8c2;
+        }
+        .zh { font-weight: 500; color: #3d262e; font-size: 1.02rem; }
+        .vi { font-weight: 400; color: #523a44; padding-left: 0.6rem; border-left: 2px solid #dcc4cc; }
+
+        .tag {
+            display: inline-block;
+            background: #e8d0d8;
+            padding: 0.05rem 1rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #3d262e;
+            margin-right: 0.5rem;
+        }
+
+        /* TABS */
+        .tab-bar {
+            display: flex;
+            gap: 0.4rem;
+            margin: 1.2rem 0 1rem 0;
+            border-bottom: 2px solid #e2c8d0;
+            padding-bottom: 0.2rem;
+            flex-wrap: wrap;
+        }
+        body.dark .tab-bar { border-bottom-color: #5d4450; }
+        .tab-btn {
+            background: #f0dce2;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            padding: 0.6rem 1.4rem;
+            font-family: 'American Typewriter', monospace;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #3d262e;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn:hover { opacity: 0.8; }
+        .tab-btn.active {
+            background: #dbb8c2;
+            border-bottom-color: #b07a8a;
+        }
+        body.dark .tab-btn {
+            background: #2d1f26;
+            color: #cbb5be;
+        }
+        body.dark .tab-btn.active {
+            background: #4d3540;
+            color: #eddce3;
+            border-bottom-color: #b07a8a;
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.25s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0.3; } to { opacity: 1; } }
+
+        .theme-toggle {
+            background: #dbb8c2;
+            border: none;
+            border-radius: 4px;
+            padding: 0.3rem 1.2rem;
+            font-family: 'American Typewriter', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #2d1e24;
+            font-size: 0.9rem;
+        }
+        .theme-toggle:hover { opacity: 0.8; }
+
+        /* QUIZ */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: center;
+            margin: 0.8rem 0 1rem 0;
+        }
+        .quiz-controls button {
+            background: #dbb8c2;
+            border: none;
+            border-radius: 4px;
+            padding: 0.4rem 1.4rem;
+            font-family: 'American Typewriter', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 0.9rem;
+            color: #2d1e24;
+        }
+        .quiz-controls button:hover { opacity: 0.8; }
+        .quiz-progress {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-left: 0.3rem;
+        }
+
+        .section-nav {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 0.8rem 0;
+        }
+        .section-nav button {
+            background: #f0dce2;
+            border: 1px solid #dbb8c2;
+            border-radius: 4px;
+            padding: 0.3rem 1.2rem;
+            font-family: 'American Typewriter', monospace;
+            cursor: pointer;
+            transition: 0.15s;
+            font-weight: bold;
+            color: #3d262e;
+        }
+        .section-nav button:hover { background: #dbb8c2; }
+        .section-nav button.active-sec {
+            background: #dbb8c2;
+            border-color: #b07a8a;
+        }
+        body.dark .section-nav button {
+            background: #2d1f26;
+            border-color: #4d3540;
+            color: #cbb5be;
+        }
+        body.dark .section-nav button.active-sec {
+            background: #4d3540;
+            border-color: #b07a8a;
+            color: #eddce3;
+        }
+
+        .quiz-item {
+            background: #fff7f9;
+            border: 1px solid #e6d0d8;
+            border-radius: 4px;
+            margin: 0.6rem 0;
+            padding: 0.7rem 1.2rem;
+            transition: 0.1s;
+        }
+        .quiz-item:hover { background: #fcf0f3; }
+        .quiz-question { font-weight: 600; color: #3d262e; }
+        body.dark .quiz-question { color: #eddce3; }
+        .quiz-options {
+            padding-left: 0.8rem;
+            margin: 0.2rem 0;
+        }
+        .quiz-options li {
+            list-style: none;
+            margin: 0.15rem 0;
+            padding: 0.1rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .quiz-options li:hover { background: rgba(200, 160, 175, 0.15); }
+        .quiz-options li.selected { background: #e8d0d8; font-weight: 500; }
+        .quiz-options li.correct-answer { background: #b8d9b8; color: #1a4a1a; }
+        .quiz-options li.wrong-answer { background: #f0baba; color: #6b1a1a; }
+        body.dark .quiz-options li.correct-answer { background: #3a6b3a; color: #d4f0d4; }
+        body.dark .quiz-options li.wrong-answer { background: #7a3a3a; color: #f5d0d0; }
+
+        #answer-section {
+            background: #f5e6ea;
+            border: 1px solid #dbb8c2;
+            border-radius: 4px;
+            padding: 1rem 1.6rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        #answers-list {
+            columns: 4 120px;
+            column-gap: 0.8rem;
+            background: #fff7f9;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+        }
+        body.dark #answers-list { background: #3a2930; }
+
+        /* CHART */
+        .chart-container {
+            background: #fff7f9;
+            border: 1px solid #e6d0d8;
+            border-radius: 6px;
+            padding: 1.2rem 1.6rem;
+            margin: 1rem 0;
+        }
+        body.dark .chart-container { background: #2d1f26; border-color: #4d3540; }
+        .chart-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 0.3rem 0;
+        }
+        .chart-label { min-width: 60px; font-weight: 500; font-size: 0.9rem; }
+        .chart-bar {
+            flex: 1;
+            height: 22px;
+            background: #f0dce2;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .chart-bar-fill {
+            height: 100%;
+            background: #c4909e;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+            min-width: 2px;
+        }
+        .chart-value { min-width: 40px; text-align: right; font-weight: 600; font-size: 0.9rem; }
+        .avg-score { font-size: 1.1rem; font-weight: 700; color: #5a3a44; margin-top: 0.3rem; }
+        body.dark .avg-score { color: #d4bcc6; }
+
+        /* TERMS */
+        .term-card {
+            background: #fff7f9;
+            border: 1px solid #e6d0d8;
+            border-radius: 6px;
+            padding: 0.8rem 1.4rem;
+            margin: 0.6rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem;
+            align-items: baseline;
+        }
+        .term-zh { font-weight: 700; color: #4a2e38; font-size: 1.1rem; min-width: 120px; }
+        .term-vi { color: #523a44; font-style: italic; }
+        body.dark .term-zh { color: #eddce3; }
+        body.dark .term-vi { color: #cbb5be; }
+
+        .footer-note {
+            font-size: 0.9rem;
+            color: #5a3a44;
+            background: #f5e6ea;
+            padding: 0.6rem 1.6rem;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 2rem;
+            border: 1px solid #dbb8c2;
+        }
+
+        @media (max-width: 700px) {
+            .container { padding: 1.2rem; }
+            #answers-list { columns: 2 100px; }
+            .tab-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+            .term-card { flex-direction: column; gap: 0.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- HEADER -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <h1 style="border: none; margin:0; flex:1;">🌸 中国文化要略 · 简论 <br><span style="font-size:1.2rem;">Tinh hoa văn hóa Trung Hoa – Lược luận</span></h1>
+        <button class="theme-toggle" id="themeToggle">🌙 Dark / 暗黑</button>
+    </div>
+    <p style="text-align:center; color:#6a4a54; font-size:1rem; margin-top:-0.1rem;">✦ Song ngữ Việt – Trung · 4 tabs ✦</p>
+
+    <!-- TABS -->
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="tab-original">📄 Nguyên văn song ngữ / 原文对照</button>
+        <button class="tab-btn" data-tab="tab-summary">📘 Tóm tắt / 摘要</button>
+        <button class="tab-btn" data-tab="tab-quiz">📝 Quiz / 测验</button>
+        <button class="tab-btn" data-tab="tab-terms">📚 Thuật ngữ / 术语</button>
+    </div>
+
+    <!-- ===== TAB 1: NGUYÊN VĂN SONG NGỮ ===== -->
+    <div id="tab-original" class="tab-content active">
+        <h2>📄 Nguyên văn song ngữ · 中越对照原文</h2>
+        <div class="card">
+            <div class="bilingual-block">
+                <div class="zh"><strong>一、文化与中国文化</strong> – “文化”这个词，现在已经深入到社会生活的各个角落和人们的心理层面，不需要过多地解释了。按照文献，它最早出现在《周易·贲》里，书云：“观乎天文，以察时变；观乎人文，以化成天下。”这应当是中国人论述“文化”的开始，但“文化”二字还没有连在一起。它的意思是，统治者通过观察天象，可以了解时序的变化；通过观察人类社会的各种现象，可以用教育感化的手段来治理天下。汉代出现“文化”一词，但对其含义，人们的理解并不一致。刘向《说苑·指武》云：“凡武之兴，为不服也；文化不改，然后加诛。”晋人《补亡诗·由仪》也说：“文化内辑，武功外悠。”这都指的是与国家的军事手段（即武功）相对立的一个概念，即国家的文教治理手段。唐代的孔颖达则别有见地，他在解释前引《周易》中的那段话时认为：“圣人观察人文，则诗书礼乐之谓。”这实际上是说，人类社会的文化，主要是指文学艺术和礼仪风俗等属于上层建筑的那些东西。古人对“文化”概念的这种规定性从汉唐时代起，一直影响到明清。因此，顾炎武在《日知录》中说：“自身而至于家国天下，制之为度数，发之为音容，莫非文也。”即人自身的行为表现和国家的各种制度，都属于“文化”的范畴。可见，中国古代的“文化”概念，指的是狭义的精神层面的东西。</div>
+                <div class="vi"><strong>I. Văn hóa và văn hóa Trung Hoa</strong> – Từ “văn hóa” ngày nay đã thấm sâu vào mọi ngõ ngách của đời sống xã hội và tâm lý con người. Theo văn hiến, nó xuất hiện sớm nhất trong “Kinh Dịch” (quẻ Bí): “Quan hồ thiên văn, dĩ sát thời biến; quan hồ nhân văn, dĩ hóa thành thiên hạ.” Đây là sự bàn luận về “văn hóa” của người Trung Quốc, nhưng hai chữ chưa ghép lại. Người cai trị quan sát thiên tượng để biết biến thiên thời tiết; quan sát các hiện tượng xã hội để giáo hóa thiên hạ. Đến thời Hán, từ “văn hóa” xuất hiện nhưng cách hiểu không thống nhất. Lưu Hướng trong “Thuyết uyển” viết: “Phàm vũ chi hưng, vi bất phục dã; văn hóa bất cải, nhiên hậu gia tru.” Người Tấn trong “Bổ vong thi · Do nghi” cũng nói: “Văn hóa nội tập, vũ công ngoại du.” Đây đều chỉ khái niệm đối lập với vũ công (quân sự), tức phương thức giáo hóa văn trị. Khổng Dĩnh Đạt đời Đường cho rằng “thánh nhân quan sát nhân văn, tức là thi, thư, lễ, nhạc”. Văn hóa thời cổ ở Trung Quốc chủ yếu chỉ những thứ thuộc về tinh thần theo nghĩa hẹp.</div>
+            </div>
+            <div class="bilingual-block">
+                <div class="zh"><strong>西方“文化”概念与马克思主义定义</strong> – 西方的“文化”一词，来源于拉丁文Cultura，它的意思是耕种、居住、练习、注意等。法文的Culture，也是栽培、种植之意，但又引申为对人的性情的陶冶和品德的培养。可见，西方“文化”的含义比中国古代“文化”的含义要宽泛得多。19世纪下半叶，英国文化学家泰勒出版的《原始文化》一书，给“文化”下了这样一个定义，说它是“包括知识、信仰、艺术、道德、法律、习俗和任何人作为一名社会成员而获得的能力和习惯在内的复杂整体”。马克思主义理论家把“文化”分为广义和狭义两种，广义指人类在社会历史实践过程中所创造的物质财富和精神财富的总和；狭义指在历史上一定的物质资料生产方式的基础上发生和发展的社会精神生活形式的总和。</div>
+                <div class="vi"><strong>Khái niệm “văn hóa” phương Tây và định nghĩa Mác-xít</strong> – Từ “văn hóa” phương Tây bắt nguồn từ tiếng Latinh Cultura, nghĩa là gieo trồng, cư trú, rèn luyện... Tiếng Pháp Culture cũng là trồng trọt, nhưng mở rộng sang tu dưỡng tình cảm và đạo đức. Nhà văn hóa học Anh Edward Tylor định nghĩa văn hóa là “tổng thể phức tạp bao gồm tri thức, tín ngưỡng, nghệ thuật, đạo đức, pháp luật, tập quán và mọi năng lực, thói quen mà con người với tư cách thành viên xã hội có được”. Các nhà lý luận Mác-xít chia văn hóa thành nghĩa rộng (tổng hòa vật chất và tinh thần) và nghĩa hẹp (các hình thái đời sống tinh thần xã hội).</div>
+            </div>
+            <div class="bilingual-block">
+                <div class="zh"><strong>文化的结构与层次</strong> – 关于文化的结构，一般地把它分为四个层次：一为物态文化层，指人的物质生产活动及其产品的总和，是看得见、摸得着的具体实在的事物，如人们的衣、食、住、行等；二为制度文化层，指人们在社会实践中建立的规范自身行为和调节相互关系的准则；三为行为文化层，指人在长期社会交往中约定俗成的习惯和风俗，它是一种社会的、集体的行为，不是个人的随心所欲；四为心态文化层，指人们的社会心理和社会意识形态，包括人们的价值观念、审美情趣、思维方式以及由此而产生的文学艺术作品。这是文化的核心部分，也是文化的精华部分。</div>
+                <div class="vi"><strong>Cấu trúc và tầng bậc của văn hóa</strong> – Cấu trúc văn hóa thường được chia thành bốn tầng: (1) Tầng văn hóa vật chất – tổng hòa hoạt động sản xuất vật chất và sản phẩm, như ăn, mặc, ở, đi lại; (2) Tầng văn hóa chế độ – các quy phạm điều chỉnh hành vi và quan hệ xã hội; (3) Tầng văn hóa hành vi – tập quán và phong tục được hình thành trong giao tiếp xã hội lâu dài; (4) Tầng văn hóa tâm thái – tâm lý xã hội và ý thức hệ xã hội, bao gồm giá trị, thẩm mỹ, tư duy và các tác phẩm văn học nghệ thuật. Đây là phần cốt lõi và tinh hoa của văn hóa.</div>
+            </div>
+            <div class="bilingual-block">
+                <div class="zh"><strong>中国文化的庞大体系与民族特点</strong> – 中国文化根植于东方的土地，融入了东方的智慧，吸纳了外来的因子，最终形成一种内涵十分丰富、具有自新能力，并且生生不息的文化体系。若以纵向的发展形态区分，它首先可以分为传统文化与现当代文化；若以产生的地域区分，它可以分为中原农耕文化与北部边疆的游牧文化；若以文化的地域类型区分，它包括了三秦文化、三晋文化、燕赵文化、齐鲁文化、吴越文化、中州文化、两淮文化、荆楚文化、巴蜀文化、岭南文化等；若以民族的属性区分，它又包括了汉文化与少数民族文化；若以文化的社会性区分，它可以分为皇家文化与民间文化，精英文化与大众文化，宗教文化与世俗文化；若以宗教的属性区分，它又可以分为道教文化、佛教文化和伊斯兰文化等；若以不同的门类区分，它包含的就更多了，诸如建筑文化、服饰文化、饮食文化、舟车文化、青铜文化、玉器文化、山文化、水文化、茶文化、酒文化等，都在其内。中国文化的民族特点：外在特点有统一性、连续性、包容性、多样性；内在特点突出人文主义精神，注重和谐与中庸，富于安土乐天的情趣。</div>
+                <div class="vi"><strong>Hệ thống đồ sộ và đặc điểm dân tộc của văn hóa Trung Hoa</strong> – Văn hóa Trung Hoa bén rễ trên đất phương Đông, thấm nhuần trí tuệ phương Đông, tiếp thu các nhân tố bên ngoài, hình thành hệ thống giàu nội dung, có khả năng tự đổi mới và trường tồn. Phân theo hình thái phát triển dọc: văn hóa truyền thống và đương đại. Phân theo địa vực: văn hóa nông nghiệp Trung Nguyên và du mục biên cương Bắc bộ; các loại hình địa vực: Tam Tần, Tam Tấn, Yên Triệu, Tề Lỗ, Ngô Việt, Trung Châu, Lưỡng Hoài, Kinh Sở, Ba Thục, Lĩnh Nam... Phân theo dân tộc: Hán và các dân tộc thiểu số. Phân theo tính chất xã hội: hoàng gia và dân gian, tinh anh và đại chúng, tôn giáo và thế tục. Phân theo tôn giáo: Đạo giáo, Phật giáo, Hồi giáo... Phân theo loại hình: kiến trúc, trang phục, ẩm thực, xe thuyền, đồ đồng, ngọc, núi, nước, trà, rượu... Đặc điểm dân tộc: bên ngoài – thống nhất, liên tục, bao dung, đa dạng; bên trong – nhân văn, hài hòa – trung dung, an thổ lạc thiên.</div>
+            </div>
+            <div class="bilingual-block">
+                <div class="zh"><strong>了解中国文化的现实需要与未来方向</strong> – 首先，是世界人民的需要。在全球化时代，世界各国人民迫切希望了解中国、了解中国文化。其次，是文化自身发展的需要。中国文化正经历着有史以来最深刻的变化，面临国际、国内两种形势的挑战。在经济全球化的背景下，西方文化对中国文化以巨大的冲击，需要我们认真了解自己的文化，进行有益的文化扬弃。再次，是个人提高素养的需要。作为中国人，应当从民族文化中汲取营养、熏陶人格。关于中国文化的未来，作者认为当代中国文化的三个阶段：以政治为第一取向、以经济为第一取向、以文化为第一取向。张岱年先生力主中国文化“综合创新”，即马克思主义普遍真理与中国文化优秀传统的综合；中国文化的优秀传统与近代西方文化的先进成就的综合；儒、道、墨、法四家的综合。只要我们实事求是地分析中国文化的成分，继承和吸收古代文化中一切有益的东西，借鉴和吸收外来文化中一切优秀的成果，建立一种性质、结构和功能都完全崭新的社会主义新文化，是完全可以实现的。</div>
+                <div class="vi"><strong>Nhu cầu thực tế và hướng đi tương lai của văn hóa Trung Hoa</strong> – Thứ nhất, nhu cầu của nhân dân thế giới. Trong thời đại toàn cầu hóa, nhân dân các nước tha thiết muốn tìm hiểu Trung Hoa và văn hóa Trung Hoa. Thứ hai, nhu cầu phát triển của bản thân văn hóa. Văn hóa Trung Hoa đang trải qua biến đổi sâu sắc nhất, đối mặt với thách thức quốc tế và nội địa. Trong bối cảnh toàn cầu hóa, văn hóa phương Tây tạo ra xung kích lớn, đòi hỏi chúng ta hiểu rõ văn hóa của mình để tiếp biến có chọn lọc. Thứ ba, nhu cầu nâng cao phẩm chất cá nhân. Là người Trung Hoa, cần hấp thụ dinh dưỡng từ văn hóa dân tộc, bồi dưỡng nhân cách. Về tương lai, tác giả cho rằng ba giai đoạn của văn hóa đương đại: chính trị → kinh tế → văn hóa. Trương Đài Niên chủ trương “tổng hợp sáng tạo”: kết hợp chân lý phổ biến Mác-xít với truyền thống ưu tú Trung Hoa; kết hợp truyền thống ưu tú với thành tựu tiên tiến phương Tây cận đại; dung hợp bốn nhà Nho, Đạo, Mặc, Pháp. Nếu chúng ta phân tích thực tế các thành phần văn hóa, kế thừa những gì có ích, tham khảo tinh hoa ngoại lai, thì việc xây dựng một nền văn hóa xã hội chủ nghĩa mới mẻ về tính chất, cấu trúc và chức năng là hoàn toàn có thể thực hiện được.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 2: TÓM TẮT ===== -->
+    <div id="tab-summary" class="tab-content">
+        <h2>📘 Tóm tắt nội dung · 内容摘要</h2>
+        <div class="card">
+            <div class="bilingual-block" style="border-left-color:#b898a4;">
+                <div class="zh"><strong>1. 文化与中国文化</strong> – “文化”最早见于《周易·贲》，汉代指文教治理。西方（Cultura）含义更广，泰勒定义文化为复杂整体。马克思主义分广义（物质+精神）与狭义（精神）。四层次：物态、制度、行为、心态。中国文化以汉文化为核心，儒家为主，道佛为辅。</div>
+                <div class="vi"><strong>1. Văn hóa và văn hóa Trung Hoa</strong> – “Văn hóa” xuất hiện sớm nhất trong Kinh Dịch, thời Hán mang nghĩa giáo hóa. Phương Tây (Cultura) rộng hơn, Tylor định nghĩa là tổng thể phức tạp. Marx phân nghĩa rộng (vật chất+tinh thần) và nghĩa hẹp. Bốn tầng: vật chất, chế độ, hành vi, tâm thái. Văn hóa Trung Hoa lấy Hán làm hạt nhân, Nho giáo chủ đạo, Đạo-Phật bổ trợ.</div>
+            </div>
+            <div class="bilingual-block" style="border-left-color:#b898a4;">
+                <div class="zh"><strong>2. 现实需要</strong> – (1) 世界人民需要，中国发明影响全球；(2) 文化自身发展，需应对外来冲击，有选择性吸收；(3) 个人素养提升，成为现代文明人。</div>
+                <div class="vi"><strong>2. Nhu cầu thực tế</strong> – (1) Nhân dân thế giới cần, phát minh Trung Hoa ảnh hưởng toàn cầu; (2) Văn hóa tự thân phát triển, cần ứng phó với xung kích ngoại lai, tiếp biến có chọn lọc; (3) Nâng cao phẩm chất cá nhân, trở thành văn minh nhân hiện đại.</div>
+            </div>
+            <div class="bilingual-block" style="border-left-color:#b898a4;">
+                <div class="zh"><strong>3. 民族特点</strong> – 外在：统一性、连续性、包容性、多样性。内在：人文主义、和谐中庸、安土乐天。</div>
+                <div class="vi"><strong>3. Đặc điểm dân tộc</strong> – Ngoại tại: thống nhất, liên tục, bao dung, đa dạng. Nội tại: nhân văn, hài hòa – trung dung, an thổ lạc thiên.</div>
+            </div>
+            <div class="bilingual-block" style="border-left-color:#b898a4;">
+                <div class="zh"><strong>4. 未来与方向</strong> – 三阶段：政治→经济→文化。张岱年“综合创新”：马克思主义与优秀传统结合，吸收西方精华，融合儒道墨法。</div>
+                <div class="vi"><strong>4. Tương lai & Định hướng</strong> – Ba giai đoạn: chính trị → kinh tế → văn hóa. Trương Đài Niên “tổng hợp sáng tạo”: kết hợp Mác-xít với truyền thống, tiếp thu tinh hoa Tây phương, dung hợp Nho-Đạo-Mặc-Pháp.</div>
+            </div>
+        </div>
+        <div class="center-caption" style="text-align:center; color:#6a4a54; margin:0.8rem 0;">
+            <span style="background:#f0dce2; padding:0.1rem 1.6rem; border-radius:4px;">汉代画像石 渔猎图 · Họa đá thời Hán: đồ săn bắt cá</span> &nbsp;|&nbsp;
+            <span style="background:#f0dce2; padding:0.1rem 1.6rem; border-radius:4px;">汉代画像石 宴饮乐舞图 · Họa đá thời Hán: tiệc vui và múa hát</span>
+        </div>
+    </div>
+
+    <!-- ===== TAB 3: QUIZ ===== -->
+    <div id="tab-quiz" class="tab-content">
+        <h2>📝 Trắc nghiệm tương tác · 互动选择题 <span style="font-size:1rem; font-weight:normal;">(100 câu / 100 题)</span></h2>
+        <div class="quiz-controls">
+            <button id="shuffleBtn">🔀 Shuffle / 随机排序</button>
+            <button id="resetQuizBtn">🔄 Reset / 重置</button>
+            <button id="checkAnswersBtn">✅ Check đáp án / 检查答案</button>
+            <span class="quiz-progress" id="progressText">Đã trả lời: 0/100 · 已答: 0/100</span>
+        </div>
+
+        <div class="section-nav" id="sectionNav">
+            <button class="active-sec" data-sec="0">Section 1 (1-20)</button>
+            <button data-sec="1">Section 2 (21-40)</button>
+            <button data-sec="2">Section 3 (41-60)</button>
+            <button data-sec="3">Section 4 (61-80)</button>
+            <button data-sec="4">Section 5 (81-100)</button>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <div id="answer-section">
+            <h3 style="margin-top:0; border-bottom:1px solid #dbb8c2;">✅ Đáp án gợi ý (section hiện tại) · 参考答案 (当前部分)</h3>
+            <div id="answersList" style="columns:4 120px; column-gap:0.8rem; background:#fff7f9; padding:0.6rem 1rem; border-radius:4px;"></div>
+        </div>
+
+        <div class="chart-container" id="chartContainer">
+            <h3 style="margin-top:0; border-bottom:1px solid #dbb8c2;">📊 Điểm trung bình 5 lần gần nhất · 最近5次平均分</h3>
+            <div id="chartRows"></div>
+            <div class="avg-score" id="avgScoreDisplay">Trung bình: -- / 100 · 平均: -- / 100</div>
+            <button id="resetStatsBtn" style="margin-top:0.5rem; background:#f0dce2; border:none; border-radius:4px; padding:0.3rem 1.2rem; font-family:inherit; cursor:pointer;">🔄 Xóa lịch sử / 清除历史</button>
+        </div>
+    </div>
+
+    <!-- ===== TAB 4: THUẬT NGỮ ===== -->
+    <div id="tab-terms" class="tab-content">
+        <h2>📚 Các thuật ngữ quan trọng · 重要术语</h2>
+        <div class="card">
+            <div class="term-card"><span class="term-zh">文化</span><span class="term-vi">Văn hóa (Cultura)</span></div>
+            <div class="term-card"><span class="term-zh">《周易·贲》</span><span class="term-vi">Kinh Dịch · quẻ Bí</span></div>
+            <div class="term-card"><span class="term-zh">观乎天文，以察时变</span><span class="term-vi">Quan sát thiên văn để biết biến thiên thời tiết</span></div>
+            <div class="term-card"><span class="term-zh">观乎人文，以化成天下</span><span class="term-vi">Quan sát nhân văn để giáo hóa thiên hạ</span></div>
+            <div class="term-card"><span class="term-zh">文治教化</span><span class="term-vi">Giáo hóa văn trị</span></div>
+            <div class="term-card"><span class="term-zh">泰勒 (Edward Tylor)</span><span class="term-vi">Edward Tylor – nhà nhân học văn hóa Anh</span></div>
+            <div class="term-card"><span class="term-zh">广义文化</span><span class="term-vi">Văn hóa nghĩa rộng (vật chất + tinh thần)</span></div>
+            <div class="term-card"><span class="term-zh">狭义文化</span><span class="term-vi">Văn hóa nghĩa hẹp (tinh thần)</span></div>
+            <div class="term-card"><span class="term-zh">物态文化层</span><span class="term-vi">Tầng văn hóa vật chất</span></div>
+            <div class="term-card"><span class="term-zh">制度文化层</span><span class="term-vi">Tầng văn hóa chế độ</span></div>
+            <div class="term-card"><span class="term-zh">行为文化层</span><span class="term-vi">Tầng văn hóa hành vi</span></div>
+            <div class="term-card"><span class="term-zh">心态文化层</span><span class="term-vi">Tầng văn hóa tâm thái</span></div>
+            <div class="term-card"><span class="term-zh">儒家思想</span><span class="term-vi">Tư tưởng Nho gia</span></div>
+            <div class="term-card"><span class="term-zh">道家思想</span><span class="term-vi">Tư tưởng Đạo gia</span></div>
+            <div class="term-card"><span class="term-zh">佛家思想</span><span class="term-vi">Tư tưởng Phật gia</span></div>
+            <div class="term-card"><span class="term-zh">统一性</span><span class="term-vi">Tính thống nhất</span></div>
+            <div class="term-card"><span class="term-zh">连续性</span><span class="term-vi">Tính liên tục</span></div>
+            <div class="term-card"><span class="term-zh">包容性</span><span class="term-vi">Tính bao dung</span></div>
+            <div class="term-card"><span class="term-zh">多样性</span><span class="term-vi">Tính đa dạng</span></div>
+            <div class="term-card"><span class="term-zh">人文主义</span><span class="term-vi">Chủ nghĩa nhân văn</span></div>
+            <div class="term-card"><span class="term-zh">和谐与中庸</span><span class="term-vi">Hài hòa và trung dung</span></div>
+            <div class="term-card"><span class="term-zh">安土乐天</span><span class="term-vi">An thổ lạc thiên</span></div>
+            <div class="term-card"><span class="term-zh">综合创新</span><span class="term-vi">Tổng hợp sáng tạo</span></div>
+            <div class="term-card"><span class="term-zh">张岱年</span><span class="term-vi">Trương Đài Niên</span></div>
+            <div class="term-card"><span class="term-zh">冯友兰</span><span class="term-vi">Phùng Hữu Lan</span></div>
+            <div class="term-card"><span class="term-zh">任继愈</span><span class="term-vi">Nhâm Kế Dũ</span></div>
+            <div class="term-card"><span class="term-zh">李泽厚</span><span class="term-vi">Lý Trạch Hậu</span></div>
+            <div class="term-card"><span class="term-zh">梁漱溟</span><span class="term-vi">Lương Thấu Minh</span></div>
+            <div class="term-card"><span class="term-zh">丝绸之路</span><span class="term-vi">Con đường tơ lụa</span></div>
+            <div class="term-card"><span class="term-zh">四大发明</span><span class="term-vi">Tứ đại phát minh</span></div>
+            <div class="term-card"><span class="term-zh">二十四史</span><span class="term-vi">Nhị thập tứ sử</span></div>
+            <div class="term-card"><span class="term-zh">孔子学院</span><span class="term-vi">Học viện Khổng Tử</span></div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        ✦ Font American Typewriter · Tone pink · 4 tabs: Nguyên văn, Tóm tắt, Quiz, Thuật ngữ ✦
+    </div>
+</div>
+
+<script>
+    // ---------- DỮ LIỆU 100 CÂU ----------
+    const rawQuestions = [
+        { zhQ: '“文化”一词最早出现在哪部典籍？', viQ: '“Văn hóa” xuất hiện sớm nhất trong bộ điển tịch nào?', options: ['《周易》', '《尚书》', '《礼记》', '《诗经》'], correct: 0 },
+        { zhQ: '汉代“文化”一词的含义主要指什么？', viQ: 'Thời Hán, từ “văn hóa” chủ yếu mang nghĩa gì?', options: ['文治教化', '文学艺术', '军事武功', '宗教信仰'], correct: 0 },
+        { zhQ: '西方“文化”一词来源于拉丁文什么？', viQ: 'Từ “văn hóa” phương Tây bắt nguồn từ tiếng Latinh nào?', options: ['Cultura', 'Cultus', 'Colere', 'Civitas'], correct: 0 },
+        { zhQ: '泰勒认为文化是复杂的整体，不包括以下哪项？', viQ: 'Theo Tylor, văn hóa là tổng thể phức tạp, không bao gồm yếu tố nào?', options: ['知识', '信仰', '基因', '习俗'], correct: 2 },
+        { zhQ: '马克思主义对文化的定义分为哪两种？', viQ: 'Mác-xít chia định nghĩa văn hóa thành hai loại nào?', options: ['广义和狭义', '物质和精神', '古代和现代', '东方和西方'], correct: 0 },
+        { zhQ: '文化的四层次不包括以下哪个？', viQ: 'Bốn tầng văn hóa không bao gồm tầng nào?', options: ['物态', '制度', '行为', '生态'], correct: 3 },
+        { zhQ: '心态文化层属于文化的哪个部分？', viQ: 'Tầng văn hóa tâm thái thuộc bộ phận nào của văn hóa?', options: ['核心部分', '表层部分', '物质部分', '制度部分'], correct: 0 },
+        { zhQ: '中国文化的精神内核是什么？', viQ: 'Hạt nhân tinh thần của văn hóa Trung Hoa là gì?', options: ['儒家思想', '道家思想', '法家思想', '墨家思想'], correct: 0 },
+        { zhQ: '中国文化在发展中以什么文化为核心？', viQ: 'Văn hóa Trung Hoa lấy văn hóa nào làm trung tâm trong phát triển?', options: ['华夏文化', '游牧文化', '江南文化', '巴蜀文化'], correct: 0 },
+        { zhQ: '以下哪个不是中国文化的民族特点（外在）？', viQ: 'Đặc điểm dân tộc bên ngoài của văn hóa Trung Hoa không bao gồm?', options: ['统一性', '连续性', '排他性', '多样性'], correct: 2 },
+        { zhQ: '“观乎天文，以察时变”出自哪部典籍？', viQ: '“Quan hồ thiên văn, dĩ sát thời biến” xuất từ bộ điển tịch nào?', options: ['《周易》', '《礼记》', '《论语》', '《孟子》'], correct: 0 },
+        { zhQ: '唐代孔颖达认为“人文”指什么？', viQ: 'Khổng Dĩnh Đạt đời Đường cho rằng “nhân văn” là gì?', options: ['诗书礼乐', '武功战事', '农耕技术', '天文历法'], correct: 0 },
+        { zhQ: '顾炎武在《日知录》中认为“文”的范围包括？', viQ: 'Cố Viêm Vũ trong “Nhật tri lục” cho rằng phạm vi của “văn” bao gồm?', options: ['自身行为和制度', '仅文学艺术', '仅礼仪风俗', '仅军事'], correct: 0 },
+        { zhQ: '泰勒《原始文化》出版于哪个世纪？', viQ: 'Tác phẩm “Văn hóa nguyên thủy” của Tylor xuất bản vào thế kỷ nào?', options: ['18世纪', '19世纪', '20世纪', '17世纪'], correct: 1 },
+        { zhQ: '苏联哲学家罗森塔尔·尤金对文化的定义倾向于？', viQ: 'Nhà triết học Xô viết Rosenthal–Iudin định nghĩa văn hóa thiên về?', options: ['广义狭义二分', '历史性', '规范性', '心理性'], correct: 0 },
+        { zhQ: '文化的核心问题是？', viQ: 'Vấn đề cốt lõi của văn hóa là gì?', options: ['人', '自然', '社会制度', '经济基础'], correct: 0 },
+        { zhQ: '物态文化层包括以下哪项？', viQ: 'Tầng văn hóa vật chất bao gồm yếu tố nào?', options: ['衣食住行', '道德规范', '价值观念', '审美情趣'], correct: 0 },
+        { zhQ: '行为文化层主要指？', viQ: 'Tầng văn hóa hành vi chủ yếu chỉ?', options: ['约定俗成的习惯', '法律条文', '哲学思想', '宗教仪式'], correct: 0 },
+        { zhQ: '心态文化层包括？', viQ: 'Tầng văn hóa tâm thái bao gồm?', options: ['价值观念、审美情趣、思维方式', '典章制度', '生产工具', '饮食服饰'], correct: 0 },
+        { zhQ: '中国文化体系根植于？', viQ: 'Hệ thống văn hóa Trung Hoa bén rễ ở?', options: ['东方的土地', '西方的土地', '北方的草原', '南方的海洋'], correct: 0 },
+        { zhQ: '以下哪个属于中国文化的宗教文化？', viQ: 'Tôn giáo nào sau đây thuộc văn hóa Trung Hoa?', options: ['道教文化', '基督教文化', '伊斯兰文化', '以上皆是'], correct: 3 },
+        { zhQ: '“有容乃大”体现了中国文化的什么特点？', viQ: '“Hữu dung nãi đại” thể hiện đặc điểm gì của văn hóa Trung Hoa?', options: ['包容性', '统一性', '连续性', '多样性'], correct: 0 },
+        { zhQ: '中国“二十四史”体现了文化的什么特点？', viQ: '“Nhị thập tứ sử” Trung Hoa thể hiện đặc điểm gì của văn hóa?', options: ['连续性', '统一性', '包容性', '多样性'], correct: 0 },
+        { zhQ: '中国文化在三国、南北朝时期的特点？', viQ: 'Văn hóa Trung Hoa thời Tam Quốc, Nam Bắc triều có đặc điểm gì?', options: ['文化统一', '文化分裂', '文化中断', '全盘西化'], correct: 0 },
+        { zhQ: '中国方言差异体现了文化的？', viQ: 'Sự khác biệt phương ngữ Trung Hoa thể hiện đặc điểm?', options: ['多样性', '统一性', '连续性', '包容性'], correct: 0 },
+        { zhQ: '八大菜系体现了中国文化的？', viQ: 'Tám đại hệ món ăn Trung Hoa thể hiện đặc điểm?', options: ['多样性', '统一性', '连续性', '包容性'], correct: 0 },
+        { zhQ: '冯友兰认为中国文化具有什么特性？', viQ: 'Phùng Hữu Lan cho rằng văn hóa Trung Hoa có đặc tính gì?', options: ['哲学特性', '宗教特性', '美学特性', '伦理特性'], correct: 0 },
+        { zhQ: '任继愈认为中国文化是儒道释三教合一，实质上是？', viQ: 'Nhâm Kế Dũ cho rằng văn hóa Trung Hoa là tam giáo hợp nhất, thực chất là?', options: ['宗教', '哲学', '美学', '政治'], correct: 0 },
+        { zhQ: '李泽厚认为中国文化的追求是？', viQ: 'Lý Trạch Hậu cho rằng theo đuổi của văn hóa Trung Hoa là?', options: ['美感和乐感', '苦感和罪感', '权力和财富', '知识和理性'], correct: 0 },
+        { zhQ: '梁漱溟认为中国文化以什么为基本？', viQ: 'Lương Thấu Minh cho rằng văn hóa Trung Hoa lấy gì làm cơ bản?', options: ['人伦关系', '个人本位', '神本', '自然'], correct: 0 },
+        { zhQ: '中国文化的“天道”实质上指？', viQ: '“Thiên đạo” trong văn hóa Trung Hoa thực chất chỉ?', options: ['道德秩序', '自然规律', '神意', '天命'], correct: 0 },
+        { zhQ: '“和而不同”出自哪部经典？', viQ: '“Hòa nhi bất đồng” xuất từ bộ kinh điển nào?', options: ['《论语》', '《周易》', '《孟子》', '《中庸》'], correct: 0 },
+        { zhQ: '中庸之道被认为是“天下之大本”，出自？', viQ: 'Trung dung chi đạo được coi là “thiên hạ chi đại bản”, xuất từ?', options: ['《中庸》', '《周易》', '《论语》', '《大学》'], correct: 0 },
+        { zhQ: '安土乐天的心理产生于什么经济基础？', viQ: 'Tâm lý an thổ lạc thiên sinh ra từ nền tảng kinh tế nào?', options: ['农业自然经济', '商业经济', '工业经济', '游牧经济'], correct: 0 },
+        { zhQ: '“日出而作，日入而息”出自？', viQ: '“Nhật xuất nhi tác, nhật nhập nhi tức” xuất từ?', options: ['《击壤歌》', '《诗经》', '《楚辞》', '《乐府》'], correct: 0 },
+        { zhQ: '中国文化的“人文主义”与西方文化的区别在于？', viQ: '“Chủ nghĩa nhân văn” của văn hóa Trung Hoa khác phương Tây ở điểm?', options: ['不依附于神学独断', '更强调个人', '更强调神', '更强调科学'], correct: 0 },
+        { zhQ: '中国人在行为准则上主要遵循什么？', viQ: 'Người Trung Hoa tuân theo quy chuẩn hành vi chủ yếu nào?', options: ['儒家道德规范', '神的意志', '法律', '习惯法'], correct: 0 },
+        { zhQ: '汉代画像石“渔猎图”属于哪个文化层面？', viQ: 'Họa đá thời Hán “đồ săn bắt cá” thuộc tầng văn hóa nào?', options: ['物态文化', '制度文化', '行为文化', '心态文化'], correct: 0 },
+        { zhQ: '孔子学院在全球设立反映了什么？', viQ: 'Việc thành lập Học viện Khổng Tử trên toàn cầu phản ánh điều gì?', options: ['世界人民需要了解中国文化', '中国政治扩张', '宗教传播', '军事影响'], correct: 0 },
+        { zhQ: '英国科学家坦普尔指出中国有多少个“世界第一”？', viQ: 'Nhà khoa học Anh Temple chỉ ra Trung Hoa có bao nhiêu “nhất thế giới”?', options: ['100个', '50个', '80个', '120个'], correct: 0 },
+        { zhQ: '坦普尔认为没有中国的什么，哥伦布不能到美洲？', viQ: 'Theo Temple, nếu không có gì của Trung Hoa, Columbus không thể đến châu Mỹ?', options: ['船舵、罗盘和多级桅杆', '火药', '纸张', '印刷术'], correct: 0 },
+        { zhQ: '伏尔泰赞扬孔子是？', viQ: 'Voltaire ca ngợi Khổng Tử là?', options: ['唯一有益理智的表现者', '最伟大的军事家', '宗教领袖', '科学家'], correct: 0 },
+        { zhQ: '诺贝尔奖得主汉内斯·阿尔文认为人类要生存需汲取谁的智慧？', viQ: 'Người đoạt giải Nobel Hannes Alfvén cho rằng nhân loại cần hấp thụ trí tuệ của ai?', options: ['孔子', '老子', '庄子', '孟子'], correct: 0 },
+        { zhQ: '培根评价印刷术、火药和指南针改变了世界的面貌，它们属于？', viQ: 'Bacon đánh giá in ấn, thuốc súng, la bàn thay đổi bộ mặt thế giới, chúng thuộc?', options: ['四大发明', '三大发明', '五大发明', '六艺'], correct: 0 },
+        { zhQ: '当代中国文化的三个阶段不包括以下哪个取向？', viQ: 'Ba giai đoạn của văn hóa Trung Hoa đương đại không bao gồm định hướng nào?', options: ['军事', '政治', '经济', '文化'], correct: 0 },
+        { zhQ: '“全盘西化”的主张被作者认为？', viQ: 'Chủ trương “Tây phương hóa toàn diện” bị tác giả coi là?', options: ['行不通', '可行', '必要', '有待商榷'], correct: 0 },
+        { zhQ: '张岱年先生主张中国文化应如何发展？', viQ: 'Trương Đài Niên chủ trương văn hóa Trung Hoa nên phát triển theo hướng?', options: ['综合创新', '全盘西化', '彻底复古', '保持现状'], correct: 0 },
+        { zhQ: '综合创新中，张岱年提出要综合哪四家？', viQ: 'Trong tổng hợp sáng tạo, Trương Đài Niên đề xuất tổng hợp bốn nhà nào?', options: ['儒道墨法', '儒道释法', '儒道墨释', '道法墨释'], correct: 0 },
+        { zhQ: '孟子说的“四端”不包括以下哪项？', viQ: '“Tứ đoan” của Mạnh Tử không bao gồm điều nào?', options: ['仁爱之心', '羞恶之心', '辞让之心', '是非之心'], correct: 0 },
+        { zhQ: '“非人”在孟子看来是指什么？', viQ: 'Theo Mạnh Tử, “phi nhân” có nghĩa là gì?', options: ['动物', '恶人', '无德之人', '愚人'], correct: 0 },
+        { zhQ: '现代“文明人”应具备什么？', viQ: '“Văn minh nhân” hiện đại cần có điều gì?', options: ['高尚品质', '财富', '权力', '出身'], correct: 0 },
+        { zhQ: '中国文化的“伦理特性说”是谁提出的？', viQ: '“Thuyết đặc tính luân lý” của văn hóa Trung Hoa do ai đề xuất?', options: ['梁漱溟', '冯友兰', '任继愈', '李泽厚'], correct: 0 },
+        { zhQ: '中国文化的“美学特性说”是谁提出的？', viQ: '“Thuyết đặc tính mỹ học” của văn hóa Trung Hoa do ai đề xuất?', options: ['李泽厚', '冯友兰', '任继愈', '梁漱溟'], correct: 0 },
+        { zhQ: '中国文化的“宗教特性说”是谁提出的？', viQ: '“Thuyết đặc tính tôn giáo” của văn hóa Trung Hoa do ai đề xuất?', options: ['任继愈', '冯友兰', '李泽厚', '梁漱溟'], correct: 0 },
+        { zhQ: '中国文化的“哲学特性说”是谁提出的？', viQ: '“Thuyết đặc tính triết học” của văn hóa Trung Hoa do ai đề xuất?', options: ['冯友兰', '任继愈', '李泽厚', '梁漱溟'], correct: 0 },
+        { zhQ: '“统一性”这一特点在世界其他民族文化中？', viQ: 'Đặc điểm “thống nhất” ở các nền văn hóa dân tộc khác trên thế giới?', options: ['难以找到', '很常见', '不存在', '普遍存在'], correct: 0 },
+        { zhQ: '中国诗歌发展脉络从《诗经》到？', viQ: 'Mạch phát triển thơ ca Trung Hoa từ “Kinh Thi” đến?', options: ['明清小说', '唐诗宋词元曲', '汉赋', '楚辞'], correct: 1 },
+        { zhQ: '公元前43年的太阳黑子记载来自？', viQ: 'Ghi chép về vết đen Mặt Trời năm 43 TCN từ đâu?', options: ['二十四史', '《诗经》', '《尚书》', '《周易》'], correct: 0 },
+        { zhQ: '中国在公元1世纪吸收了哪种外来宗教文化？', viQ: 'Trung Hoa tiếp nhận tôn giáo ngoại lai nào vào thế kỷ 1?', options: ['佛教', '基督教', '伊斯兰教', '祆教'], correct: 0 },
+        { zhQ: '中国各种宗教之间通常？', viQ: 'Các tôn giáo ở Trung Hoa thường?', options: ['和谐共处', '激烈冲突', '战争', '互不往来'], correct: 0 },
+        { zhQ: '中国北方戏曲的特点是？', viQ: 'Đặc điểm của kịch phương Bắc Trung Hoa?', options: ['高亢激昂', '委婉缠绵', '平淡', '悲凉'], correct: 0 },
+        { zhQ: '中国南方戏曲的特点是？', viQ: 'Đặc điểm của kịch phương Nam Trung Hoa?', options: ['委婉缠绵', '高亢激昂', '粗犷', '简朴'], correct: 0 },
+        { zhQ: '“荆楚文化”属于哪种地域类型？', viQ: '“Văn hóa Kinh Sở” thuộc loại hình địa vực nào?', options: ['地域文化', '民族文化', '宗教文化', '时代文化'], correct: 0 },
+        { zhQ: '“巴蜀文化”是中国文化的什么类型？', viQ: '“Văn hóa Ba Thục” là loại hình gì của văn hóa Trung Hoa?', options: ['地域文化', '民族文化', '宗教文化', '门类文化'], correct: 0 },
+        { zhQ: '中国文化的“水文化”属于什么门类？', viQ: '“Văn hóa nước” của Trung Hoa thuộc loại hình nào?', options: ['门类文化', '地域文化', '民族文化', '时代文化'], correct: 0 },
+        { zhQ: '“茶文化”属于中国文化的什么门类？', viQ: '“Văn hóa trà” thuộc loại hình nào của văn hóa Trung Hoa?', options: ['门类文化', '地域文化', '宗教文化', '政治文化'], correct: 0 },
+        { zhQ: '“酒文化”属于中国文化的什么门类？', viQ: '“Văn hóa rượu” thuộc loại hình nào của văn hóa Trung Hoa?', options: ['门类文化', '地域文化', '民族文化', '时代文化'], correct: 0 },
+        { zhQ: '中国文化在汉代开辟了什么道路影响西方？', viQ: 'Văn hóa Trung Hoa mở ra con đường nào ảnh hưởng đến phương Tây thời Hán?', options: ['丝绸之路', '茶马古道', '海上丝绸之路', '唐蕃古道'], correct: 0 },
+        { zhQ: '全球化背景下，中国文化面临的主要冲击来自？', viQ: 'Trong bối cảnh toàn cầu hóa, văn hóa Trung Hoa đối mặt với sự tác động chính từ?', options: ['西方文化', '东方文化', '非洲文化', '拉美文化'], correct: 0 },
+        { zhQ: '“个人本位”和“自我中心”属于哪种文化？', viQ: '“Vị nhân bản” và “tự ngã trung tâm” thuộc nền văn hóa nào?', options: ['西方文化', '中国文化', '印度文化', '阿拉伯文化'], correct: 0 },
+        { zhQ: '中国文化注重“和谐与中庸”，不同于西方文化的？', viQ: 'Văn hóa Trung Hoa chú trọng “hài hòa và trung dung”, khác với văn hóa phương Tây ở?', options: ['分别与对抗', '合作与团结', '竞争与共赢', '独立与自由'], correct: 0 },
+        { zhQ: '“天下同归而殊途，一致而百虑”出自？', viQ: '“Thiên hạ đồng quy nhi thù đồ, nhất trí nhi bách lự” xuất từ?', options: ['《周易·系辞下》', '《论语》', '《道德经》', '《庄子》'], correct: 0 },
+        { zhQ: '中国文化的“中庸之道”被认为是？', viQ: '“Trung dung chi đạo” của văn hóa Trung Hoa được coi là?', options: ['天下之大本', '天下之道', '治国之策', '修身之法'], correct: 0 },
+        { zhQ: '“世外桃源”反映了中国人的什么心理？', viQ: '“Thế ngoại đào nguyên” phản ánh tâm lý gì của người Trung Hoa?', options: ['安土乐天', '冒险精神', '征服欲望', '批判精神'], correct: 0 },
+        { zhQ: '乡土情谊在中国文化中很浓厚，是因为？', viQ: 'Tình cảm quê hương sâu đậm trong văn hóa Trung Hoa là vì?', options: ['安土乐天的心理', '商业发达', '游牧生活', '宗教影响'], correct: 0 },
+        { zhQ: '新儒学的建立被认为？', viQ: 'Việc xây dựng Tân Nho học được đánh giá là?', options: ['不切实际的幻想', '可行', '必然趋势', '无意义'], correct: 0 },
+        { zhQ: '张岱年“综合创新”不包括以下哪项？', viQ: '“Tổng hợp sáng tạo” của Trương Đài Niên không bao gồm điều nào?', options: ['马克思主义与中国优秀传统综合', '中国传统与西方先进成就综合', '儒道墨法综合', '佛学与儒学综合'], correct: 3 },
+        { zhQ: '中国文化的“包容性”体现在？', viQ: '“Tính bao dung” của văn hóa Trung Hoa thể hiện ở?', options: ['兼收并蓄', '排斥异质', '单一文化', '自我封闭'], correct: 0 },
+        { zhQ: '中国文化的“多样性”体现在？', viQ: '“Tính đa dạng” của văn hóa Trung Hoa thể hiện ở?', options: ['各地文化差异', '全国统一', '无差异', '单一民族'], correct: 0 },
+        { zhQ: '儒家思想在中国文化中的地位是？', viQ: 'Vị trí của tư tưởng Nho gia trong văn hóa Trung Hoa là?', options: ['主导', '次要', '消失', '被取代'], correct: 0 },
+        { zhQ: '道家思想在中国文化中扮演什么角色？', viQ: 'Tư tưởng Đạo gia đóng vai trò gì trong văn hóa Trung Hoa?', options: ['辅助', '主导', '无关', '反对'], correct: 0 },
+        { zhQ: '佛家思想在中国文化中扮演什么角色？', viQ: 'Tư tưởng Phật gia đóng vai trò gì trong văn hóa Trung Hoa?', options: ['辅助', '主导', '排斥', '唯一'], correct: 0 },
+        { zhQ: '中国文化的“连续性”体现在？', viQ: '“Tính liên tục” của văn hóa Trung Hoa thể hiện ở?', options: ['历史未中断', '文化跳跃', '文化断裂', '文化空白'], correct: 0 },
+        { zhQ: '埃及文化、巴比伦文化出现过断档，而中国文化？', viQ: 'Văn hóa Ai Cập, Babylon từng bị đứt đoạn, còn văn hóa Trung Hoa?', options: ['未中断', '也中断', '部分中断', '完全中断'], correct: 0 },
+        { zhQ: '“汉字和普通话统一，方言不同”体现了文化的？', viQ: '“Chữ Hán và phổ thông ngữ thống nhất, phương ngữ khác nhau” thể hiện đặc điểm?', options: ['统一性和多样性', '仅有统一性', '仅有多样性', '无关联'], correct: 0 },
+        { zhQ: '中国菜有八大菜系，体现了文化的？', viQ: 'Ẩm thực Trung Hoa có tám đại hệ, thể hiện đặc điểm?', options: ['多样性', '统一性', '连续性', '包容性'], correct: 0 },
+        { zhQ: '中国文化的“人文主义”强调什么？', viQ: '“Chủ nghĩa nhân văn” của văn hóa Trung Hoa nhấn mạnh điều gì?', options: ['人的价值', '神的价值', '自然的价值', '物的价值'], correct: 0 },
+        { zhQ: '“宗法道德观念”在旧中国维系社会，与西方相比？', viQ: '“Quan niệm đạo đức tông pháp” ở Trung Hoa cũ khác với phương Tây ở?', options: ['不是遵循神意', '遵循神意', '遵循法律', '遵循习惯'], correct: 0 },
+        { zhQ: '中国古代祭天仪式中的“天”实质是？', viQ: '“Trời” trong nghi tế thiên thời cổ Trung Hoa thực chất là?', options: ['自然', '神', '君主', '祖先'], correct: 0 },
+        { zhQ: '“和而不同”的思想主张什么？', viQ: 'Tư tưởng “hòa nhi bất đồng” chủ trương điều gì?', options: ['和谐融合', '排斥差异', '绝对统一', '对抗'], correct: 0 },
+        { zhQ: '“中庸之道”追求什么状态？', viQ: '“Trung dung chi đạo” theo đuổi trạng thái nào?', options: ['不偏不倚', '极端', '偏激', '激进'], correct: 0 },
+        { zhQ: '“安土乐天”与西方文化中的什么相对？', viQ: '“An thổ lạc thiên” đối lập với điều gì trong văn hóa phương Tây?', options: ['冒险与刺激', '和平', '稳定', '保守'], correct: 0 },
+        { zhQ: '“乡土情谊”在中国文化中属于？', viQ: '“Tình cảm quê hương” trong văn hóa Trung Hoa thuộc về?', options: ['心理层面', '物质层面', '制度层面', '行为层面'], correct: 0 },
+        { zhQ: '中国文化“综合创新”的主要目标？', viQ: 'Mục tiêu chính của “tổng hợp sáng tạo” văn hóa Trung Hoa?', options: ['建立社会主义新文化', '复兴儒学', '全盘西化', '保持古代文化'], correct: 0 },
+        { zhQ: '当代中国文化的“第一取向”阶段演变顺序？', viQ: 'Thứ tự giai đoạn “định hướng thứ nhất” của văn hóa đương đại Trung Hoa?', options: ['政治→经济→文化', '经济→政治→文化', '文化→经济→政治', '政治→文化→经济'], correct: 0 },
+        { zhQ: '“全盘西化”主张被作者否定的原因是？', viQ: 'Lý do chủ trương “Tây phương hóa toàn diện” bị tác giả phủ định?', options: ['脱离国情', '太先进', '太保守', '不现实'], correct: 0 },
+        { zhQ: '中国文化的未来走向，作者认为应该？', viQ: 'Tác giả cho rằng hướng đi của văn hóa Trung Hoa trong tương lai là?', options: ['综合创新', '全盘西化', '全面复古', '停滞不前'], correct: 0 },
+        { zhQ: '“国学”呼唤反映了什么？', viQ: 'Tiếng gọi “Quốc học” phản ánh điều gì?', options: ['对传统文化的回归', '对西方文化的推崇', '对现代文化的否定', '对政治的关注'], correct: 0 },
+        { zhQ: '张岱年主张用马克思主义的什么方法分析文化？', viQ: 'Trương Đài Niên chủ trương dùng phương pháp gì của Mác-xít để phân tích văn hóa?', options: ['唯物辩证法', '阶级斗争', '经济基础决定论', '历史唯物主义'], correct: 0 },
+        { zhQ: '中国文化的“道家批判精神”属于哪家思想？', viQ: '“Tinh thần phê phán của Đạo gia” thuộc tư tưởng nhà nào?', options: ['道家', '儒家', '墨家', '法家'], correct: 0 },
+        { zhQ: '中国文化的“墨家重视自然科学”属于哪家？', viQ: '“Mặc gia coi trọng khoa học tự nhiên” thuộc nhà nào?', options: ['墨家', '道家', '儒家', '法家'], correct: 0 },
+        { zhQ: '“法家以法治国”的思想属于哪家？', viQ: 'Tư tưởng “Pháp gia lấy pháp trị nước” thuộc nhà nào?', options: ['法家', '道家', '儒家', '墨家'], correct: 0 },
+        { zhQ: '中国文化的“儒家以和为贵”属于哪家？', viQ: '“Nho gia lấy hòa vi quý” thuộc nhà nào?', options: ['儒家', '道家', '墨家', '法家'], correct: 0 },
+        { zhQ: '《中国文化概论》的作者是？', viQ: 'Tác giả của “Đại cương văn hóa Trung Quốc” là?', options: ['张岱年、方克立', '冯天瑜', '杨华', '任放'], correct: 0 },
+        { zhQ: '《中国文化史》的作者之一是？', viQ: 'Một trong những tác giả của “Lịch sử văn hóa Trung Quốc” là?', options: ['冯天瑜', '张岱年', '方克立', '梁漱溟'], correct: 0 }
+    ];
+
+    // ---------- QUIZ STATE ----------
+    let questions = [];
+    let userAnswers = [];
+    let currentSection = 0;
+    const SECTION_SIZE = 20;
+    let scoreHistory = JSON.parse(localStorage.getItem('quizScoreHistory')) || [];
+
+    const container = document.getElementById('quizContainer');
+    const progressText = document.getElementById('progressText');
+    const answerSection = document.getElementById('answer-section');
+    const answersList = document.getElementById('answersList');
+    const chartRows = document.getElementById('chartRows');
+    const avgScoreDisplay = document.getElementById('avgScoreDisplay');
+
+    function initQuiz() {
+        questions = rawQuestions.map(q => ({ ...q }));
+        userAnswers = new Array(questions.length).fill(null);
+        renderSection(0);
+        updateProgress();
+        renderChart();
+    }
+
+    function renderSection(sectionIdx) {
+        currentSection = sectionIdx;
+        const start = sectionIdx * SECTION_SIZE;
+        const end = Math.min(start + SECTION_SIZE, questions.length);
+        const sectionQuestions = questions.slice(start, end);
+        const letters = ['A', 'B', 'C', 'D'];
+        let html = '';
+        sectionQuestions.forEach((q, idx) => {
+            const globalIdx = start + idx;
+            const selected = userAnswers[globalIdx];
+            html += `<div class="quiz-item" data-index="${globalIdx}">
+                <div class="quiz-question"><span class="tag">Q${globalIdx+1}</span> <span class="zh">${q.zhQ}</span> <span style="font-weight:normal; color:#6a4a54;">/ <span class="vi">${q.viQ}</span></span></div>
+                <ul class="quiz-options">`;
+            q.options.forEach((opt, oi) => {
+                let cls = '';
+                if (selected !== null && oi === selected) cls = 'selected';
+                html += `<li class="${cls}" data-q="${globalIdx}" data-opt="${oi}">
+                    <span>${letters[oi]}. ${opt}</span>
+                </li>`;
+            });
+            html += `</ul></div>`;
+        });
+        container.innerHTML = html;
+
+        document.querySelectorAll('.section-nav button').forEach(btn => {
+            btn.classList.toggle('active-sec', parseInt(btn.dataset.sec) === sectionIdx);
+        });
+
+        document.querySelectorAll('.quiz-options li').forEach(el => {
+            el.addEventListener('click', function() {
+                const qIdx = parseInt(this.dataset.q);
+                const optIdx = parseInt(this.dataset.opt);
+                userAnswers[qIdx] = optIdx;
+                renderSection(currentSection);
+                updateProgress();
+                answerSection.style.display = 'none';
+            });
+        });
+        answerSection.style.display = 'none';
+    }
+
+    function updateProgress() {
+        const answered = userAnswers.filter(a => a !== null).length;
+        progressText.textContent = `Đã trả lời: ${answered}/${questions.length} · 已答: ${answered}/${questions.length}`;
+    }
+
+    function shuffleQuestions() {
+        questions = shuffleArray([...questions]);
+        userAnswers = new Array(questions.length).fill(null);
+        answerSection.style.display = 'none';
+        renderSection(currentSection);
+        updateProgress();
+    }
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function resetQuiz() {
+        userAnswers = new Array(questions.length).fill(null);
+        answerSection.style.display = 'none';
+        renderSection(currentSection);
+        updateProgress();
+    }
+
+    function checkAnswers() {
+        const start = currentSection * SECTION_SIZE;
+        const end = Math.min(start + SECTION_SIZE, questions.length);
+        const sectionQuestions = questions.slice(start, end);
+        const letters = ['A', 'B', 'C', 'D'];
+
+        let correct = 0, total = 0;
+        sectionQuestions.forEach((q, idx) => {
+            const globalIdx = start + idx;
+            const userAns = userAnswers[globalIdx];
+            if (userAns !== null) { total++; if (userAns === q.correct) correct++; }
+        });
+
+        let ansHtml = '';
+        sectionQuestions.forEach((q, idx) => {
+            const globalIdx = start + idx;
+            const userAns = userAnswers[globalIdx];
+            const isCorrect = (userAns === q.correct);
+            const mark = (userAns !== null) ? (isCorrect ? '✅' : '❌') : '⬜';
+            ansHtml += `<span style="display:inline-block; width:100%; padding:0.1rem 0;">
+                <strong>${globalIdx+1}.</strong> ${letters[q.correct]} ${mark}
+            </span>`;
+        });
+        answersList.innerHTML = ansHtml;
+        answerSection.style.display = 'block';
+
+        const totalInSection = sectionQuestions.length;
+        const answeredInSection = sectionQuestions.filter((_, idx) => userAnswers[start + idx] !== null).length;
+        if (answeredInSection === totalInSection) {
+            const score = Math.round((correct / totalInSection) * 100);
+            scoreHistory.push(score);
+            if (scoreHistory.length > 5) scoreHistory.shift();
+            localStorage.setItem('quizScoreHistory', JSON.stringify(scoreHistory));
+            renderChart();
+        } else {
+            alert(`Bạn mới trả lời ${answeredInSection}/${totalInSection} câu trong section này. / 您在本部分仅回答了 ${answeredInSection}/${totalInSection} 题。`);
+        }
+        updateProgress();
+    }
+
+    function renderChart() {
+        const history = scoreHistory;
+        let html = '';
+        if (history.length === 0) {
+            html = `<p style="color:#6a4a54;">Chưa có dữ liệu điểm. / 暂无分数数据。</p>`;
+        } else {
+            const display = history.slice(-5);
+            display.forEach((score, idx) => {
+                const pct = Math.min(score, 100);
+                html += `<div class="chart-row">
+                    <span class="chart-label">Lần ${idx+1}</span>
+                    <div class="chart-bar"><div class="chart-bar-fill" style="width:${pct}%;"></div></div>
+                    <span class="chart-value">${score}%</span>
+                </div>`;
+            });
+            const avg = Math.round(display.reduce((a,b) => a+b, 0) / display.length);
+            avgScoreDisplay.textContent = `Trung bình: ${avg} / 100 · 平均: ${avg} / 100`;
+        }
+        chartRows.innerHTML = html;
+    }
+
+    function resetStats() {
+        scoreHistory = [];
+        localStorage.setItem('quizScoreHistory', JSON.stringify(scoreHistory));
+        renderChart();
+        avgScoreDisplay.textContent = 'Trung bình: -- / 100 · 平均: -- / 100';
+    }
+
+    // ---------- TABS ----------
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(this.dataset.tab).classList.add('active');
+        });
+    });
+
+    // ---------- SECTION NAV ----------
+    document.querySelectorAll('.section-nav button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            renderSection(parseInt(this.dataset.sec));
+            document.getElementById('quizContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // ---------- THEME ----------
+    document.getElementById('themeToggle').addEventListener('click', function() {
+        document.body.classList.toggle('dark');
+        this.textContent = document.body.classList.contains('dark') ? '☀️ Light / 亮色' : '🌙 Dark / 暗黑';
+    });
+
+    // ---------- CONTROLS ----------
+    document.getElementById('shuffleBtn').addEventListener('click', shuffleQuestions);
+    document.getElementById('resetQuizBtn').addEventListener('click', resetQuiz);
+    document.getElementById('checkAnswersBtn').addEventListener('click', checkAnswers);
+    document.getElementById('resetStatsBtn').addEventListener('click', resetStats);
+
+    initQuiz();
+</script>
+</body>
+</html>
