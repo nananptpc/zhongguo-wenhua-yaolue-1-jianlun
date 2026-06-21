@@ -50,24 +50,38 @@
 
     <div class="tab-nav">
         <button class="tab-btn active" data-tab="tab-original">📄 Nguyên Văn</button>
-        <button class="tab-btn" data-tab="tab-summary">🎯 Trích Yếu Trọng Tâm</button>
         <button class="tab-btn" data-tab="tab-terms">📚 Thuật Ngữ / Từ Vựng</button>
         <button class="tab-btn" data-tab="tab-quiz">📝 Luyện Trắc Nghiệm</button>
         <button class="tab-btn" data-tab="tab-notes">✍️ Kho Ghi Chú (Notes)</button>
     </div>
 
-    <div id="tab-original" class="tab-content active">
+    <div id="tab-original" class="tab-content active" style="position: relative;">
         <div class="card">
             <div class="card-header-tip">💡 Mẹo: Bôi đen (Highlight) bất kỳ cụm từ hoặc đoạn văn bản nào bên dưới để tạo ghi chú và bình luận nhanh.</div>
             <div id="originalContainer" class="bilingual-container">
                 <p class="empty-message">📭 Chưa có dữ liệu học liệu. Vui lòng chọn và nạp tệp data.csv ở phía trên.</p>
             </div>
         </div>
-    </div>
-
-    <div id="tab-summary" class="tab-content">
-        <div id="summaryContainer">
-            <p class="empty-message">📭 Chưa có dữ liệu trích yếu. Vui lòng nạp học liệu để hệ thống tự động trích xuất các câu dài trọng tâm.</p>
+        
+        <div class="note-popup" id="notePopup" style="display: none;">
+            <div class="popup-header">
+                <span>🖊️ Thêm Ghi Chú Nhanh</span>
+                <button class="popup-close-btn" id="closePopupBtn">✕</button>
+            </div>
+            <div class="selected-text-preview" id="selectedTextPreview">“Nội dung trích xuất...”</div>
+            
+            <div class="color-options" id="colorOptions">
+                <span class="active" data-color="yellow" style="background:#fff1a1;" title="Màu vàng"></span>
+                <span data-color="green" style="background:#c3ebd0;" title="Màu xanh lá"></span>
+                <span data-color="blue" style="background:#cce3f7;" title="Màu xanh dương"></span>
+                <span data-color="pink" style="background:#f7cbd6;" title="Màu hồng"></span>
+            </div>
+            <textarea id="noteContent" placeholder="Viết nhận xét, bình luận hoặc bổ sung kiến thức học tập..."></textarea>
+            <div class="popup-actions">
+                <button class="btn-cancel" id="cancelPopupBtn">Hủy</button>
+                <button class="btn-save" id="saveNoteBtn">💾 Lưu ghi chú</button>
+            </div>
+            <div class="block-info" id="selectedBlockInfo">Đoạn: --</div>
         </div>
     </div>
 
@@ -93,7 +107,7 @@
                 <div id="quizSectionNav" class="quiz-sec-nav"></div>
 
                 <div id="quizContainer">
-                    <p class="empty-message">📭 Chưa có câu hỏi trắc nghiệm. Vui lòng chọn và nạp tệp quiz.csv ở phía trên.</p>
+                    <p class="empty-message">📭 Chưa có câu hỏi trắc nghiệm. Vui lòng nạp tệp quiz.csv ở phía trên.</p>
                 </div>
 
                 <div class="quiz-submit-bar">
@@ -113,9 +127,7 @@
                         <button id="resetStatsBtn" class="btn-text-danger" title="Xóa lịch sử điểm">🗑️</button>
                     </div>
                     <div id="avgScoreDisplay" class="avg-score">📊 Trung bình: 0/100</div>
-                    
-                    <div class="chart-container" id="chartRows">
-                        </div>
+                    <div class="chart-container" id="chartRows"></div>
                 </div>
             </div>
         </div>
@@ -132,7 +144,7 @@
                 </div>
             </div>
 
-            <div class="bulk-actions-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0; padding: 0.8rem; background: var(--card-bg, #fffbfb); border: 1px solid #f2dae0; border-radius: 8px;">
+            <div class="bulk-actions-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0; padding: 0.8rem; background: #fffbfb; border: 1px solid #f2dae0; border-radius: 8px;">
                 <div class="bulk-left" style="display: flex; gap: 0.5rem;">
                     <button id="selectAllNotes" class="btn-secondary" style="font-size: 0.88rem; padding: 0.4rem 0.8rem;">✅ Chọn tất cả</button>
                     <button id="deleteSelectedNotes" class="btn-danger" style="font-size: 0.88rem; padding: 0.4rem 0.8rem; background: #bd4f60; color: white; border: none; border-radius: 4px; cursor: pointer;" disabled>🗑️ Xóa đã chọn (0)</button>
@@ -154,39 +166,15 @@
     </div>
 </div>
 
-<div class="note-popup" id="notePopup" style="display: none;">
-    <div class="popup-header">
-        <span>🖊️ Thêm Ghi Chú / Nhận Xét Nhanh</span>
-        <button class="popup-close-btn" id="closePopupBtn">✕</button>
-    </div>
-    <div class="selected-text-preview" id="selectedTextPreview">“Nội dung văn bản được trích xuất...”</div>
-    
-    <div class="color-options" id="colorOptions">
-        <span class="active" data-color="yellow" style="background:#fff1a1;"></span>
-        <span data-color="green" style="background:#c3ebd0;"></span>
-        <span data-color="blue" style="background:#cce3f7;"></span>
-        <span data-color="pink" style="background:#f7cbd6;"></span>
-    </div>
-    <textarea id="noteContent" placeholder="Viết nhận xét, bình luận độc thoại nội tâm hoặc kiến thức bổ sung…"></textarea>
-    <div class="popup-actions">
-        <button class="btn-cancel" id="cancelPopupBtn">Hủy</button>
-        <button class="btn-save" id="saveNoteBtn">💾 Lưu ghi chú</button>
-    </div>
-    <div class="block-info" id="selectedBlockInfo">Đoạn: --</div>
-</div>
-
 <button class="sidebar-toggle-btn" id="sidebarToggleBtn">📂 HỌC LIỆU ĐÃ NẠP</button>
 
 <div class="progress-sidebar" id="progressSidebar">
     <h3>📚 Kho Tiến Trình</h3>
     <div class="sidebar-sub">Click vào tên file để khôi phục bài học dở dang.</div>
-
     <div class="sidebar-sec-title">📄 Học liệu</div>
     <div id="historyDocsList" class="sidebar-list"></div>
-
     <div class="sidebar-sec-title">📚 Thuật ngữ</div>
     <div id="historyTermsList" class="sidebar-list"></div>
-
     <div class="sidebar-sec-title">📝 Trắc nghiệm</div>
     <div id="historyQuizList" class="sidebar-list"></div>
 </div>
