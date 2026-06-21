@@ -17,12 +17,15 @@ let scoreHistory = JSON.parse(localStorage.getItem('quizScoreHistory_v5')) || []
 let quizQuestions = [];
 let userAnswers = [];
 let currentQuizSection = 0;
-const questionsPerSection = 50; // Đổi thành 50 câu mỗi lần
+const questionsPerSection = 50;
 
-// Biến toàn cục cho popup
+// Biến cho popup
 let isPopupVisible = false;
 let selectedText = '';
 let selectedBlock = 'N/A';
+
+// Lưu lịch sử các lần làm bài để tránh trùng
+let quizAttemptHistory = [];
 
 // ===== 2. KHỞI TẠO TRANG =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -124,11 +127,12 @@ function initFileImports() {
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(evt) {
-                quizVault[file.name] = { csvText: evt.target.result, answers: [] };
+                const csvText = evt.target.result;
+                quizVault[file.name] = { csvText: csvText, answers: [] };
                 activeQuizName = file.name;
                 localStorage.setItem('quizVault_v5', JSON.stringify(quizVault));
                 localStorage.setItem('activeQuizName_v5', activeQuizName);
-                parseQuizCSV(evt.target.result);
+                parseQuizCSV(csvText);
                 renderSidebarLists();
                 document.getElementById('quizStatus').innerText = `✅ ${file.name}`;
             };
@@ -344,13 +348,12 @@ function parseQuizCSV(csvText) {
     
     rows.forEach((row, idx) => {
         if (idx === 0) return;
-        // Cần ít nhất 6 cột: câu hỏi, A, B, C, D, đáp án (0,1,2,3)
         if (row.length >= 6) {
             const correct = parseInt(row[5]);
-            // Đảm bảo đáp án đúng trong khoảng 0-3
             const finalCorrect = (!isNaN(correct) && correct >= 0 && correct <= 3) ? correct : 0;
             
             quizQuestions.push({
+                id: idx,
                 zhQ: row[0] || 'Câu hỏi trống',
                 viQ: row[6] || 'Chọn đáp án đúng nhất:',
                 options: [
@@ -377,10 +380,15 @@ function parseQuizCSV(csvText) {
 
 // ===== 10. HÀM SHUFFLE CÂU HỎI =====
 function shuffleQuestions() {
+    // Fisher-Yates shuffle
     for (let i = quizQuestions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [quizQuestions[i], quizQuestions[j]] = [quizQuestions[j], quizQuestions[i]];
     }
+    // Reset lại đánh số thứ tự
+    quizQuestions.forEach((q, idx) => {
+        q.displayId = idx + 1;
+    });
 }
 
 // ===== 11. HỆ THỐNG HIGHLIGHT - FIX POPUP =====
@@ -395,9 +403,7 @@ function initHighlightSystem() {
 
     let isPopupOpen = false;
 
-    // Hàm hiển thị popup
     function showPopup(text, blockIdx, x, y) {
-        // Cập nhật preview
         const preview = document.getElementById('selectedTextPreview');
         if (preview) {
             preview.textContent = text.length > 100 ? text.substring(0, 100) + '...' : text;
@@ -408,28 +414,28 @@ function initHighlightSystem() {
             blockInfo.textContent = `Đoạn: ${blockIdx}`;
         }
 
-        // Xóa nội dung textarea
         const textarea = document.getElementById('noteContent');
         if (textarea) {
             textarea.value = '';
         }
 
-        // Tính vị trí
-        let left = x + 10;
-        let top = y + 15;
+        // Tính vị trí - Đặt popup gần vị trí highlight
+        let left = x + window.scrollX + 10;
+        let top = y + window.scrollY + 15;
 
         const popupWidth = 340;
         const popupHeight = 320;
-        if (left + popupWidth > window.innerWidth) {
-            left = window.innerWidth - popupWidth - 20;
+        
+        // Điều chỉnh để popup không tràn khỏi màn hình
+        if (left + popupWidth > window.innerWidth + window.scrollX) {
+            left = x + window.scrollX - popupWidth - 10;
         }
-        if (top + popupHeight > window.scrollY + window.innerHeight) {
-            top = y - popupHeight - 10;
+        if (top + popupHeight > window.innerHeight + window.scrollY) {
+            top = y + window.scrollY - popupHeight - 10;
         }
         if (left < 10) left = 10;
         if (top < 10) top = 10;
 
-        // Hiển thị popup
         popup.style.display = 'block';
         popup.style.left = left + 'px';
         popup.style.top = top + 'px';
@@ -443,10 +449,9 @@ function initHighlightSystem() {
             if (textarea) textarea.focus();
         }, 100);
 
-        console.log(`📝 Popup hiển thị với text: "${text.substring(0, 30)}..."`);
+        console.log(`📝 Popup hiển thị tại (${left}, ${top})`);
     }
 
-    // Hàm ẩn popup
     function hidePopup() {
         popup.style.display = 'none';
         isPopupOpen = false;
@@ -484,7 +489,7 @@ function initHighlightSystem() {
         let isInContainer = false;
         let node = selection.anchorNode;
         while (node && node !== document.body) {
-            if (node === container || node.parentNode === container) {
+            if (node === container || (node.parentNode && node.parentNode === container)) {
                 isInContainer = true;
                 break;
             }
@@ -511,10 +516,10 @@ function initHighlightSystem() {
             parent = parent.parentNode;
         }
 
-        // Lấy vị trí
+        // Lấy vị trí của selection
         const rect = selection.getRangeAt(0).getBoundingClientRect();
-        const x = rect.left + window.scrollX;
-        const y = rect.bottom + window.scrollY;
+        const x = rect.left;
+        const y = rect.bottom;
 
         showPopup(text, blockIdx, x, y);
     });
@@ -629,7 +634,7 @@ window.deleteNote = function(id) {
     }
 };
 
-// ===== 13. QUIZ ENGINE - SỬA LỖI ĐÁP ÁN =====
+// ===== 13. QUIZ ENGINE =====
 function initQuizEngine() {
     const checkBtn = document.getElementById('checkAnswersBtn');
     if (checkBtn) checkBtn.addEventListener('click', submitQuizScore);
@@ -639,7 +644,7 @@ function initQuizEngine() {
         resetBtn.addEventListener('click', function() {
             userAnswers.fill(null);
             document.getElementById('answer-section').style.display = 'none';
-            renderQuizSection(0);
+            renderQuizSection(currentQuizSection);
             updateQuizProgress();
             saveQuizProgress();
         });
@@ -655,6 +660,7 @@ function initQuizEngine() {
             renderQuizSection(0);
             updateQuizProgress();
             saveQuizProgress();
+            buildQuizNavigation();
         });
     }
 
@@ -683,13 +689,18 @@ function buildQuizNavigation() {
         btn.addEventListener('click', () => renderQuizSection(i));
         nav.appendChild(btn);
     }
+    // Đánh dấu bài đang active
+    const btns = nav.querySelectorAll('button');
+    btns.forEach((btn, idx) => {
+        btn.classList.toggle('active-sec', idx === currentQuizSection);
+    });
 }
 
 function renderQuizSection(sectionIdx) {
     currentQuizSection = sectionIdx;
     const container = document.getElementById('quizContainer');
     if (!container || quizQuestions.length === 0) {
-        container.innerHTML = '<p class="empty-message">Vui lòng nạp file quiz.csv</p>';
+        container.innerHTML = '<p class="empty-message">📝 Vui lòng nạp file quiz.csv</p>';
         return;
     }
     container.innerHTML = '';
@@ -704,8 +715,11 @@ function renderQuizSection(sectionIdx) {
         const q = quizQuestions[i];
         const item = document.createElement('div');
         item.className = 'quiz-item';
+        
+        // Hiển thị số thứ tự câu hỏi
+        const displayNum = q.displayId || (i + 1);
         item.innerHTML = `
-            <p class="quiz-question"><strong>Câu ${i + 1}:</strong> ${q.zhQ}</p>
+            <p class="quiz-question"><strong>Câu ${displayNum}:</strong> ${q.zhQ}</p>
             <p style="color:#8c5863; font-size:0.9rem; font-style:italic; margin-bottom:0.5rem;">${q.viQ}</p>
         `;
         
@@ -753,7 +767,6 @@ function updateQuizProgress() {
 function submitQuizScore() {
     if (quizQuestions.length === 0) return;
     
-    // Kiểm tra xem đã trả lời hết chưa
     const unanswered = userAnswers.filter(a => a === null).length;
     if (unanswered > 0) {
         if (!confirm(`⚠️ Bạn còn ${unanswered} câu chưa trả lời. Bạn có chắc muốn nộp bài không?`)) {
@@ -771,9 +784,10 @@ function submitQuizScore() {
         const status = isCorrect ? '✅ Đúng' : '❌ Sai';
         const correctAnswer = q.options[q.correct];
         const userAnswer = userAnswers[idx] !== null ? q.options[userAnswers[idx]] : 'Chưa trả lời';
+        const displayNum = q.displayId || (idx + 1);
         list.innerHTML += `
             <div style="padding:0.3rem 0; border-bottom:1px solid #f2dae0; ${isCorrect ? 'color:#1e421e;' : 'color:#6e201d;'}">
-                <strong>Câu ${idx + 1}:</strong> ${status}
+                <strong>Câu ${displayNum}:</strong> ${status}
                 ${!isCorrect ? `<span style="font-size:0.8rem; color:#8c5863;"> (Đáp án đúng: ${correctAnswer})</span>` : ''}
             </div>
         `;
@@ -782,7 +796,6 @@ function submitQuizScore() {
     const percent = Math.round((score / quizQuestions.length) * 100);
     document.getElementById('answer-section').style.display = 'block';
     
-    // Cập nhật điểm số
     const scoreDisplay = document.createElement('div');
     scoreDisplay.style.cssText = 'font-weight:bold; font-size:1.2rem; text-align:center; padding:0.5rem; background:#fae1e6; border-radius:6px; margin-bottom:0.5rem;';
     scoreDisplay.textContent = `📊 Điểm số: ${score}/${quizQuestions.length} (${percent}%)`;
@@ -805,7 +818,6 @@ function revealAnswers() {
         const q = quizQuestions[actualIdx];
         if (!q) return;
         
-        // Lấy text của option (bỏ qua phần A., B., C., D.)
         const optText = li.textContent.replace(/^[A-D]\.\s*/, '');
         let optIdx = -1;
         q.options.forEach((opt, i) => {
