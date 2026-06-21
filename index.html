@@ -17,21 +17,23 @@
         <button class="theme-toggle" id="themeToggle">🌙 Chế độ tối / 暗黑</button>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-        <div style="padding: 1rem; background: rgba(245, 211, 220, 0.25); border: 2px dashed #e3a6b2; border-radius: 10px; text-align: center;">
-            <label for="csvDocInput" style="font-family: 'American Typewriter', serif; font-weight: bold; color: #54333a; cursor: pointer; display: block;">
-                🌸 1. Nạp file học liệu môn học (data.csv)
-            </label>
-            <input type="file" id="csvDocInput" accept=".csv" style="display: none;">
-            <span id="docStatus" style="font-size: 0.8rem; color: #8c5863; display: block; margin-top: 0.3rem;">Chưa nạp học liệu</span>
+    <div class="import-grid">
+        <div class="import-box">
+            <label for="csvDocInput">🌸 1. Nạp học liệu (data.csv)</label>
+            <input type="file" id="csvDocInput" accept=".csv">
+            <span id="docStatus">Chưa nạp học liệu</span>
         </div>
 
-        <div style="padding: 1rem; background: rgba(245, 211, 220, 0.25); border: 2px dashed #e3a6b2; border-radius: 10px; text-align: center;">
-            <label for="csvQuizInput" style="font-family: 'American Typewriter', serif; font-weight: bold; color: #54333a; cursor: pointer; display: block;">
-                📝 2. Nạp file trắc nghiệm luyện tập (quiz.csv)
-            </label>
-            <input type="file" id="csvQuizInput" accept=".csv" style="display: none;">
-            <span id="quizStatus" style="font-size: 0.8rem; color: #8c5863; display: block; margin-top: 0.3rem;">Chưa nạp câu hỏi</span>
+        <div class="import-box">
+            <label for="csvTermInput">📚 2. Nạp thuật ngữ (terms.csv)</label>
+            <input type="file" id="csvTermInput" accept=".csv">
+            <span id="termStatus">Chưa nạp thuật ngữ</span>
+        </div>
+
+        <div class="import-box">
+            <label for="csvQuizInput">📝 3. Nạp trắc nghiệm (quiz.csv)</label>
+            <input type="file" id="csvQuizInput" accept=".csv">
+            <span id="quizStatus">Chưa nạp câu hỏi</span>
         </div>
     </div>
 
@@ -47,27 +49,26 @@
         <h2>📄 Nguyên văn đối chiếu Trung - Việt · 中越对照学理原文</h2>
         <p style="color:#8c5863; font-size:0.88rem; margin: 0.4rem 0 1.2rem 0;">💡 Mẹo: Bôi đen một cụm từ bất kỳ trong văn bản để kích hoạt Popup trích xuất ghi chú nhanh.</p>
         <div id="originalContainer">
-            <p style="text-align: center; color: #a67c84; padding: 2rem; font-style: italic;">Vui lòng chọn nạp file "data.csv" ở trên để hiển thị nội dung nguyên văn song ngữ...</p>
+            <p class="empty-message">Vui lòng chọn nạp file "data.csv" ở trên để hiển thị nội dung nguyên văn...</p>
         </div>
     </div>
 
     <div id="tab-summary" class="tab-content">
         <h2>📘 Tóm tắt nội dung cốt lõi · 核心内容摘要</h2>
         <div id="summaryContainer">
-            <p style="text-align: center; color: #a67c84; padding: 2rem; font-style: italic;">Hệ thống sẽ tự động tổng hợp tóm tắt sau khi bạn nạp file học liệu thành công.</p>
+            <p class="empty-message">Hệ thống sẽ tự động trích lọc nội dung tóm tắt sau khi bạn nạp file học liệu.</p>
         </div>
     </div>
 
     <div id="tab-notes" class="tab-content">
         <h2>📒 Nhật ký trích xuất Highlight cá nhân · 我的笔记</h2>
-        <div id="notesList">
-            </div>
+        <div id="notesList"></div>
     </div>
 
     <div id="tab-terms" class="tab-content">
         <h2>📚 Danh mục thuật ngữ chuyên ngành tinh hoa · 核心术语</h2>
         <div id="termsContainer">
-            <p style="text-align: center; color: #a67c84; padding: 2rem; font-style: italic;">Danh sách thuật ngữ học thuật sẽ tự động hiển thị dựa trên học liệu được nạp.</p>
+            <p class="empty-message">Vui lòng chọn nạp file "terms.csv" ở trên để hiển thị danh mục thuật ngữ học thuật...</p>
         </div>
     </div>
 
@@ -80,16 +81,14 @@
             <span class="quiz-progress" id="quizProgress">Đã trả lời: 0/0</span>
         </div>
 
-        <div class="section-nav" id="quizSectionNav">
-            </div>
-
+        <div class="section-nav" id="quizSectionNav"></div>
         <div id="quizContainer">
-            <p style="text-align: center; color: #a67c84; padding: 2rem; font-style: italic;">Vui lòng nạp file "quiz.csv" ở trên để bắt đầu làm bài luyện tập...</p>
+            <p class="empty-message">Vui lòng nạp file "quiz.csv" ở trên để bắt đầu làm bài luyện tập...</p>
         </div>
 
         <div id="answer-section" style="display: none; background-color: #fae1e6; padding: 1.2rem; border-radius: 8px; margin-top: 1.5rem;">
             <h3>📊 Bảng kiểm tra đáp án chi tiết</h3>
-            <div id="answers-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem; background: white; padding: 0.8rem; border-radius: 6px; font-size: 0.88rem; margin-top: 0.5rem;"></div>
+            <div id="answers-list"></div>
         </div>
 
         <div class="chart-container" id="chartContainer">
@@ -121,22 +120,23 @@
         <button id="saveNoteBtn">💾 Lưu ghi chú</button>
     </div>
 </div>
-    <button class="sidebar-toggle-btn" id="sidebarToggleBtn">📂 HỌC LIỆU ĐÃ NẠP 📑</button>
+
+<button class="sidebar-toggle-btn" id="sidebarToggleBtn">📂 HỌC LIỆU ĐÃ NẠP 📑</button>
 
 <div class="progress-sidebar" id="progressSidebar">
     <h3 style="margin-top: 0; border-bottom: 2px solid #e3a6b2; padding-bottom: 0.5rem; color: #4d2d35;">📚 Kho Tiến Trình</h3>
-    
-    <div style="font-size: 0.82rem; color: #8c5863; font-style: italic; margin-bottom: 0.5rem;">
-        Hệ thống tự động đồng bộ. Click vào dòng dưới để khôi phục bài học dở dang ngay lập tức.
-    </div>
+    <div style="font-size: 0.78rem; color: #8c5863; font-style: italic; margin-bottom: 0.5rem;">Click vào dòng dưới để khôi phục bài học dở dang ngay lập tức.</div>
 
-    <div style="font-weight: bold; font-size: 0.9rem; margin-top: 0.5rem;">📄 Học liệu (data.csv):</div>
-    <div id="historyDocsList" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 200px; overflow-y: auto;"></div>
+    <div class="sidebar-sec-title">📄 Học liệu (data.csv):</div>
+    <div id="historyDocsList" class="sidebar-list"></div>
 
-    <div style="font-weight: bold; font-size: 0.9rem; margin-top: 0.8rem;">📝 Trắc nghiệm (quiz.csv):</div>
-    <div id="historyQuizList" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 200px; overflow-y: auto;"></div>
+    <div class="sidebar-sec-title">📚 Thuật ngữ (terms.csv):</div>
+    <div id="historyTermsList" class="sidebar-list"></div>
 
-    <button id="clearAllCacheBtn" style="margin-top: auto; background-color: #bd4f60; font-size: 0.8rem; padding: 0.4rem;">🗑 Xóa toàn bộ bộ nhớ</button>
+    <div class="sidebar-sec-title">📝 Trắc nghiệm (quiz.csv):</div>
+    <div id="historyQuizList" class="sidebar-list"></div>
+
+    <button id="clearAllCacheBtn" style="margin-top: auto; background-color: #bd4f60; font-size: 0.8rem; padding: 0.5rem; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🗑 Xóa sạch bộ nhớ tạm</button>
 </div>
 
 <script src="script.js"></script>
