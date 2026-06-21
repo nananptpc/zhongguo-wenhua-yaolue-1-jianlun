@@ -22,6 +22,9 @@ let curSelectedText = '';
 let curSelectedColor = 'yellow';
 let curBlockIdx = null;
 
+// Biến để theo dõi trạng thái popup
+let isPopupVisible = false;
+
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Quản lý hệ thống chuyển đổi 5 Tabs mượt mà
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -321,40 +324,112 @@ function parseQuizCSV(csvText) {
     updateQuizProgress();
 }
 
-// KHỞI TẠO TÍNH NĂNG BÔI ĐEN VĂN BẢN (SỬ SỬA LỖI ĐIỀU KIỆN ĐÍCH VÀ COORD POPUP)
+// ==========================================================================
+// HỆ THỐNG HIGHLIGHT - ĐÃ SỬA LỖI POPUP KHÔNG HIỆN
+// ==========================================================================
 function initHighlightSystem() {
     const notePopup = document.getElementById('notePopup');
-    if (!notePopup) return;
+    if (!notePopup) {
+        console.warn('Không tìm thấy notePopup element');
+        return;
+    }
 
-    // Lắng nghe chuột thả từ cấp document để bắt trọn văn bản động
+    // Lắng nghe sự kiện mouseup trên toàn bộ document
     document.addEventListener('mouseup', function(e) {
-        // Nếu click bên trong nội dung Popup thì không xử lý lại
+        // Nếu đang click vào popup thì bỏ qua
         if (notePopup.contains(e.target)) return;
 
         const selection = window.getSelection();
-        const txt = selection.toString().trim();
+        const selectedText = selection.toString().trim();
         
-        // SỬA LỖI: Chuyển đổi kiểm tra từ thẻ cha #tab-original sang #originalContainer thực tế
-        if (txt.length < 2 || !e.target.closest('#originalContainer')) {
+        // Kiểm tra xem có text được chọn không
+        if (selectedText.length < 2) {
+            notePopup.style.display = 'none';
+            isPopupVisible = false;
             return;
         }
 
-        curSelectedText = txt;
+        // KIỂM TRA XEM VĂN BẢN ĐƯỢC CHỌN CÓ NẰM TRONG VÙNG NỘI DUNG HỌC KHÔNG
+        // Sử dụng nhiều cách kiểm tra khác nhau để đảm bảo tương thích
+        let isInContent = false;
+        let targetElement = e.target;
+        
+        // Kiểm tra xem target có nằm trong originalContainer không
+        while (targetElement && targetElement !== document.body) {
+            if (targetElement.id === 'originalContainer' || 
+                targetElement.closest && targetElement.closest('#originalContainer')) {
+                isInContent = true;
+                break;
+            }
+            // Kiểm tra nếu đang ở tab original (tab-1)
+            const tabContent = targetElement.closest ? targetElement.closest('.tab-content') : null;
+            if (tabContent && tabContent.id === 'tab-original') {
+                isInContent = true;
+                break;
+            }
+            targetElement = targetElement.parentNode;
+        }
 
-        // Truy tìm phân đoạn khối bài đọc gốc để lấy index dòng dữ liệu
+        // Nếu không nằm trong vùng nội dung, ẩn popup và thoát
+        if (!isInContent) {
+            notePopup.style.display = 'none';
+            isPopupVisible = false;
+            return;
+        }
+
+        // Lưu text được chọn
+        curSelectedText = selectedText;
+
+        // Tìm block cha chứa đoạn văn bản được bôi đen
         let parent = selection.anchorNode.parentNode;
-        while (parent && parent !== document.body && !parent.classList.contains('bilingual-block')) {
+        let foundBlock = false;
+        while (parent && parent !== document.body) {
+            if (parent.classList && parent.classList.contains('bilingual-block')) {
+                curBlockIdx = parent.dataset.block || "N/A";
+                foundBlock = true;
+                break;
+            }
             parent = parent.parentNode;
         }
-        curBlockIdx = (parent && parent.classList.contains('bilingual-block')) ? parent.dataset.block : "N/A";
+        if (!foundBlock) {
+            curBlockIdx = "N/A";
+        }
 
-        // Tính toán tọa độ hiển thị mượt mà
+        // Tính toán vị trí hiển thị popup
+        const rect = selection.getRangeAt(0).getBoundingClientRect();
+        let left = rect.left + window.scrollX;
+        let top = rect.bottom + window.scrollY + 15;
+
+        // Đảm bảo popup không bị tràn ra ngoài màn hình
+        const popupWidth = 340;
+        const popupHeight = 200;
+        if (left + popupWidth > window.innerWidth) {
+            left = window.innerWidth - popupWidth - 20;
+        }
+        if (top + popupHeight > window.scrollY + window.innerHeight) {
+            top = rect.top + window.scrollY - popupHeight - 15;
+        }
+        if (left < 10) left = 10;
+        if (top < 10) top = 10;
+
+        // Hiển thị popup
         notePopup.style.display = 'block';
-        notePopup.style.left = Math.min(e.clientX, window.innerWidth - 350) + 'px';
-        notePopup.style.top = (e.clientY + window.scrollY + 15) + 'px';
+        notePopup.style.left = left + 'px';
+        notePopup.style.top = top + 'px';
+        isPopupVisible = true;
 
+        // Xóa nội dung textarea cũ
         const noteContent = document.getElementById('noteContent');
-        if (noteContent) noteContent.value = '';
+        if (noteContent) {
+            noteContent.value = '';
+            noteContent.focus();
+        }
+
+        // Cập nhật thông báo block hiện tại
+        const blockInfo = document.getElementById('selectedBlockInfo');
+        if (blockInfo) {
+            blockInfo.textContent = `Đoạn: ${curBlockIdx}`;
+        }
     });
 
     // Sự kiện lưu ghi chú trích xuất vào bộ nhớ cục bộ
@@ -363,12 +438,16 @@ function initHighlightSystem() {
         saveNoteBtn.addEventListener('click', function() {
             const noteContent = document.getElementById('noteContent');
             const comment = noteContent ? noteContent.value.trim() : '';
-            if (!curSelectedText) return;
+            
+            if (!curSelectedText) {
+                alert('Chưa có văn bản nào được chọn!');
+                return;
+            }
 
             notes.push({
                 id: Date.now(),
                 text: curSelectedText,
-                comment: comment,
+                comment: comment || '(Không có ghi chú)',
                 color: curSelectedColor,
                 block: curBlockIdx,
                 time: new Date().toLocaleString('vi-VN')
@@ -376,24 +455,42 @@ function initHighlightSystem() {
 
             localStorage.setItem('studyNotes_v5', JSON.stringify(notes));
             notePopup.style.display = 'none';
+            isPopupVisible = false;
             window.getSelection().removeAllRanges();
-            alert('Đã lưu tri thức trích xuất thành công! Hãy sang Tab 3 để xem nhật ký.');
+            alert('✅ Đã lưu ghi chú thành công! Hãy sang Tab 3 để xem nhật ký.');
         });
     }
 
+    // Đóng popup
     const closePopupBtn = document.getElementById('closePopupBtn');
     if (closePopupBtn) {
-        closePopupBtn.addEventListener('click', () => {
+        closePopupBtn.addEventListener('click', function() {
             notePopup.style.display = 'none';
+            isPopupVisible = false;
         });
     }
 
-    // Tự động ẩn popup nếu click chuột ra ngoài vùng trống bài học (SỬA ĐỒNG BỘ ĐIỀU KIỆN CONTAINER)
+    // Đóng popup khi click ra ngoài
     document.addEventListener('mousedown', function(e) {
-        if (notePopup.style.display === 'block' && !notePopup.contains(e.target) && !e.target.closest('#originalContainer')) {
-            notePopup.style.display = 'none';
+        if (isPopupVisible && !notePopup.contains(e.target)) {
+            // Kiểm tra xem click có phải là đang bôi đen văn bản không
+            const selection = window.getSelection();
+            if (selection.toString().trim().length < 2) {
+                notePopup.style.display = 'none';
+                isPopupVisible = false;
+            }
         }
     });
+
+    // Đóng popup khi nhấn ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isPopupVisible) {
+            notePopup.style.display = 'none';
+            isPopupVisible = false;
+        }
+    });
+
+    console.log('✅ Hệ thống Highlight đã được khởi tạo thành công!');
 }
 
 function renderNotes() {
