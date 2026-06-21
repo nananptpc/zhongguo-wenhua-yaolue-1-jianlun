@@ -121,6 +121,23 @@
         <button id="saveNoteBtn">💾 Lưu ghi chú</button>
     </div>
 </div>
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn">📂 HỌC LIỆU ĐÃ NẠP 📑</button>
+
+<div class="progress-sidebar" id="progressSidebar">
+    <h3 style="margin-top: 0; border-bottom: 2px solid #e3a6b2; padding-bottom: 0.5rem; color: #4d2d35;">📚 Kho Tiến Trình</h3>
+    
+    <div style="font-size: 0.82rem; color: #8c5863; font-style: italic; margin-bottom: 0.5rem;">
+        Hệ thống tự động đồng bộ. Click vào dòng dưới để khôi phục bài học dở dang ngay lập tức.
+    </div>
+
+    <div style="font-weight: bold; font-size: 0.9rem; margin-top: 0.5rem;">📄 Học liệu (data.csv):</div>
+    <div id="historyDocsList" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 200px; overflow-y: auto;"></div>
+
+    <div style="font-weight: bold; font-size: 0.9rem; margin-top: 0.8rem;">📝 Trắc nghiệm (quiz.csv):</div>
+    <div id="historyQuizList" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 200px; overflow-y: auto;"></div>
+
+    <button id="clearAllCacheBtn" style="margin-top: auto; background-color: #bd4f60; font-size: 0.8rem; padding: 0.4rem;">🗑 Xóa toàn bộ bộ nhớ</button>
+</div>
 
 <script src="script.js"></script>
 </body>
