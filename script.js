@@ -1,5 +1,5 @@
 // ==========================================================================
-// BỘ BA ENGINE LƯU TRỮ ĐA TIẾN TRÌNH KHÉP KÍN (BẢN SỬA LỖI MAX-WIDTH POPUP)
+// BỘ BA ENGINE LƯU TRỮ ĐA TIẾN TRÌNH KHÉP KÍN (BẢN SỬA LỖI ĐỘNG BÔI ĐEN HIGHLIGHT)
 // ==========================================================================
 let quizQuestions = [];
 let userAnswers = [];
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 3. Xử lý sự kiện nạp 3 cổng file dữ liệu độc lập
+    // 3. Xử lý sự kiện nạp file dữ liệu độc lập
     const csvDocInput = document.getElementById('csvDocInput');
     if (csvDocInput) {
         csvDocInput.addEventListener('change', function(e) {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Khởi động các module độc lập
+    // Khởi động các Module lõi
     autoLoadSavedProgress();
     initHighlightSystem();
     initQuizEngine();
@@ -176,7 +176,7 @@ function renderSidebarLists() {
         item.className = `history-item ${name === activeTermName ? 'active-history' : ''}`;
         item.innerHTML = `📚 ${name}`;
         item.addEventListener('click', () => {
-            activeTermName = name; localStorage.setItem('activeTermName_v5', activeTermName);
+            activeTermName = name; localStorage.setItem('termVault_v5', JSON.stringify(termVault));
             parseTermCSV(termVault[name]); renderSidebarLists();
             const termStatus = document.getElementById('termStatus');
             if (termStatus) termStatus.innerText = `✅ Đang chạy: ${name}`;
@@ -207,7 +207,7 @@ function renderSidebarLists() {
     });
 }
 
-// BỘ GIẢI MÃ CHUỖI CSV PHẲNG
+// BỘ GIẢI MÃ CHUỖI CSV
 function parseCSVLine(text) {
     let lines = text.split(/\r\n|\n/);
     return lines.map(line => {
@@ -271,7 +271,7 @@ function parseDocumentCSV(csvText) {
     summaryContainer.firstChild.innerHTML += '</div>';
 }
 
-// BÚNG ĐIỀU KHIỂN THUẬT NGỮ CHUẨN 2 CỘT (TAB 4)
+// BÚNG ĐIỀU KHIỂN THUẬT NGỮ (TAB 4)
 function parseTermCSV(csvText) {
     const rows = parseCSVLine(csvText);
     const termsContainer = document.getElementById('termsContainer');
@@ -281,7 +281,7 @@ function parseTermCSV(csvText) {
     let count = 0;
 
     rows.forEach((row, idx) => {
-        if (idx === 0) return; // Bỏ qua tiêu đề
+        if (idx === 0) return;
         let zh = row[0] ? row[0].trim() : ''; 
         let vi = row[1] ? row[1].trim() : '';
         if (zh && vi) {
@@ -295,16 +295,16 @@ function parseTermCSV(csvText) {
     termsContainer.firstChild.innerHTML += '</div>';
 }
 
-// BÚNG ĐIỀU KHIỂN TRẮC NGHIỆM ĐÁP ÁN EXCEL HỆ ĐẾM 1-4
+// BÚNG ĐIỀU KHIỂN TRẮC NGHIỆM CHUẨN ĐÚNG HỆ ĐẾM EXCEL 1-4
 function parseQuizCSV(csvText) {
     const rows = parseCSVLine(csvText);
     quizQuestions = [];
     
     rows.forEach((row, idx) => {
-        if (idx === 0) return; // Bỏ qua tiêu đề
+        if (idx === 0) return;
         if (row.length >= 6) {
             let rawCorrect = parseInt(row[5]);
-            let finalCorrect = !isNaN(rawCorrect) ? (rawCorrect - 1) : 0; // Trừ 1 đơn vị khớp mảng lập trình
+            let finalCorrect = !isNaN(rawCorrect) ? (rawCorrect - 1) : 0;
 
             quizQuestions.push({ 
                 zhQ: row[0], 
@@ -321,39 +321,35 @@ function parseQuizCSV(csvText) {
     updateQuizProgress();
 }
 
-// KHỞI TẠO TÍNH NĂNG BÔI ĐEN VĂN BẢN (KỸ THUẬT ỦY QUYỀN SỰ KIỆN TĨNH - ÉP KIỂU CSS KIÊN CỐ)
+// KHỞI TẠO TÍNH NĂNG BÔI ĐEN VĂN BẢN (SỬ SỬA LỖI ĐIỀU KIỆN ĐÍCH VÀ COORD POPUP)
 function initHighlightSystem() {
     const notePopup = document.getElementById('notePopup');
     if (!notePopup) return;
 
-    // Lắng nghe chuột từ cấp document cao nhất để chống hiện tượng lọt lưới sự kiện thẻ động
+    // Lắng nghe chuột thả từ cấp document để bắt trọn văn bản động
     document.addEventListener('mouseup', function(e) {
-        if (notePopup.contains(e.target)) return; // Nếu tương tác trong nội dung popup thì bỏ qua
+        // Nếu click bên trong nội dung Popup thì không xử lý lại
+        if (notePopup.contains(e.target)) return;
 
         const selection = window.getSelection();
         const txt = selection.toString().trim();
         
-        // Khóa điều kiện nghiêm ngặt: Chỉ hiện nếu chọn từ 2 chữ trở lên và phải nằm trong Tab Nguyên văn
-        if (txt.length < 2 || !e.target.closest('#tab-original')) {
+        // SỬA LỖI: Chuyển đổi kiểm tra từ thẻ cha #tab-original sang #originalContainer thực tế
+        if (txt.length < 2 || !e.target.closest('#originalContainer')) {
             return;
         }
 
         curSelectedText = txt;
 
-        // Truy tìm chính xác số phân đoạn khối bài đọc gốc
+        // Truy tìm phân đoạn khối bài đọc gốc để lấy index dòng dữ liệu
         let parent = selection.anchorNode.parentNode;
         while (parent && parent !== document.body && !parent.classList.contains('bilingual-block')) {
             parent = parent.parentNode;
         }
         curBlockIdx = (parent && parent.classList.contains('bilingual-block')) ? parent.dataset.block : "N/A";
 
-        // PHƯƠNG ÁN ÉP KIỂU BẢO VỆ TUYỆT ĐỐI: Phá vỡ lỗi giới hạn max-width: 45px gõ nhầm ở CSS cũ
-        notePopup.style.setProperty('display', 'block', 'important');
-        notePopup.style.setProperty('max-width', '420px', 'important');
-        notePopup.style.setProperty('min-width', '320px', 'important');
-        notePopup.style.setProperty('z-index', '99999', 'important');
-        
-        // Căn tọa độ chính xác bám theo chuột
+        // Tính toán tọa độ hiển thị mượt mà
+        notePopup.style.display = 'block';
         notePopup.style.left = Math.min(e.clientX, window.innerWidth - 350) + 'px';
         notePopup.style.top = (e.clientY + window.scrollY + 15) + 'px';
 
@@ -361,6 +357,7 @@ function initHighlightSystem() {
         if (noteContent) noteContent.value = '';
     });
 
+    // Sự kiện lưu ghi chú trích xuất vào bộ nhớ cục bộ
     const saveNoteBtn = document.getElementById('saveNoteBtn');
     if (saveNoteBtn) {
         saveNoteBtn.addEventListener('click', function() {
@@ -391,9 +388,9 @@ function initHighlightSystem() {
         });
     }
 
-    // Tự động ẩn nếu bấm trượt ra ngoài vùng học liệu
+    // Tự động ẩn popup nếu click chuột ra ngoài vùng trống bài học (SỬA ĐỒNG BỘ ĐIỀU KIỆN CONTAINER)
     document.addEventListener('mousedown', function(e) {
-        if (notePopup.style.display === 'block' && !notePopup.contains(e.target) && !e.target.closest('#tab-original')) {
+        if (notePopup.style.display === 'block' && !notePopup.contains(e.target) && !e.target.closest('#originalContainer')) {
             notePopup.style.display = 'none';
         }
     });
@@ -502,7 +499,6 @@ function updateQuizProgress() {
     progressEl.innerText = `Đã trả lời: ${answered}/${quizQuestions.length}`; 
 }
 
-// NỘP BÀI CHẤM ĐIỂM
 function submitQuizScore() {
     if (quizQuestions.length === 0) return; let score = 0;
     const list = document.getElementById('answers-list'); if (!list) return;
@@ -534,6 +530,7 @@ function revealQuizAnswers() {
     });
 }
 
+// THỐNG KÊ ĐỒ THỊ LỊCH SỬ
 function renderQuizChart() {
     const rows = document.getElementById('chartRows'); if (!rows) return; rows.innerHTML = '';
     if (scoreHistory.length === 0) { rows.innerHTML = '<p style="font-size:0.88rem; font-style:italic;">Chưa có dữ liệu thống kê điểm số.</p>'; return; }
