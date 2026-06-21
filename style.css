@@ -29,8 +29,17 @@ body {
 }
 
 /* ==========================================================================
-   2. TIÊU ĐỀ PHÂN CẤP VÀ HỆ THỐNG TABS ĐIỀU HƯỚNG
+   2. TIÊU ĐỀ & HEADER
    ========================================================================== */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
 h1 {
     font-size: 2.2rem;
     font-weight: 700;
@@ -64,6 +73,83 @@ h3 {
     margin-bottom: 2rem;
 }
 
+.theme-toggle {
+    background: #f2dae0;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    font-family: 'American Typewriter', serif;
+    font-weight: bold;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #54333a;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.theme-toggle:hover {
+    background: #ebd0d7;
+}
+
+/* ==========================================================================
+   3. IMPORT GRID
+   ========================================================================== */
+.import-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.import-box {
+    padding: 1.2rem;
+    background: rgba(245, 211, 220, 0.25);
+    border: 2px dashed #e3a6b2;
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.import-box label {
+    font-family: 'American Typewriter', serif;
+    font-weight: bold;
+    color: #54333a;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.import-box input[type="file"] {
+    font-size: 0.8rem;
+    color: #73464f;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.import-box span {
+    display: block;
+    font-size: 0.8rem;
+    color: #8c5863;
+    margin-top: 0.3rem;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.import-hint {
+    font-size: 0.75rem;
+    color: #a6737f;
+    margin-top: 0.5rem;
+    border-top: 1px dashed #e3a6b2;
+    padding-top: 0.3rem;
+    text-align: left;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   4. TABS
+   ========================================================================== */
 .tab-bar {
     display: flex;
     gap: 0.4rem;
@@ -112,54 +198,14 @@ h3 {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ==========================================================================
-   3. KHU VỰC IMPORT LƯỚI 3 CỔNG TÁCH BIỆT (IMPORT GRID)
-   ========================================================================== */
-.import-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.import-box {
-    padding: 1.2rem;
-    background: rgba(245, 211, 220, 0.25);
-    border: 2px dashed #e3a6b2;
-    border-radius: 10px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.import-box label {
-    font-family: 'American Typewriter', serif;
-    font-weight: bold;
-    color: #54333a;
-    cursor: pointer;
-    display: block;
-    margin-bottom: 0.4rem;
-}
-
-.import-box input[type="file"] {
-    font-size: 0.8rem;
-    color: #73464f;
-    max-width: 100%;
-    margin: 0 auto;
-}
-
-.import-box span {
-    display: block;
-    font-size: 0.8rem;
+.tab-hint {
     color: #8c5863;
-    margin-top: 0.3rem;
-    font-style: italic;
-    font-weight: bold;
+    font-size: 0.88rem;
+    margin: 0.4rem 0 1.2rem 0;
 }
 
 /* ==========================================================================
-   4. KHỐI SONG NGỮ VÀ THẺ THUẬT NGỮ CỐ ĐỊNH (TERMS)
+   5. BILINGUAL BLOCKS & TERMS
    ========================================================================== */
 .card {
     background-color: #fffcfd;
@@ -181,6 +227,7 @@ h3 {
     border-radius: 0 10px 10px 0;
     position: relative;
     transition: background 0.2s ease;
+    cursor: text;
 }
 
 .bilingual-block:hover {
@@ -239,7 +286,7 @@ h3 {
 }
 
 /* ==========================================================================
-   5. POPUP GHI CHÚ - ĐÃ SỬA LỖI VÀ TỐI ƯU HIỂN THỊ
+   6. POPUP GHI CHÚ
    ========================================================================== */
 .note-popup {
     position: fixed;
@@ -374,7 +421,324 @@ h3 {
 }
 
 /* ==========================================================================
-   6. THANH BAR GÓC ĐIỀU HƯỚNG TIẾN TRÌNH TRƯỢT (SIDEBAR)
+   7. NOTES - VIEW CONTROLS & BULK ACTIONS
+   ========================================================================== */
+.notes-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    align-items: center;
+    padding: 0.5rem;
+    background: rgba(245, 211, 220, 0.15);
+    border-radius: 8px;
+    border: 1px solid #f2dae0;
+}
+
+.notes-toolbar .label {
+    font-weight: bold;
+    color: #4d2d35;
+    font-size: 0.85rem;
+}
+
+.view-btn {
+    background: #f2dae0;
+    color: #54333a;
+    border: none;
+    padding: 0.3rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'American Typewriter', serif;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.view-btn:hover {
+    background: #ebd0d7;
+}
+
+.view-btn.active {
+    background: #e3a6b2;
+    color: white;
+}
+
+.bulk-btn {
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'American Typewriter', serif;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.bulk-btn-primary {
+    background: #f2dae0;
+    color: #54333a;
+}
+
+.bulk-btn-primary:hover {
+    background: #ebd0d7;
+}
+
+.bulk-btn-danger {
+    background: #bd4f60;
+    color: white;
+}
+
+.bulk-btn-danger:hover {
+    background: #a84252;
+}
+
+.bulk-btn-success {
+    background: #4a7a6b;
+    color: white;
+}
+
+.bulk-btn-success:hover {
+    background: #3d6659;
+}
+
+.bulk-btn-secondary {
+    background: #7a5a6b;
+    color: white;
+}
+
+.bulk-btn-secondary:hover {
+    background: #694d5c;
+}
+
+/* Note items */
+.note-item {
+    position: relative;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 1px solid #f2dae0;
+    border-radius: 8px;
+    background: #fffcfd;
+    transition: all 0.2s;
+}
+
+.note-item:hover {
+    box-shadow: 0 2px 8px rgba(230, 185, 195, 0.2);
+}
+
+.note-checkbox {
+    margin-right: 0.5rem;
+    cursor: pointer;
+    accent-color: #e3a6b2;
+}
+
+.note-meta {
+    font-size: 0.75rem;
+    color: #8c6870;
+    margin-top: 0.3rem;
+    border-top: 1px dashed #f2dae0;
+    padding-top: 0.3rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+/* Grid view */
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.notes-grid .note-item {
+    margin: 0;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* ==========================================================================
+   8. QUIZ
+   ========================================================================== */
+.quiz-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.quiz-progress {
+    font-size: 0.92rem;
+    font-weight: bold;
+    color: #704b52;
+    margin-left: auto;
+}
+
+.section-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.section-nav button {
+    background-color: #fae1e6;
+    color: #5c353d;
+    border: 1px solid #f2dae0;
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+    font-family: 'American Typewriter', serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.section-nav button:hover {
+    background: #f5d3dc;
+}
+
+.section-nav button.active-sec {
+    background-color: #e3a6b2;
+    color: white;
+    border-color: #b86e7c;
+}
+
+.quiz-item {
+    background-color: #fffcfd;
+    border: 1px solid #f5dee3;
+    border-radius: 10px;
+    margin: 1rem 0;
+    padding: 1.4rem;
+}
+
+.quiz-question {
+    font-weight: bold;
+    color: #3b2226;
+    margin-bottom: 0.8rem;
+}
+
+.quiz-options {
+    list-style: none;
+    padding-left: 0.2rem;
+}
+
+.quiz-options li {
+    margin: 0.5rem 0;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.quiz-options li:hover {
+    background: rgba(227, 166, 178, 0.15);
+    border-color: #f2dae0;
+}
+
+.quiz-options li.selected {
+    background-color: #fae1e6;
+    font-weight: bold;
+    border-color: #e3a6b2;
+}
+
+.quiz-options li.correct-answer {
+    background-color: #d2ebd2;
+    color: #1e421e;
+    font-weight: bold;
+    border-color: #8cb88c;
+}
+
+.quiz-options li.wrong-answer {
+    background-color: #fcdcdb;
+    color: #6e201d;
+    border-color: #dba9a8;
+}
+
+.btn-primary {
+    background-color: #bd596d !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background-color: #a84252 !important;
+}
+
+.btn-secondary {
+    background-color: #ebd5da !important;
+    color: #5c353d !important;
+}
+
+.btn-secondary:hover {
+    background-color: #e0c8cd !important;
+}
+
+.btn-danger {
+    background-color: #bd4f60 !important;
+    color: white !important;
+}
+
+.btn-danger:hover {
+    background-color: #a84252 !important;
+}
+
+/* ==========================================================================
+   9. CHART
+   ========================================================================== */
+.chart-container {
+    background-color: #fffcfd;
+    border: 1px solid #f2dae0;
+    border-radius: 12px;
+    padding: 1.8rem;
+    margin-top: 2rem;
+}
+
+.chart-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.6rem 0;
+}
+
+.chart-label { 
+    min-width: 80px; 
+    font-size: 0.88rem; 
+}
+
+.chart-bar { 
+    flex: 1; 
+    height: 22px; 
+    background-color: #fae6ea; 
+    border-radius: 4px; 
+    overflow: hidden; 
+}
+
+.chart-bar-fill { 
+    height: 100%; 
+    background-color: #e3a6b2; 
+    transition: width 0.5s ease-in-out; 
+}
+
+.chart-value { 
+    min-width: 50px; 
+    text-align: right; 
+    font-weight: bold; 
+    font-size: 0.88rem; 
+}
+
+.avg-score {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #4d2d35;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #fae6ea;
+    border-radius: 6px;
+}
+
+/* ==========================================================================
+   10. SIDEBAR
    ========================================================================== */
 .progress-sidebar {
     position: fixed;
@@ -396,6 +760,20 @@ h3 {
 
 .progress-sidebar.open {
     right: 0;
+}
+
+.progress-sidebar h3 {
+    margin-top: 0;
+    border-bottom: 2px solid #e3a6b2;
+    padding-bottom: 0.5rem;
+    color: #4d2d35;
+}
+
+.sidebar-sub {
+    font-size: 0.78rem;
+    color: #8c5863;
+    font-style: italic;
+    margin-bottom: 0.5rem;
 }
 
 .sidebar-toggle-btn {
@@ -468,148 +846,8 @@ h3 {
 }
 
 /* ==========================================================================
-   7. HỆ THỐNG ENGINE QUIZ TRẮC NGHIỆM ĐỒ THỊ
+   11. FOOTER
    ========================================================================== */
-button:not(.tab-btn):not(.sidebar-toggle-btn):not(#clearAllCacheBtn):not(.popup-actions button) {
-    background-color: #e3a6b2;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 0.5rem 1.2rem;
-    font-family: 'American Typewriter', serif;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-size: 0.88rem;
-}
-
-button:not(.tab-btn):not(.sidebar-toggle-btn):not(#clearAllCacheBtn):not(.popup-actions button):hover {
-    background-color: #d4929f;
-}
-
-.quiz-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.quiz-progress {
-    font-size: 0.92rem;
-    font-weight: bold;
-    color: #704b52;
-    margin-left: auto;
-}
-
-.section-nav {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.section-nav button {
-    background-color: #fae1e6;
-    color: #5c353d;
-    border: 1px solid #f2dae0;
-}
-
-.section-nav button.active-sec {
-    background-color: #e3a6b2;
-    color: white;
-}
-
-.quiz-item {
-    background-color: #fffcfd;
-    border: 1px solid #f5dee3;
-    border-radius: 10px;
-    margin: 1rem 0;
-    padding: 1.4rem;
-}
-
-.quiz-question {
-    font-weight: bold;
-    color: #3b2226;
-    margin-bottom: 0.8rem;
-}
-
-.quiz-options {
-    list-style: none;
-    padding-left: 0.2rem;
-}
-
-.quiz-options li {
-    margin: 0.5rem 0;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-}
-
-.quiz-options li:hover {
-    background: rgba(227, 166, 178, 0.15);
-}
-
-.quiz-options li.selected {
-    background-color: #fae1e6;
-    font-weight: bold;
-}
-
-.quiz-options li.correct-answer {
-    background-color: #d2ebd2;
-    color: #1e421e;
-    font-weight: bold;
-}
-
-.quiz-options li.wrong-answer {
-    background-color: #fcdcdb;
-    color: #6e201d;
-}
-
-.chart-container {
-    background-color: #fffcfd;
-    border: 1px solid #f2dae0;
-    border-radius: 12px;
-    padding: 1.8rem;
-    margin-top: 2rem;
-}
-
-.chart-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 0.6rem 0;
-}
-
-.chart-label { 
-    min-width: 80px; 
-    font-size: 0.88rem; 
-}
-
-.chart-bar { 
-    flex: 1; 
-    height: 22px; 
-    background-color: #fae6ea; 
-    border-radius: 4px; 
-    overflow: hidden; 
-}
-
-.chart-bar-fill { 
-    height: 100%; 
-    background-color: #e3a6b2; 
-    transition: width 0.5s ease-in-out; 
-}
-
-.chart-value { 
-    min-width: 50px; 
-    text-align: right; 
-    font-weight: bold; 
-    font-size: 0.88rem; 
-}
-
 .footer-note { 
     font-size: 0.85rem; 
     color: #7d545e; 
@@ -622,7 +860,27 @@ button:not(.tab-btn):not(.sidebar-toggle-btn):not(#clearAllCacheBtn):not(.popup-
 }
 
 /* ==========================================================================
-   8. CHẾ ĐỘ NỀN TỐI ĐÊM HOÀI CỔ CHUYÊN SÂU (DARK MODE)
+   12. BUTTONS (GLOBAL)
+   ========================================================================== */
+button:not(.tab-btn):not(.sidebar-toggle-btn):not(#clearAllCacheBtn):not(.popup-actions button):not(.view-btn):not(.bulk-btn):not(.section-nav button) {
+    background-color: #e3a6b2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.2rem;
+    font-family: 'American Typewriter', serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.88rem;
+}
+
+button:not(.tab-btn):not(.sidebar-toggle-btn):not(#clearAllCacheBtn):not(.popup-actions button):not(.view-btn):not(.bulk-btn):not(.section-nav button):hover {
+    background-color: #d4929f;
+}
+
+/* ==========================================================================
+   13. DARK MODE
    ========================================================================== */
 body.dark { 
     background-color: #241a1c; 
@@ -673,7 +931,7 @@ body.dark .tab-btn.active {
     color: #ffffff; 
 }
 
-body.dark button:not(.tab-btn):not(.sidebar-toggle-btn):not(#clearAllCacheBtn):not(.popup-actions button) { 
+body.dark button:not(.tab-btn):not(.sidebar-toggle-btn):not(#clearAllCacheBtn):not(.popup-actions button):not(.view-btn):not(.bulk-btn):not(.section-nav button) { 
     background-color: #593c41; 
 }
 
@@ -697,7 +955,6 @@ body.dark .sidebar-list {
     border-color: #4f3b3e; 
 }
 
-/* Dark mode cho popup */
 body.dark .note-popup {
     background-color: #2e2123;
     border-color: #593c41;
@@ -746,8 +1003,90 @@ body.dark .note-popup .popup-close:hover {
     color: #fce6ea;
 }
 
+body.dark .note-item {
+    background: #2e2123;
+    border-color: #4f3b3e;
+}
+
+body.dark .notes-toolbar {
+    background: rgba(82, 58, 63, 0.2);
+    border-color: #4f3b3e;
+}
+
+body.dark .view-btn {
+    background: #3d2b2e;
+    color: #b5989d;
+}
+
+body.dark .view-btn:hover {
+    background: #4f3b3e;
+}
+
+body.dark .view-btn.active {
+    background: #593c41;
+    color: white;
+}
+
+body.dark .bulk-btn-primary {
+    background: #3d2b2e;
+    color: #b5989d;
+}
+
+body.dark .bulk-btn-primary:hover {
+    background: #4f3b3e;
+}
+
+body.dark .chart-container {
+    background: #2e2123;
+    border-color: #4f3b3e;
+}
+
+body.dark .chart-bar {
+    background: #3d2b2e;
+}
+
+body.dark .avg-score {
+    background: #3d2b2e;
+    color: #fce6ea;
+}
+
+body.dark .quiz-options li:hover {
+    background: rgba(176, 125, 134, 0.2);
+}
+
+body.dark .quiz-options li.selected {
+    background: #3d2b2e;
+    border-color: #593c41;
+}
+
+body.dark .quiz-options li.correct-answer {
+    background: #1e3d1e;
+    color: #8cb88c;
+}
+
+body.dark .quiz-options li.wrong-answer {
+    background: #3d1e1e;
+    color: #dba9a8;
+}
+
+body.dark .section-nav button {
+    background: #3d2b2e;
+    color: #b5989d;
+    border-color: #4f3b3e;
+}
+
+body.dark .section-nav button:hover {
+    background: #4f3b3e;
+}
+
+body.dark .section-nav button.active-sec {
+    background: #593c41;
+    color: white;
+    border-color: #b07d86;
+}
+
 /* ==========================================================================
-   9. RESPONSIVE - HIỂN THỊ TỐT TRÊN MỌI THIẾT BỊ
+   14. RESPONSIVE
    ========================================================================== */
 @media (max-width: 768px) {
     body {
@@ -766,6 +1105,11 @@ body.dark .note-popup .popup-close:hover {
         font-size: 1.2rem;
     }
     
+    .header-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
     .tab-btn {
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
@@ -775,6 +1119,8 @@ body.dark .note-popup .popup-close:hover {
         min-width: 280px;
         max-width: 340px;
         padding: 1rem;
+        left: 10px !important;
+        right: 10px !important;
     }
     
     .bilingual-block {
@@ -796,22 +1142,17 @@ body.dark .note-popup .popup-close:hover {
         margin-left: 0;
         text-align: center;
     }
-}
-
-@media (max-width: 480px) {
-    .note-popup {
-        min-width: 240px;
-        max-width: 280px;
-        padding: 0.8rem;
-        left: 10px !important;
-        right: 10px !important;
+    
+    .notes-toolbar {
+        flex-direction: column;
+        align-items: stretch;
     }
     
-    .note-popup textarea {
-        min-height: 60px;
+    .notes-toolbar .label {
+        text-align: center;
     }
     
-    .import-grid {
+    .notes-grid {
         grid-template-columns: 1fr;
     }
     
@@ -823,5 +1164,21 @@ body.dark .note-popup .popup-close:hover {
     .chart-label {
         min-width: 60px;
         font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .import-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .note-popup {
+        min-width: 240px;
+        max-width: 280px;
+        padding: 0.8rem;
+    }
+    
+    .note-popup textarea {
+        min-height: 60px;
     }
 }
