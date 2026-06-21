@@ -428,7 +428,6 @@ function parseCSVLine(text) {
     }).filter(row => row.length > 0 && row.some(cell => cell !== ''));
 }
 
-// ĐÃ LƯỢC BỎ HOÀN TOÀN PHẦN RENDER TRÍCH YẾU (SUM UP) THỪA
 function parseDocumentCSV(csvText) {
     const rows = parseCSVLine(csvText);
     const container = document.getElementById('originalContainer');
@@ -537,7 +536,7 @@ function shuffleQuestions() {
     });
 }
 
-// ===== 10. HỆ THỐNG HIGHLIGHT & ĐỊNH VỊ CỐ ĐỊNH BÊN PHẢI CHỐNG LỖI ZOOM MÀN HÌNH =====
+// ===== 10. SỬA LỖI ĐỊNH VỊ POPUP TUYỆT ĐỐI THEO CHUỘT (CHỐNG LỆCH ĐOẠN / ZOOM 80%) =====
 function initHighlightSystem() {
     const popup = document.getElementById('notePopup');
     if (!popup) return;
@@ -545,7 +544,6 @@ function initHighlightSystem() {
     let isPopupOpen = false;
     let selectedColor = 'yellow'; 
 
-    // Bộ lắng nghe sự kiện click chọn màu thẻ học nâng cấp
     const colorSpans = document.querySelectorAll('#colorOptions span');
     colorSpans.forEach(span => {
         span.addEventListener('click', function() {
@@ -555,7 +553,7 @@ function initHighlightSystem() {
         });
     });
 
-    function showPopup(text, blockIdx, parentBlock) {
+    function showPopup(text, blockIdx, rect, parentBlock) {
         const preview = document.getElementById('selectedTextPreview');
         if (preview) preview.textContent = text.length > 100 ? text.substring(0, 100) + '...' : text;
         
@@ -565,26 +563,27 @@ function initHighlightSystem() {
         const textarea = document.getElementById('noteContent');
         if (textarea) textarea.value = '';
 
-        // Reset về màu vàng mặc định mỗi lần mở popup mới
         colorSpans.forEach(s => s.classList.remove('active'));
         const defaultSpan = document.querySelector('#colorOptions span[data-color="yellow"]');
         if (defaultSpan) defaultSpan.classList.add('active');
         selectedColor = 'yellow';
 
+        // Lấy bounding box của container chính làm điểm mốc tính toán
         const tabOriginal = document.getElementById('tab-original');
         const tabRect = tabOriginal.getBoundingClientRect();
 
-        if (parentBlock && parentBlock !== 'N/A') {
+        if (parentBlock) {
             const blockRect = parentBlock.getBoundingClientRect();
-
-            // Đặt định vị cố định sang hẳn bên phải khối text, cách ra 40px cố định
-            let left = blockRect.right - tabRect.left + 40;
+            
+            // FIX TRIỆT ĐỂ: Tính tọa độ Left và Top dựa trên vị trí chính xác của khối text so với khung cha
+            let left = blockRect.right - tabRect.left + 35;
             let top = blockRect.top - tabRect.top;
 
             const popupWidth = 340;
+            // Nếu thu hẹp màn hình hoặc bị tràn cạnh phải do zoom, lật popup xuống dưới chân chữ bôi đen
             if (left + popupWidth > tabRect.width) {
-                left = tabRect.width - popupWidth - 20;
-                top = blockRect.bottom - tabRect.top + 10;
+                left = Math.max(10, rect.left - tabRect.left);
+                top = rect.bottom - tabRect.top + 10;
             }
 
             popup.style.display = 'block';
@@ -638,7 +637,8 @@ function initHighlightSystem() {
             parent = parent.parentNode;
         }
 
-        showPopup(text, blockIdx, parentBlock);
+        const rect = selection.getRangeAt(0).getBoundingClientRect();
+        showPopup(text, blockIdx, rect, parentBlock);
     });
 
     document.addEventListener('mousedown', function(e) {
@@ -672,7 +672,7 @@ function initHighlightSystem() {
             id: Date.now(),
             text: selectedText,
             comment: comment || '(Không có ghi chú)',
-            color: selectedColor, // Đồng bộ màu sắc đã chọn
+            color: selectedColor,
             block: selectedBlock,
             time: new Date().toLocaleString('vi-VN')
         });
@@ -708,7 +708,6 @@ function createNoteItem(note) {
     const div = document.createElement('div');
     div.className = 'note-item';
     
-    // Bản đồ gán màu sắc nhẹ nhàng
     const colorMap = {
         'yellow': '#fffdf2',
         'green': '#f3faf5',
