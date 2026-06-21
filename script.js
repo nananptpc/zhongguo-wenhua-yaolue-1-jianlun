@@ -1,5 +1,5 @@
 // ==========================================================================
-// BỘ BA ENGINE LƯU TRỮ ĐA TIẾN TRÌNH KHÉP KÍN (MÔ HÌNH CHUẨN ĐA CẤU TRÚC MỚI)
+// BỘ BA ENGINE LƯU TRỮ ĐA TIẾN TRÌNH KHÉP KÍN (BẢN SỬA LỖI ĐÓNG BĂNG POPUP)
 // ==========================================================================
 let quizQuestions = [];
 let userAnswers = [];
@@ -37,89 +37,115 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 2. Chế độ ban đêm trầm lắng (Dark Mode) và Thanh Sidebar
-    document.getElementById('themeToggle').addEventListener('click', function() {
-        document.body.classList.toggle('dark');
-        this.textContent = document.body.classList.contains('dark') ? '☀️ Light / 亮色' : '🌙 Dark / 暗黑';
-    });
+    // 2. Chế độ ban đêm và Thanh Sidebar (Kiểm tra an toàn)
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark');
+            this.textContent = document.body.classList.contains('dark') ? '☀️ Light / 亮色' : '🌙 Dark / 暗黑';
+        });
+    }
 
     const sidebar = document.getElementById('progressSidebar');
-    document.getElementById('sidebarToggleBtn').addEventListener('click', function() {
-        sidebar.classList.toggle('open');
-    });
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    if (sidebarToggleBtn && sidebar) {
+        sidebarToggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+        });
+    }
 
-    // 3. Xử lý sự kiện nạp 3 file dữ liệu hoàn toàn độc lập
-    document.getElementById('csvDocInput').addEventListener('change', function(e) {
-        const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            docVault[file.name] = evt.target.result;
-            activeDocName = file.name;
-            localStorage.setItem('docVault_v5', JSON.stringify(docVault));
-            localStorage.setItem('activeDocName_v5', activeDocName);
-            parseDocumentCSV(evt.target.result);
-            renderSidebarLists();
-            document.getElementById('docStatus').innerText = `✅ Đang chạy: ${file.name}`;
-        };
-        reader.readAsText(file, 'UTF-8');
-    });
+    // 3. Xử lý sự kiện nạp file độc lập (Có khối bảo vệ bảo mật)
+    const csvDocInput = document.getElementById('csvDocInput');
+    if (csvDocInput) {
+        csvDocInput.addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                docVault[file.name] = evt.target.result;
+                activeDocName = file.name;
+                localStorage.setItem('docVault_v5', JSON.stringify(docVault));
+                localStorage.setItem('activeDocName_v5', activeDocName);
+                parseDocumentCSV(evt.target.result);
+                renderSidebarLists();
+                const docStatus = document.getElementById('docStatus');
+                if (docStatus) docStatus.innerText = `✅ Đang chạy: ${file.name}`;
+            };
+            reader.readAsText(file, 'UTF-8');
+        });
+    }
 
-    document.getElementById('csvTermInput').addEventListener('change', function(e) {
-        const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            termVault[file.name] = evt.target.result;
-            activeTermName = file.name;
-            localStorage.setItem('termVault_v5', JSON.stringify(termVault));
-            localStorage.setItem('activeTermName_v5', activeTermName);
-            parseTermCSV(evt.target.result);
-            renderSidebarLists();
-            document.getElementById('termStatus').innerText = `✅ Đang chạy: ${file.name}`;
-        };
-        reader.readAsText(file, 'UTF-8');
-    });
+    const csvTermInput = document.getElementById('csvTermInput');
+    if (csvTermInput) {
+        csvTermInput.addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                termVault[file.name] = evt.target.result;
+                activeTermName = file.name;
+                localStorage.setItem('termVault_v5', JSON.stringify(termVault));
+                localStorage.setItem('activeTermName_v5', activeTermName);
+                parseTermCSV(evt.target.result);
+                renderSidebarLists();
+                const termStatus = document.getElementById('termStatus');
+                if (termStatus) termStatus.innerText = `✅ Đang chạy: ${file.name}`;
+            };
+            reader.readAsText(file, 'UTF-8');
+        });
+    }
 
-    document.getElementById('csvQuizInput').addEventListener('change', function(e) {
-        const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            quizVault[file.name] = { csvText: evt.target.result, answers: [] };
-            activeQuizName = file.name;
-            localStorage.setItem('quizVault_v5', JSON.stringify(quizVault));
-            localStorage.setItem('activeQuizName_v5', activeQuizName);
-            parseQuizCSV(evt.target.result);
-            renderSidebarLists();
-            document.getElementById('quizStatus').innerText = `✅ Đang chạy: ${file.name}`;
-        };
-        reader.readAsText(file, 'UTF-8');
-    });
+    const csvQuizInput = document.getElementById('csvQuizInput');
+    if (csvQuizInput) {
+        csvQuizInput.addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                quizVault[file.name] = { csvText: evt.target.result, answers: [] };
+                activeQuizName = file.name;
+                localStorage.setItem('quizVault_v5', JSON.stringify(quizVault));
+                localStorage.setItem('activeQuizName_v5', activeQuizName);
+                parseQuizCSV(evt.target.result);
+                renderSidebarLists();
+                const quizStatus = document.getElementById('quizStatus');
+                if (quizStatus) quizStatus.innerText = `✅ Đang chạy: ${file.name}`;
+            };
+            reader.readAsText(file, 'UTF-8');
+        });
+    }
 
-    document.getElementById('clearAllCacheBtn').addEventListener('click', function() {
-        localStorage.clear();
-        alert('Đã xóa sạch bộ nhớ tạm của trình duyệt. Trang web sẽ khởi động lại!');
-        window.location.reload();
-    });
+    const clearAllCacheBtn = document.getElementById('clearAllCacheBtn');
+    if (clearAllCacheBtn) {
+        clearAllCacheBtn.addEventListener('click', function() {
+            localStorage.clear();
+            alert('Đã xóa sạch bộ nhớ tạm. Trang web sẽ tải lại!');
+            window.location.reload();
+        });
+    }
 
+    // Khởi động các module độc lập
     autoLoadSavedProgress();
     initHighlightSystem();
     initQuizEngine();
 });
 
+// KHÔI PHỤC TIẾN TRÌNH CŨ
 function autoLoadSavedProgress() {
     if (activeDocName && docVault[activeDocName]) {
         parseDocumentCSV(docVault[activeDocName]);
-        document.getElementById('docStatus').innerText = `✅ Khôi phục: ${activeDocName}`;
+        const docStatus = document.getElementById('docStatus');
+        if (docStatus) docStatus.innerText = `✅ Khôi phục: ${activeDocName}`;
     }
     if (activeTermName && termVault[activeTermName]) {
         parseTermCSV(termVault[activeTermName]);
-        document.getElementById('termStatus').innerText = `✅ Khôi phục: ${activeTermName}`;
+        const termStatus = document.getElementById('termStatus');
+        if (termStatus) termStatus.innerText = `✅ Khôi phục: ${activeTermName}`;
     }
     if (activeQuizName && quizVault[activeQuizName]) {
         parseQuizCSV(quizVault[activeQuizName].csvText);
         if (quizVault[activeQuizName].answers && quizVault[activeQuizName].answers.length > 0) {
             userAnswers = quizVault[activeQuizName].answers;
         }
-        document.getElementById('quizStatus').innerText = `✅ Khôi phục: ${activeQuizName}`;
+        const quizStatus = document.getElementById('quizStatus');
+        if (quizStatus) quizStatus.innerText = `✅ Khôi phục: ${activeQuizName}`;
     }
     renderSidebarLists();
 }
@@ -139,7 +165,8 @@ function renderSidebarLists() {
         item.addEventListener('click', () => {
             activeDocName = name; localStorage.setItem('activeDocName_v5', activeDocName);
             parseDocumentCSV(docVault[name]); renderSidebarLists();
-            document.getElementById('docStatus').innerText = `✅ Đang chạy: ${name}`;
+            const docStatus = document.getElementById('docStatus');
+            if (docStatus) docStatus.innerText = `✅ Đang chạy: ${name}`;
         });
         docList.appendChild(item);
     });
@@ -151,7 +178,8 @@ function renderSidebarLists() {
         item.addEventListener('click', () => {
             activeTermName = name; localStorage.setItem('activeTermName_v5', activeTermName);
             parseTermCSV(termVault[name]); renderSidebarLists();
-            document.getElementById('termStatus').innerText = `✅ Đang chạy: ${name}`;
+            const termStatus = document.getElementById('termStatus');
+            if (termStatus) termStatus.innerText = `✅ Đang chạy: ${name}`;
         });
         termList.appendChild(item);
     });
@@ -169,15 +197,17 @@ function renderSidebarLists() {
             parseQuizCSV(quizVault[name].csvText);
             if (quizVault[name].answers && quizVault[name].answers.length > 0) userAnswers = quizVault[name].answers;
             renderSidebarLists();
-            document.getElementById('quizStatus').innerText = `✅ Đang chạy: ${name}`;
-            document.getElementById('answer-section').style.display = 'none';
+            const quizStatus = document.getElementById('quizStatus');
+            if (quizStatus) quizStatus.innerText = `✅ Đang chạy: ${name}`;
+            const answerSec = document.getElementById('answer-section');
+            if (answerSec) answerSec.style.display = 'none';
             renderQuizSection(0); updateQuizProgress();
         });
         quizList.appendChild(item);
     });
 }
 
-// BỘ GIẢI MÃ CSV HỖ TRỢ NGOẶC KÉP PHỨC TẠP
+// BỘ GIẢI MÃ CHUỖI CSV PHẲNG
 function parseCSVLine(text) {
     let lines = text.split(/\r\n|\n/);
     return lines.map(line => {
@@ -192,7 +222,7 @@ function parseCSVLine(text) {
     }).filter(row => row.length > 0 && row.some(cell => cell !== ''));
 }
 
-// BÚNG DỮ LIỆU FILE HỌC LIỆU (TAB 1 & TAB 2)
+// BÚNG ĐIỀU KHIỂN HỌC LIỆU VỚI THUẬT TOÁN CHỐNG LỆCH PHÂN ĐOẠN SONG NGỮ
 function parseDocumentCSV(csvText) {
     const dataRows = parseCSVLine(csvText);
     const originalContainer = document.getElementById('originalContainer');
@@ -202,11 +232,9 @@ function parseDocumentCSV(csvText) {
     originalContainer.innerHTML = '';
     summaryContainer.innerHTML = '<div class="card">';
     
-    let blockCount = 0;
-    let lastBlockEl = null;
+    let blockCount = 0; let lastBlockEl = null;
 
     dataRows.forEach((row, idx) => {
-        // Bỏ qua dòng tiêu đề nếu chứa từ khóa quy định cấu trúc
         if (idx === 0 && row[0] && row[0].toLowerCase().includes('type')) return;
         
         let type = row[0] ? row[0].toLowerCase().trim() : 'p';
@@ -243,7 +271,7 @@ function parseDocumentCSV(csvText) {
     summaryContainer.firstChild.innerHTML += '</div>';
 }
 
-// BÚNG DỮ LIỆU FILE THUẬT NGỮ ĐỘC LẬP CHUẨN 2 CỘT (TAB 4)
+// BÚNG ĐIỀU KHIỂN THUẬT NGỮ (TAB 4)
 function parseTermCSV(csvText) {
     const rows = parseCSVLine(csvText);
     const termsContainer = document.getElementById('termsContainer');
@@ -253,12 +281,9 @@ function parseTermCSV(csvText) {
     let count = 0;
 
     rows.forEach((row, idx) => {
-        // BỎ QUA DÒNG ĐẦU TIÊN (TITLE / HEADER) CỦA FILE TERMS.CSV
-        if (idx === 0) return;
-        
+        if (idx === 0) return; // Bỏ qua dòng tiêu đề thuật ngữ (zh, vi)
         let zh = row[0] ? row[0].trim() : ''; 
         let vi = row[1] ? row[1].trim() : '';
-        
         if (zh && vi) {
             const termEl = document.createElement('div');
             termEl.className = 'term-card';
@@ -267,30 +292,25 @@ function parseTermCSV(csvText) {
             count++;
         }
     });
-    
     termsContainer.firstChild.innerHTML += '</div>';
-    if (count === 0) {
-        termsContainer.innerHTML = '<p class="empty-message">Vui lòng chọn nạp file "terms.csv" đúng định dạng 2 cột để hiển thị danh mục thuật ngữ...</p>';
-    }
 }
 
-// BÚNG DỮ LIỆU FILE TRẮC NGHIỆM ĐỘC LẬP CHUẨN CẤU TRÚC ĐƠN FILE CỦA BẠN (TAB 5)
-// Định dạng: Câu hỏi | Phương án A | Phương án B | Phương án C | Phương án D | Đáp án (0,1,2,3)
+// BÚNG ĐIỀU KHIỂN TRẮC NGHIỆM CHUẨN ĐÚNG HỆ ĐẾM EXCEL 1-4
 function parseQuizCSV(csvText) {
     const rows = parseCSVLine(csvText);
     quizQuestions = [];
     
     rows.forEach((row, idx) => {
-        // BỎ QUA DÒNG ĐẦU TIÊN (TITLE / HEADER) CỦA FILE QUIZ.CSV
-        if (idx === 0) return;
-        
-        // Kiểm tra xem hàng có đủ ít nhất 6 cột (Câu hỏi, 4 đáp án, 1 chỉ số đúng)
+        if (idx === 0) return; // Bỏ qua dòng tiêu đề câu hỏi
         if (row.length >= 6) {
+            let rawCorrect = parseInt(row[5]);
+            let finalCorrect = !isNaN(rawCorrect) ? (rawCorrect - 1) : 0; // Trừ 1 đơn vị để khớp mảng lập trình
+
             quizQuestions.push({ 
-                zhQ: row[0], // Nội dung câu hỏi trơn từ file của bạn
-                viQ: "Chọn phương án trả lời chính xác nhất dưới đây:", 
+                zhQ: row[0], 
+                viQ: "Chọn đáp án đúng nhất dưới đây:", 
                 options: [row[1], row[2], row[3], row[4]], 
-                correct: parseInt(row[5]) !== NaN ? parseInt(row[5]) : 0 
+                correct: finalCorrect
             });
         }
     });
@@ -301,34 +321,58 @@ function parseQuizCSV(csvText) {
     updateQuizProgress();
 }
 
-// HIGHLIGHT ĐỘNG & POPUP TRÍCH XUẤT NHẬT KÝ GHI CHÚ (TAB 3)
+// KHỞI TẠO TÍNH NĂNG BÔI ĐEN VĂN BẢN (HIGHLIGHT SYSTEM) - KHÓA AN TOÀN TUYỆT ĐỐI
 function initHighlightSystem() {
     const originalContent = document.getElementById('tab-original');
     const notePopup = document.getElementById('notePopup');
     if (!originalContent || !notePopup) return;
 
     originalContent.addEventListener('mouseup', function(e) {
-        const selection = window.getSelection(); const txt = selection.toString().trim();
-        if (txt.length < 2) return;
+        const selection = window.getSelection(); 
+        const txt = selection.toString().trim();
+        if (txt.length < 2) return; // Chỉ hiện nếu bôi đen từ 2 chữ trở lên
+        
         curSelectedText = txt;
         
         let parent = selection.anchorNode.parentNode;
-        while (parent && parent !== originalContent && !parent.classList.contains('bilingual-block')) parent = parent.parentNode;
+        while (parent && parent !== originalContent && !parent.classList.contains('bilingual-block')) {
+            parent = parent.parentNode;
+        }
         curBlockIdx = (parent && parent.classList.contains('bilingual-block')) ? parent.dataset.block : "N/A";
         
+        // Hiện Popup bám sát tọa độ chuột và thanh cuộn
         notePopup.style.display = 'block';
         notePopup.style.left = Math.min(e.clientX, window.innerWidth - 350) + 'px';
         notePopup.style.top = (e.clientY + window.scrollY + 15) + 'px';
+        
+        const noteContent = document.getElementById('noteContent');
+        if (noteContent) noteContent.value = '';
     });
 
-    document.getElementById('saveNoteBtn').addEventListener('click', function() {
-        const comment = document.getElementById('noteContent').value.trim();
-        notes.push({ id: Date.now(), text: curSelectedText, comment: comment, color: curSelectedColor, block: curBlockIdx, time: new Date().toLocaleString('vi-VN') });
-        localStorage.setItem('studyNotes_v5', JSON.stringify(notes));
-        notePopup.style.display = 'none'; window.getSelection().removeAllRanges();
-        alert('Đã lưu tri thức trích xuất thành công!');
-    });
-    document.getElementById('closePopupBtn').addEventListener('click', () => { notePopup.style.display = 'none'; });
+    const saveNoteBtn = document.getElementById('saveNoteBtn');
+    if (saveNoteBtn) {
+        saveNoteBtn.addEventListener('click', function() {
+            const noteContent = document.getElementById('noteContent');
+            const comment = noteContent ? noteContent.value.trim() : '';
+            notes.push({ 
+                id: Date.now(), 
+                text: curSelectedText, 
+                comment: comment, 
+                color: curSelectedColor, 
+                block: curBlockIdx, 
+                time: new Date().toLocaleString('vi-VN') 
+            });
+            localStorage.setItem('studyNotes_v5', JSON.stringify(notes));
+            notePopup.style.display = 'none'; 
+            window.getSelection().removeAllRanges();
+            alert('Đã lưu tri thức trích xuất thành công!');
+        });
+    }
+    
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    if (closePopupBtn) {
+        closePopupBtn.addEventListener('click', () => { notePopup.style.display = 'none'; });
+    }
 }
 
 function renderNotes() {
@@ -338,18 +382,47 @@ function renderNotes() {
     container.innerHTML = '';
     notes.forEach(note => {
         const item = document.createElement('div'); item.className = 'note-item';
-        item.innerHTML = `<div style="padding:0.4rem 0.8rem; border-left: 5px solid #e3a6b2; background-color:rgba(240,240,240,0.15); font-style:italic;">"${note.text}"</div><p style="margin-top:0.5rem; font-weight:bold;">👉 Bình luận / Phân tích sư phạm: <span style="font-weight:normal;">${note.comment || 'Trống.'}</span></p><div class="note-meta"><span>📍 Phân đoạn gốc số: ${note.block} | Lịch sử lưu: ${note.time}</span><span style="color:#bd4f60; cursor:pointer; font-weight:bold;" onclick="deleteNote(${note.id})">🗑 Xóa</span></div>`;
+        item.innerHTML = `<div style="padding:0.4rem 0.8rem; border-left: 5px solid #e3a6b2; background-color:rgba(240,240,240,0.15); font-style:italic;">"${note.text}"</div><p style="margin-top:0.5rem; font-weight:bold;">👉 Bình luận: <span style="font-weight:normal;">${note.comment || 'Trống.'}</span></p><div class="note-meta"><span>📍 Đoạn: ${note.block} | Lịch: ${note.time}</span><span style="color:#bd4f60; cursor:pointer; font-weight:bold;" onclick="deleteNote(${note.id})">🗑 Xóa</span></div>`;
         container.appendChild(item);
     });
 }
 window.deleteNote = function(id) { notes = notes.filter(n => n.id !== id); localStorage.setItem('studyNotes_v5', JSON.stringify(notes)); renderNotes(); };
 
-// TRẮC NGHIỆM ENGINE
+// TRẮC NGHIỆM ENGINE MẠNH MẼ - KHÔNG SỢ PHẦN TỬ NULL
 function initQuizEngine() {
-    document.getElementById('checkAnswersBtn').addEventListener('click', submitQuizScore);
-    document.getElementById('resetQuizBtn').addEventListener('click', () => { userAnswers.fill(null); document.getElementById('answer-section').style.display = 'none'; renderQuizSection(0); updateQuizProgress(); saveCurrentQuizProgress(); });
-    document.getElementById('shuffleBtn').addEventListener('click', () => { if (quizQuestions.length === 0) return; quizQuestions.sort(() => Math.random() - 0.5); userAnswers.fill(null); document.getElementById('answer-section').style.display = 'none'; renderQuizSection(0); updateQuizProgress(); saveCurrentQuizProgress(); });
-    document.getElementById('resetStatsBtn').addEventListener('click', () => { scoreHistory = []; localStorage.removeItem('quizScoreHistory_v5'); renderQuizChart(); });
+    const checkAnswersBtn = document.getElementById('checkAnswersBtn');
+    if (checkAnswersBtn) checkAnswersBtn.addEventListener('click', submitQuizScore);
+
+    const resetQuizBtn = document.getElementById('resetQuizBtn');
+    if (resetQuizBtn) {
+        resetQuizBtn.addEventListener('click', () => { 
+            userAnswers.fill(null); 
+            const answerSec = document.getElementById('answer-section');
+            if (answerSec) answerSec.style.display = 'none'; 
+            renderQuizSection(0); updateQuizProgress(); saveCurrentQuizProgress(); 
+        });
+    }
+
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    if (shuffleBtn) {
+        shuffleBtn.addEventListener('click', () => { 
+            if (quizQuestions.length === 0) return; 
+            quizQuestions.sort(() => Math.random() - 0.5); 
+            userAnswers.fill(null); 
+            const answerSec = document.getElementById('answer-section');
+            if (answerSec) answerSec.style.display = 'none'; 
+            renderQuizSection(0); updateQuizProgress(); saveCurrentQuizProgress(); 
+        });
+    }
+
+    const resetStatsBtn = document.getElementById('resetStatsBtn');
+    if (resetStatsBtn) {
+        resetStatsBtn.addEventListener('click', () => { 
+            scoreHistory = []; 
+            localStorage.removeItem('quizScoreHistory_v5'); 
+            renderQuizChart(); 
+        });
+    }
     renderQuizChart();
 }
 
@@ -358,14 +431,17 @@ function buildQuizNavigation() {
     nav.innerHTML = '';
     const totalSections = Math.ceil(quizQuestions.length / questionsPerSection);
     for (let i = 0; i < totalSections; i++) {
-        const btn = document.createElement('button'); btn.innerText = `Câu ${i * questionsPerSection + 1}-${Math.min((i + 1) * questionsPerSection, quizQuestions.length)}`;
-        btn.addEventListener('click', () => renderQuizSection(i)); nav.appendChild(btn);
+        const btn = document.createElement('button'); 
+        btn.innerText = `Câu ${i * questionsPerSection + 1}-${Math.min((i + 1) * questionsPerSection, quizQuestions.length)}`;
+        btn.addEventListener('click', () => renderQuizSection(i)); 
+        nav.appendChild(btn);
     }
 }
 
 function renderQuizSection(secIdx) {
     currentQuizSection = secIdx; const container = document.getElementById('quizContainer');
     const navButtons = document.querySelectorAll('#quizSectionNav button');
+    
     if (!container || quizQuestions.length === 0) return; container.innerHTML = '';
     navButtons.forEach((btn, idx) => btn.classList.toggle('active-sec', idx === secIdx));
 
@@ -378,14 +454,16 @@ function renderQuizSection(secIdx) {
         q.options.forEach((opt, optIdx) => {
             const li = document.createElement('li'); li.innerText = opt; if (userAnswers[i] === optIdx) li.className = 'selected';
             li.addEventListener('click', function() {
-                if (document.getElementById('answer-section').style.display === 'block') return;
+                const answerSec = document.getElementById('answer-section');
+                if (answerSec && answerSec.style.display === 'block') return; // Khóa tương tác khi đã nộp bài
                 userAnswers[i] = optIdx; saveCurrentQuizProgress(); renderQuizSection(currentQuizSection); updateQuizProgress();
             });
             optionsList.appendChild(li);
         });
         item.appendChild(optionsList); container.appendChild(item);
     }
-    if (document.getElementById('answer-section').style.display === 'block') revealQuizAnswers();
+    const answerSec = document.getElementById('answer-section');
+    if (answerSec && answerSec.style.display === 'block') revealQuizAnswers();
 }
 
 function saveCurrentQuizProgress() {
@@ -394,6 +472,7 @@ function saveCurrentQuizProgress() {
         localStorage.setItem('quizVault_v5', JSON.stringify(quizVault));
     }
 }
+
 function updateQuizProgress() { 
     const progressEl = document.getElementById('quizProgress'); if (!progressEl) return;
     const answered = userAnswers.filter(a => a !== null).length; 
@@ -411,7 +490,9 @@ function submitQuizScore() {
     });
     
     const percent = Math.round((score / quizQuestions.length) * 100);
-    document.getElementById('answer-section').style.display = 'block';
+    const answerSec = document.getElementById('answer-section');
+    if (answerSec) answerSec.style.display = 'block';
+    
     scoreHistory.push(percent); if (scoreHistory.length > 5) scoreHistory.shift();
     localStorage.setItem('quizScoreHistory_v5', JSON.stringify(scoreHistory));
     renderQuizChart(); revealQuizAnswers();
@@ -433,5 +514,6 @@ function renderQuizChart() {
     const rows = document.getElementById('chartRows'); if (!rows) return; rows.innerHTML = '';
     if (scoreHistory.length === 0) { rows.innerHTML = '<p style="font-size:0.88rem; font-style:italic;">Chưa có dữ liệu thống kê điểm số.</p>'; return; }
     let sum = 0; scoreHistory.forEach((score, idx) => { sum += score; rows.innerHTML += `<div class="chart-row"><span class="chart-label">Lần ${idx + 1}</span><div class="chart-bar"><div class="chart-bar-fill" style="width: ${score}%"></div></div><span class="chart-value">${score}đ</span></div>`; });
-    document.getElementById('avgScoreDisplay').innerText = `Điểm số trung bình: ${Math.round(sum / scoreHistory.length)} / 100`;
+    const avgScoreDisplay = document.getElementById('avgScoreDisplay');
+    if (avgScoreDisplay) avgScoreDisplay.innerText = `Điểm số trung bình: ${Math.round(sum / scoreHistory.length)} / 100`;
 }
