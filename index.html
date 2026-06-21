@@ -22,18 +22,37 @@
             <label for="csvDocInput">🌸 1. Nạp học liệu (data.csv)</label>
             <input type="file" id="csvDocInput" accept=".csv">
             <span id="docStatus">Chưa nạp học liệu</span>
+            <div style="font-size: 0.75rem; color: #a6737f; margin-top: 0.5rem; border-top: 1px dashed #e3a6b2; padding-top: 0.3rem; text-align: left; line-height: 1.4;">
+                <strong>Cấu trúc cột chuẩn:</strong><br>
+                • Cột A: type (h: Tiêu đề | p: Đoạn văn)<br>
+                • Cột B: zhongwen (Chữ Hán trơn)<br>
+                • Cột C: tiengviet (Bản dịch tiếng Việt tương ứng)
+            </div>
         </div>
 
         <div class="import-box">
             <label for="csvTermInput">📚 2. Nạp thuật ngữ (terms.csv)</label>
             <input type="file" id="csvTermInput" accept=".csv">
             <span id="termStatus">Chưa nạp thuật ngữ</span>
+            <div style="font-size: 0.75rem; color: #a6737f; margin-top: 0.5rem; border-top: 1px dashed #e3a6b2; padding-top: 0.3rem; text-align: left; line-height: 1.4;">
+                <strong>Cấu trúc cột chuẩn:</strong><br>
+                • Cột A: thuật ngữ (zh) (Từ vựng chữ Hán)<br>
+                • Cột B: thuật ngữ (vi) (Giải nghĩa tiếng Việt)<br>
+                <span style="color:#b55a6d;">* Dòng đầu tiên làm tiêu đề cột sẽ tự động bỏ qua.</span>
+            </div>
         </div>
 
         <div class="import-box">
             <label for="csvQuizInput">📝 3. Nạp trắc nghiệm (quiz.csv)</label>
             <input type="file" id="csvQuizInput" accept=".csv">
             <span id="quizStatus">Chưa nạp câu hỏi</span>
+            <div style="font-size: 0.75rem; color: #a6737f; margin-top: 0.5rem; border-top: 1px dashed #e3a6b2; padding-top: 0.3rem; text-align: left; line-height: 1.4;">
+                <strong>Cấu trúc cột chuẩn:</strong><br>
+                • Cột A: Cau_hoi | Cột B: Phuong_an_A<br>
+                • Cột C: Phuong_an_B | Cột D: Phuong_an_C<br>
+                • Cột E: Phuong_an_D | Cột F: Dap_an (Điền 0, 1, 2, 3)<br>
+                <span style="color:#b55a6d;">* Dòng đầu tiên làm tiêu đề cột sẽ tự động bỏ qua.</span>
+            </div>
         </div>
     </div>
 
@@ -88,7 +107,7 @@
 
         <div id="answer-section" style="display: none; background-color: #fae1e6; padding: 1.2rem; border-radius: 8px; margin-top: 1.5rem;">
             <h3>📊 Bảng kiểm tra đáp án chi tiết</h3>
-            <div id="answers-list"></div>
+            <div id="answers-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; background: white; padding: 0.8rem; border-radius: 6px; font-size: 0.88rem; margin-top: 0.5rem;"></div>
         </div>
 
         <div class="chart-container" id="chartContainer">
