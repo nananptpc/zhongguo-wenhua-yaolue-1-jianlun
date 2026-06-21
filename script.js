@@ -262,7 +262,6 @@ function groupNotesByBlock() {
         grouped[key].push(n);
     });
     
-    // Hiển thị dạng group
     const container = document.getElementById('notesList');
     if (!container) return;
     container.innerHTML = '';
@@ -403,7 +402,8 @@ function parseDocumentCSV(csvText) {
     
     if (!container || !summary) return;
     container.innerHTML = '';
-    summary.innerHTML = '<div class="card">';
+    summary.innerHTML = '<div class="card"></div>';
+    const summaryCard = summary.firstChild;
     
     let blockCount = 0;
     let lastBlock = null;
@@ -443,15 +443,18 @@ function parseDocumentCSV(csvText) {
             lastBlock = block;
 
             if (zh.length > 5) {
-                summary.firstChild.innerHTML += `<div class="bilingual-block" style="border-left-color: #d48291; margin: 0.8rem 0;">
+                const summaryItem = document.createElement('div');
+                summaryItem.className = 'bilingual-block';
+                summaryItem.style.cssText = 'border-left-color: #d48291; margin: 0.8rem 0;';
+                summaryItem.innerHTML = `
                     <div class="zh" style="font-size:0.98rem;">🎯 <strong>${zh.substring(0, 45)}...</strong></div>
                     <div class="vi" style="font-size:0.92rem;">${vi}</div>
-                </div>`;
+                `;
+                summaryCard.appendChild(summaryItem);
             }
             blockCount++;
         }
     });
-    summary.firstChild.innerHTML += '</div>';
     
     console.log(`📄 Đã tải ${blockCount} đoạn văn bản`);
 }
@@ -462,7 +465,7 @@ function parseTermCSV(csvText) {
     const container = document.getElementById('termsContainer');
     if (!container) return;
     
-    container.innerHTML = '<div class="card">';
+    container.innerHTML = '<div class="card"></div>';
     const card = container.firstChild;
     rows.forEach((row, idx) => {
         if (idx === 0) return;
@@ -475,8 +478,6 @@ function parseTermCSV(csvText) {
             card.appendChild(term);
         }
     });
-    // Đóng card sau khi thêm tất cả terms
-    // Không cần thêm gì thêm vì card đã được tạo
 }
 
 // ===== 13. PARSE QUIZ CSV =====
@@ -505,7 +506,6 @@ function parseQuizCSV(csvText) {
         }
     });
     
-    // Fix: Chỉ shuffle nếu có câu hỏi
     if (quizQuestions.length > 0) {
         shuffleQuestions();
         userAnswers = new Array(quizQuestions.length).fill(null);
@@ -657,7 +657,6 @@ function initHighlightSystem() {
         }
     });
 
-    // Phím tắt Ctrl+Enter để lưu
     document.addEventListener('keydown', function(e) {
         if (isPopupOpen && (e.ctrlKey || e.metaKey) && e.key === 'Enter') {
             e.preventDefault();
@@ -695,7 +694,6 @@ function initHighlightSystem() {
         hidePopup();
         window.getSelection().removeAllRanges();
         
-        // Hiển thị thông báo nhẹ
         const toast = document.createElement('div');
         toast.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#e3a6b2; color:white; padding:12px 24px; border-radius:8px; font-weight:bold; z-index:100000; animation:fadeIn 0.3s;';
         toast.textContent = '✅ Đã lưu ghi chú!';
@@ -986,14 +984,19 @@ function submitQuizScore() {
         if (isCorrect) score++;
         const status = isCorrect ? '✅ Đúng' : '❌ Sai';
         const correctAnswer = q.options[q.correct];
-        const userAnswer = userAnswers[idx] !== null ? q.options[userAnswers[idx]] : 'Chưa trả lời';
         const displayNum = q.displayId || (idx + 1);
-        list.innerHTML += `
-            <div style="padding:0.3rem 0; border-bottom:1px solid #f2dae0; ${isCorrect ? 'color:#1e421e;' : 'color:#6e201d;'}">
-                <strong>Câu ${displayNum}:</strong> ${status}
-                ${!isCorrect ? `<span style="font-size:0.8rem; color:#8c5863;"> (Đáp án đúng: ${correctAnswer})</span>` : ''}
-            </div>
-        `;
+        
+        const resultItem = document.createElement('div');
+        resultItem.style.cssText = `padding:0.3rem 0; border-bottom:1px solid #f2dae0; ${isCorrect ? 'color:#1e421e;' : 'color:#6e201d;'}`;
+        resultItem.innerHTML = `<strong>Câu ${displayNum}:</strong> ${status}`;
+        
+        if (!isCorrect) {
+            const extraSpan = document.createElement('span');
+            extraSpan.style.cssText = 'font-size:0.8rem; color:#8c5863;';
+            extraSpan.textContent = ` (Đáp án đúng: ${correctAnswer})`;
+            resultItem.appendChild(extraSpan);
+        }
+        list.appendChild(resultItem);
     });
 
     const percent = Math.round((score / quizQuestions.length) * 100);
@@ -1024,17 +1027,11 @@ function revealAnswers() {
         
         const options = item.querySelectorAll('.quiz-options li');
         options.forEach((li, optIdx) => {
-            // Lấy text của option (bỏ qua prefix A., B., ...)
-            const optText = li.textContent.replace(/^[A-D]\.\s*/, '');
-            let matchingIdx = -1;
-            q.options.forEach((opt, i) => {
-                if (opt === optText) matchingIdx = i;
-            });
-            
-            if (matchingIdx === q.correct) {
-                li.className = 'correct-answer';
-            } else if (userAnswers[actualIdx] === matchingIdx && matchingIdx !== q.correct) {
-                li.className = 'wrong-answer';
+            li.classList.remove('correct-answer', 'wrong-answer');
+            if (optIdx === q.correct) {
+                li.classList.add('correct-answer');
+            } else if (userAnswers[actualIdx] === optIdx) {
+                li.classList.add('wrong-answer');
             }
         });
     });
@@ -1054,15 +1051,17 @@ function renderQuizChart() {
     let sum = 0;
     scoreHistory.forEach((score, idx) => {
         sum += score;
-        rows.innerHTML += `
-            <div class="chart-row">
-                <span class="chart-label">Lần ${idx + 1}</span>
-                <div class="chart-bar">
-                    <div class="chart-bar-fill" style="width: ${score}%"></div>
-                </div>
-                <span class="chart-value">${score}đ</span>
+        
+        const row = document.createElement('div');
+        row.className = 'chart-row';
+        row.innerHTML = `
+            <span class="chart-label">Lần ${idx + 1}</span>
+            <div class="chart-bar">
+                <div class="chart-bar-fill" style="width: ${score}%"></div>
             </div>
+            <span class="chart-value">${score}đ</span>
         `;
+        rows.appendChild(row);
     });
     
     const avgEl = document.getElementById('avgScoreDisplay');
