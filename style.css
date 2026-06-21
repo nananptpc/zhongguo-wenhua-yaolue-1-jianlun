@@ -1,0 +1,304 @@
+/* ==========================================================================
+   1. NỀN TẢNG THIẾT KẾ: FONT AMERICAN TYPEWRITER & TONE PINK PASTEL
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* Chỉ định Font American Typewriter làm chủ đạo tạo độ mềm mại, hoài cổ */
+    font-family: 'American Typewriter', 'Georgia', 'Times New Roman', serif;
+    /* Tone nền hồng phấn pastel cực mịn, dịu mắt */
+    background-color: #fff0f3; 
+    color: #4a353b;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+    transition: background 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+}
+
+/* Khung chứa chính tinh tế như một trang nhật ký */
+.container {
+    max-width: 1050px;
+    margin: 0 auto;
+    background: rgba(255, 251, 252, 0.98);
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid #f2dae0;
+    box-shadow: 0 15px 35px rgba(230, 185, 195, 0.3);
+    position: relative;
+}
+
+/* ==========================================================================
+   2. ĐỊNH DẠNG HIERARCHICAL HEADINGS (TIÊU ĐỀ PHÂN CẤP)
+   ========================================================================== */
+h1 {
+    font-family: 'American Typewriter', 'Georgia', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #4d2d35;
+    line-height: 1.4;
+    border-bottom: 3px double #dbb1bc;
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-family: 'American Typewriter', 'Georgia', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #5c373e;
+    margin-top: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed #dbb1bc;
+}
+
+h3 {
+    font-family: 'American Typewriter', 'Georgia', serif;
+    font-size: 1.15rem;
+    color: #73464f;
+    margin-top: 1.2rem;
+    margin-bottom: 0.6rem;
+}
+
+/* SUBTITLE */
+.subtitle {
+    color: #8c5863;
+    font-size: 0.95rem;
+    font-style: italic;
+    margin-bottom: 2rem;
+}
+
+/* ==========================================================================
+   3. HỆ THỐNG TABS ĐIỀU HƯỚNG THẨM MỸ (PINK PASTEL TABS)
+   ========================================================================== */
+.tab-bar {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #ebd5da;
+    padding-bottom: 1px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    background-color: #f5d3dc; /* Hồng cánh sen pastel nhạt */
+    border: none;
+    border-radius: 8px 8px 0 0;
+    padding: 0.8rem 1.4rem;
+    font-family: 'American Typewriter', serif;
+    font-weight: bold;
+    font-size: 0.92rem;
+    cursor: pointer;
+    color: #54333a;
+    transition: all 0.25s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    background-color: #ebd0d7;
+    color: #422329;
+}
+
+.tab-btn.active {
+    background-color: #e3a6b2; /* Hồng pastel đậm nhấn */
+    color: #ffffff;
+    border-bottom: 3px solid #b86e7c;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   4. ĐỊNH DẠNG KHỐI NỘI DUNG SONG NGỮ TRUNG - VIỆT (BILINGUAL BLOCKS)
+   ========================================================================== */
+.card {
+    background-color: #fffcfd;
+    border: 1px solid #f2dae0;
+    border-radius: 12px;
+    padding: 1.8rem;
+    margin: 1.5rem 0;
+    box-shadow: inset 0 1px 3px rgba(255,255,255,0.6);
+}
+
+.bilingual-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1.2rem 0;
+    padding: 1rem 1.4rem;
+    background: rgba(255, 240, 243, 0.45);
+    border-left: 4px solid #dba9b4; /* Viền hồng tro bụi */
+    border-radius: 0 10px 10px 0;
+    position: relative;
+    transition: background 0.2s ease;
+}
+
+.bilingual-block:hover {
+    background: rgba(255, 240, 243, 0.8);
+}
+
+/* Kiểu chữ tiếng Trung học thuật */
+.zh {
+    font-family: 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+    font-size: 1.08rem;
+    color: #211215;
+    line-height: 1.75;
+}
+
+/* Kiểu chữ tiếng Việt dịch nghĩa */
+.vi {
+    font-family: 'American Typewriter', 'Georgia', serif;
+    font-size: 0.98rem;
+    color: #5c3f45;
+    padding-left: 1rem;
+    border-left: 2px solid #ecd6db;
+    line-height: 1.75;
+}
+
+/* THẺ TAG PHÂN LOẠI KHỐI KIẾN THỨC */
+.tag {
+    display: inline-block;
+    background-color: #f7d6dd;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #5c2e37;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   5. GIAO DIỆN HỆ NÚT BẤM CHUNG & TIỆN ÍCH
+   ========================================================================== */
+button:not(.tab-btn) {
+    background-color: #e3a6b2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.2rem;
+    font-family: 'American Typewriter', serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    font-size: 0.88rem;
+}
+
+button:not(.tab-btn):hover {
+    background-color: #d4929f;
+}
+
+button:not(.tab-btn):active {
+    transform: scale(0.98);
+}
+
+.theme-toggle {
+    padding: 0.5rem 1.2rem !important;
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+}
+
+/* ==========================================================================
+   6. CÁC ĐỊNH DẠNG CHO CÁC PHẦN TIẾP THEO (QUIZ, TERMS, NOTES POPUP)
+   ========================================================================== */
+/* Thuật ngữ */
+.term-card {
+    background-color: #fffcfd;
+    border: 1px solid #f2dae0;
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin: 0.8rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    align-items: baseline;
+}
+.term-zh { font-family: 'PingFang SC', sans-serif; font-weight: bold; color: #4a2027; font-size: 1.15rem; min-width: 160px; }
+.term-vi { color: #5c3f45; font-style: italic; }
+
+/* Trắc nghiệm Quiz */
+.quiz-controls { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin-bottom: 1.5rem; }
+.quiz-progress { font-size: 0.92rem; font-weight: bold; color: #704b52; margin-left: auto; }
+.section-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+.section-nav button { background-color: #fae1e6; color: #5c353d; border: 1px solid #f2dae0; }
+.section-nav button.active-sec { background-color: #e3a6b2; color: white; }
+.quiz-item { background-color: #fffcfd; border: 1px solid #f5dee3; border-radius: 10px; margin: 1rem 0; padding: 1.4rem; }
+.quiz-question { font-weight: bold; color: #3b2226; margin-bottom: 0.8rem; }
+.quiz-options { list-style: none; padding-left: 0.2rem; }
+.quiz-options li { margin: 0.5rem 0; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; }
+.quiz-options li:hover { background: rgba(227, 166, 178, 0.15); }
+.quiz-options li.selected { background-color: #fae1e6; font-weight: bold; }
+.quiz-options li.correct-answer { background-color: #d2ebd2; color: #1e421e; font-weight: bold; }
+.quiz-options li.wrong-answer { background-color: #fcdcdb; color: #6e201d; }
+
+/* Đồ thị thống kê lịch sử làm bài */
+.chart-container { background-color: #fffcfd; border: 1px solid #f2dae0; border-radius: 12px; padding: 1.8rem; margin-top: 2rem; }
+.chart-row { display: flex; align-items: center; gap: 1rem; margin: 0.6rem 0; }
+.chart-label { min-width: 80px; font-size: 0.88rem; }
+.chart-bar { flex: 1; height: 22px; background-color: #fae6ea; border-radius: 4px; overflow: hidden; }
+.chart-bar-fill { height: 100%; background-color: #e3a6b2; transition: width 0.5s ease-in-out; }
+.chart-value { min-width: 50px; text-align: right; font-weight: bold; font-size: 0.88rem; }
+
+/* Popup Ghi chú động khi Highlight */
+.note-popup { position: fixed; background-color: #ffffff; border: 2px solid #e3a6b2; border-radius: 12px; padding: 1.2rem; box-shadow: 0 10px 35px rgba(184, 110, 124, 0.25); z-index: 1000; min-width: 320px; max-width: 450px; display: none; }
+.note-popup textarea { width: 100%; min-height: 80px; border: 1px solid #ebd5da; border-radius: 6px; padding: 0.5rem; font-family: inherit; font-size: 0.9rem; resize: vertical; margin-top: 0.5rem; }
+.color-options { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
+.color-options span { display: inline-block; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; }
+
+/* Ghi chú cá nhân */
+.note-item { background-color: #fffcfd; border: 1px solid #f2dae0; border-radius: 8px; padding: 1.2rem; margin: 0.8rem 0; }
+.note-meta { font-size: 0.8rem; color: #8c6870; display: flex; justify-content: space-between; margin-top: 0.5rem; border-top: 1px dashed #f2dae0; padding-top: 0.4rem; }
+
+/* Chân trang */
+.footer-note { font-size: 0.85rem; color: #7d545e; background-color: #fae6ea; padding: 1rem; border-radius: 8px; text-align: center; margin-top: 3rem; border: 1px dashed #e3a6b2; }
+
+/* ==========================================================================
+   7. ĐỊNH DẠNG TONE TỐI (DARK MODE) TRẦM LẮNG DÀNH CHO BAN ĐÊM
+   ========================================================================== */
+body.dark {
+    background-color: #241a1c;
+    color: #e3d3d5;
+}
+body.dark .container {
+    background: rgba(41, 30, 32, 0.98);
+    border-color: #4f3b3e;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+body.dark h1, body.dark h2, body.dark h3 { color: #fce6ea; border-bottom-color: #5e4347; }
+body.dark .subtitle { color: #bfa1a6; }
+body.dark .card, body.dark .quiz-item, body.dark .term-card, body.dark .note-item { background-color: #2e2123; border-color: #4f3b3e; }
+body.dark .bilingual-block { background: rgba(82, 58, 63, 0.2); border-left-color: #b07d86; }
+body.dark .bilingual-block:hover { background: rgba(82, 58, 63, 0.35); }
+body.dark .zh { color: #f5e6e8; }
+body.dark .vi { color: #ccb4b8; border-left-color: #5e4347; }
+body.dark .tab-btn { background-color: #332426; color: #b5989d; }
+body.dark .tab-btn:hover { background-color: #3d2b2e; color: #ebd3d7; }
+body.dark .tab-btn.active { background-color: #593c41; color: #ffffff; border-bottom-color: #b86e7c; }
+body.dark button:not(.tab-btn) { background-color: #593c41; color: #ffffff; }
+body.dark button:not(.tab-btn):hover { background-color: #6e4a50; }
+body.dark .footer-note { background-color: #332426; color: #b5989d; border-color: #593c41; }
+body.dark .quiz-options li:hover { background: rgba(227, 166, 178, 0.1); }
+body.dark .quiz-options li.selected { background-color: #402d30; }
+body.dark .chart-bar { background-color: #36282a; }
+body.dark .chart-bar-fill { background-color: #b86e7c; }
+body.dark .note-popup { background-color: #2e2123; border-color: #593c41; }
+
+/* Tối ưu hóa trên thiết bị di động */
+@media (max-width: 768px) {
+    .container { padding: 1.2rem; }
+    .tab-btn { padding: 0.6rem 1rem; font-size: 0.85rem; }
+    h1 { font-size: 1.7rem; }
+}
