@@ -1,5 +1,5 @@
 // ==========================================================================
-// HỆ THỐNG HỌC TẬP SONG NGỮ TRUNG - VIỆT (BẢN MỚI HOÀN TOÀN)
+// HỆ THỐNG HỌC TẬP SONG NGỮ TRUNG - VIỆT (BẢN SỬA LỖI POPUP BIẾN MẤT)
 // ==========================================================================
 
 // ===== 1. KHO LƯU TRỮ DỮ LIỆU =====
@@ -19,29 +19,20 @@ let userAnswers = [];
 let currentQuizSection = 0;
 const questionsPerSection = 5;
 
+// Biến toàn cục cho popup
+let isPopupVisible = false;
+let popupTimeout = null;
+
 // ===== 2. KHỞI TẠO TRANG =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Trang đã tải xong, khởi tạo hệ thống...');
     
-    // Khởi tạo các tab
     initTabs();
-    
-    // Khởi tạo dark mode
     initDarkMode();
-    
-    // Khởi tạo sidebar
     initSidebar();
-    
-    // Khởi tạo hệ thống import file
     initFileImports();
-    
-    // Khởi tạo hệ thống highlight (QUAN TRỌNG)
     initHighlightSystem();
-    
-    // Khởi tạo quiz engine
     initQuizEngine();
-    
-    // Tải dữ liệu đã lưu
     autoLoadSavedData();
     
     console.log('✅ Hệ thống đã sẵn sàng!');
@@ -49,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== 3. HÀM KHỞI TẠO CÁC THÀNH PHẦN =====
 
-// 3.1. Tab System
 function initTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -66,7 +56,6 @@ function initTabs() {
     });
 }
 
-// 3.2. Dark Mode
 function initDarkMode() {
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
@@ -77,7 +66,6 @@ function initDarkMode() {
     }
 }
 
-// 3.3. Sidebar
 function initSidebar() {
     const sidebar = document.getElementById('progressSidebar');
     const toggleBtn = document.getElementById('sidebarToggleBtn');
@@ -89,9 +77,7 @@ function initSidebar() {
     }
 }
 
-// 3.4. File Imports
 function initFileImports() {
-    // Import Document CSV
     const docInput = document.getElementById('csvDocInput');
     if (docInput) {
         docInput.addEventListener('change', function(e) {
@@ -111,7 +97,6 @@ function initFileImports() {
         });
     }
 
-    // Import Term CSV
     const termInput = document.getElementById('csvTermInput');
     if (termInput) {
         termInput.addEventListener('change', function(e) {
@@ -131,7 +116,6 @@ function initFileImports() {
         });
     }
 
-    // Import Quiz CSV
     const quizInput = document.getElementById('csvQuizInput');
     if (quizInput) {
         quizInput.addEventListener('change', function(e) {
@@ -151,7 +135,6 @@ function initFileImports() {
         });
     }
 
-    // Clear cache
     const clearBtn = document.getElementById('clearAllCacheBtn');
     if (clearBtn) {
         clearBtn.addEventListener('click', function() {
@@ -377,7 +360,7 @@ function parseQuizCSV(csvText) {
     updateQuizProgress();
 }
 
-// ===== 10. HỆ THỐNG HIGHLIGHT - QUAN TRỌNG NHẤT =====
+// ===== 10. HỆ THỐNG HIGHLIGHT - SỬA LỖI POPUP BIẾN MẤT =====
 function initHighlightSystem() {
     const popup = document.getElementById('notePopup');
     if (!popup) {
@@ -388,7 +371,70 @@ function initHighlightSystem() {
     console.log('🖍️ Đang khởi tạo hệ thống highlight...');
 
     // Biến lưu trạng thái
+    let selectedText = '';
+    let selectedBlock = 'N/A';
     let isPopupOpen = false;
+
+    // Hàm hiển thị popup
+    function showPopup(text, blockIdx, x, y) {
+        // Cập nhật nội dung
+        const preview = document.getElementById('selectedTextPreview');
+        if (preview) {
+            preview.textContent = text.length > 100 ? text.substring(0, 100) + '...' : text;
+        }
+        
+        const blockInfo = document.getElementById('selectedBlockInfo');
+        if (blockInfo) {
+            blockInfo.textContent = `Đoạn: ${blockIdx}`;
+        }
+
+        // Xóa nội dung textarea cũ
+        const textarea = document.getElementById('noteContent');
+        if (textarea) {
+            textarea.value = '';
+        }
+
+        // Tính vị trí
+        let left = x + 10;
+        let top = y + 15;
+
+        // Điều chỉnh để không tràn màn hình
+        const popupWidth = 340;
+        const popupHeight = 300;
+        if (left + popupWidth > window.innerWidth) {
+            left = window.innerWidth - popupWidth - 20;
+        }
+        if (top + popupHeight > window.scrollY + window.innerHeight) {
+            top = y - popupHeight - 10;
+        }
+        if (left < 10) left = 10;
+        if (top < 10) top = 10;
+
+        // Hiển thị popup
+        popup.style.display = 'block';
+        popup.style.left = left + 'px';
+        popup.style.top = top + 'px';
+        
+        isPopupOpen = true;
+        isPopupVisible = true;
+        selectedText = text;
+        selectedBlock = blockIdx;
+
+        // Focus vào textarea sau một chút
+        setTimeout(() => {
+            if (textarea) textarea.focus();
+        }, 100);
+
+        console.log(`📝 Popup hiển thị với text: "${text.substring(0, 30)}..."`);
+    }
+
+    // Hàm ẩn popup
+    function hidePopup() {
+        popup.style.display = 'none';
+        isPopupOpen = false;
+        isPopupVisible = false;
+        // Không xóa selection để người dùng có thể copy text
+    }
 
     // Sự kiện mouseup - bắt sự kiện bôi đen
     document.addEventListener('mouseup', function(e) {
@@ -400,24 +446,21 @@ function initHighlightSystem() {
 
         // Nếu không có text hoặc text quá ngắn
         if (text.length < 2) {
-            popup.style.display = 'none';
-            isPopupOpen = false;
+            hidePopup();
             return;
         }
 
         // KIỂM TRA XEM CÓ ĐANG Ở TAB NGUYÊN VĂN KHÔNG
         const tabOriginal = document.getElementById('tab-original');
         if (!tabOriginal || !tabOriginal.classList.contains('active')) {
-            popup.style.display = 'none';
-            isPopupOpen = false;
+            hidePopup();
             return;
         }
 
         // KIỂM TRA XEM VĂN BẢN ĐƯỢC CHỌN CÓ NẰM TRONG CONTAINER KHÔNG
         const container = document.getElementById('originalContainer');
         if (!container) {
-            popup.style.display = 'none';
-            isPopupOpen = false;
+            hidePopup();
             return;
         }
 
@@ -429,18 +472,18 @@ function initHighlightSystem() {
                 isInContainer = true;
                 break;
             }
+            if (node.classList && node.classList.contains('bilingual-block')) {
+                isInContainer = true;
+                break;
+            }
             node = node.parentNode;
         }
 
         // Nếu không nằm trong container, ẩn popup
         if (!isInContainer) {
-            popup.style.display = 'none';
-            isPopupOpen = false;
+            hidePopup();
             return;
         }
-
-        // Lưu text được chọn
-        window._selectedText = text;
 
         // Tìm block chứa văn bản
         let blockIdx = 'N/A';
@@ -452,51 +495,34 @@ function initHighlightSystem() {
             }
             parent = parent.parentNode;
         }
-        window._selectedBlock = blockIdx;
 
-        // Tính vị trí hiển thị popup
+        // Lấy vị trí của selection
         const rect = selection.getRangeAt(0).getBoundingClientRect();
-        let left = rect.left + window.scrollX;
-        let top = rect.bottom + window.scrollY + 10;
-
-        // Điều chỉnh vị trí để không bị tràn
-        const popupWidth = 340;
-        const popupHeight = 250;
-        if (left + popupWidth > window.innerWidth) {
-            left = window.innerWidth - popupWidth - 20;
-        }
-        if (top + popupHeight > window.scrollY + window.innerHeight) {
-            top = rect.top + window.scrollY - popupHeight - 10;
-        }
-        if (left < 10) left = 10;
-        if (top < 10) top = 10;
+        const x = rect.left + window.scrollX;
+        const y = rect.bottom + window.scrollY;
 
         // Hiển thị popup
-        popup.style.display = 'block';
-        popup.style.left = left + 'px';
-        popup.style.top = top + 'px';
-        isPopupOpen = true;
+        showPopup(text, blockIdx, x, y);
+    });
 
-        // Cập nhật thông tin
-        const blockInfo = document.getElementById('selectedBlockInfo');
-        if (blockInfo) blockInfo.textContent = `Đoạn: ${blockIdx}`;
-
-        // Xóa nội dung textarea cũ
-        const textarea = document.getElementById('noteContent');
-        if (textarea) {
-            textarea.value = '';
-            setTimeout(() => textarea.focus(), 100);
+    // Sự kiện mousedown - đóng popup khi click ra ngoài
+    document.addEventListener('mousedown', function(e) {
+        // Nếu popup đang mở và click ra ngoài popup
+        if (isPopupOpen && !popup.contains(e.target)) {
+            // Kiểm tra xem có đang bôi đen không
+            const sel = window.getSelection();
+            const text = sel.toString().trim();
+            if (!text || text.length < 2) {
+                hidePopup();
+            }
         }
-
-        console.log(`📝 Đã chọn: "${text.substring(0, 30)}..." tại đoạn ${blockIdx}`);
     });
 
     // Sự kiện lưu ghi chú
     const saveBtn = document.getElementById('saveNoteBtn');
     if (saveBtn) {
         saveBtn.addEventListener('click', function() {
-            const text = window._selectedText || '';
-            if (!text) {
+            if (!selectedText) {
                 alert('⚠️ Chưa có văn bản nào được chọn!');
                 return;
             }
@@ -506,20 +532,33 @@ function initHighlightSystem() {
 
             notes.push({
                 id: Date.now(),
-                text: text,
+                text: selectedText,
                 comment: comment || '(Không có ghi chú)',
                 color: 'yellow',
-                block: window._selectedBlock || 'N/A',
+                block: selectedBlock,
                 time: new Date().toLocaleString('vi-VN')
             });
 
             localStorage.setItem('studyNotes_v5', JSON.stringify(notes));
-            popup.style.display = 'none';
-            isPopupOpen = false;
+            hidePopup();
             window.getSelection().removeAllRanges();
             
             alert('✅ Đã lưu ghi chú thành công!');
-            console.log(`💾 Đã lưu ghi chú: "${text.substring(0, 30)}..."`);
+            console.log(`💾 Đã lưu ghi chú: "${selectedText.substring(0, 30)}..."`);
+            
+            // Cập nhật tab notes nếu đang mở
+            const notesTab = document.getElementById('tab-notes');
+            if (notesTab && notesTab.classList.contains('active')) {
+                renderNotes();
+            }
+        });
+    }
+
+    // Nút hủy
+    const cancelBtn = document.getElementById('cancelPopupBtn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            hidePopup();
         });
     }
 
@@ -527,28 +566,14 @@ function initHighlightSystem() {
     const closeBtn = document.getElementById('closePopupBtn');
     if (closeBtn) {
         closeBtn.addEventListener('click', function() {
-            popup.style.display = 'none';
-            isPopupOpen = false;
+            hidePopup();
         });
     }
-
-    // Đóng popup khi click ra ngoài
-    document.addEventListener('mousedown', function(e) {
-        if (isPopupOpen && !popup.contains(e.target)) {
-            // Kiểm tra xem có đang bôi đen không
-            const sel = window.getSelection();
-            if (!sel.toString().trim()) {
-                popup.style.display = 'none';
-                isPopupOpen = false;
-            }
-        }
-    });
 
     // Đóng popup bằng ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && isPopupOpen) {
-            popup.style.display = 'none';
-            isPopupOpen = false;
+            hidePopup();
         }
     });
 
@@ -561,12 +586,14 @@ function renderNotes() {
     if (!container) return;
     
     if (notes.length === 0) {
-        container.innerHTML = '<p style="color:#8c6870; text-align:center; padding:2rem;">📭 Chưa có ghi chú nào.</p>';
+        container.innerHTML = '<p class="empty-message">📭 Chưa có ghi chú nào.</p>';
         return;
     }
     
     container.innerHTML = '';
-    notes.slice().reverse().forEach(note => {
+    // Hiển thị ghi chú mới nhất lên đầu
+    const sortedNotes = [...notes].reverse();
+    sortedNotes.forEach(note => {
         const item = document.createElement('div');
         item.className = 'note-item';
         item.innerHTML = `
@@ -585,7 +612,6 @@ function renderNotes() {
     });
 }
 
-// Hàm xóa ghi chú
 window.deleteNote = function(id) {
     if (confirm('Xóa ghi chú này?')) {
         notes = notes.filter(n => n.id !== id);
@@ -653,7 +679,10 @@ function buildQuizNavigation() {
 function renderQuizSection(sectionIdx) {
     currentQuizSection = sectionIdx;
     const container = document.getElementById('quizContainer');
-    if (!container || quizQuestions.length === 0) return;
+    if (!container || quizQuestions.length === 0) {
+        container.innerHTML = '<p class="empty-message">Vui lòng nạp file quiz.csv</p>';
+        return;
+    }
     container.innerHTML = '';
 
     const navBtns = document.querySelectorAll('#quizSectionNav button');
@@ -675,7 +704,8 @@ function renderQuizSection(sectionIdx) {
             li.textContent = opt;
             if (userAnswers[i] === optIdx) li.className = 'selected';
             li.addEventListener('click', function() {
-                if (document.getElementById('answer-section').style.display === 'block') return;
+                const answerSection = document.getElementById('answer-section');
+                if (answerSection && answerSection.style.display === 'block') return;
                 userAnswers[i] = optIdx;
                 saveQuizProgress();
                 renderQuizSection(currentQuizSection);
@@ -687,7 +717,8 @@ function renderQuizSection(sectionIdx) {
         container.appendChild(item);
     }
 
-    if (document.getElementById('answer-section').style.display === 'block') {
+    const answerSection = document.getElementById('answer-section');
+    if (answerSection && answerSection.style.display === 'block') {
         revealAnswers();
     }
 }
@@ -731,6 +762,7 @@ function submitQuizScore() {
 function revealAnswers() {
     document.querySelectorAll('.quiz-options li').forEach(li => {
         const item = li.closest('.quiz-item');
+        if (!item) return;
         const items = Array.from(document.getElementById('quizContainer').children);
         const idx = items.indexOf(item);
         const actualIdx = currentQuizSection * questionsPerSection + idx;
