@@ -9,16 +9,14 @@
 <body>
 
 <div class="container">
-    <!-- Header: gọn, thanh lịch, có nút chuyển chế độ -->
     <div class="header-row">
         <div>
-            <h1>🌸 中国文化要略 · Động Bộ Song Ngữ</h1>
+            <h1>🌸 中国文化要略 · Đồng Bộ Song Ngữ</h1>
             <div class="subtitle">Hệ thống quản lý học tập chuyên sâu – Tone Pastel &amp; American Typewriter</div>
         </div>
         <button class="theme-toggle" id="themeToggle">🌙 Chế độ tối</button>
     </div>
 
-    <!-- 3 ô import dữ liệu -->
     <div class="import-grid">
         <div class="import-box">
             <label for="csvDocInput">📄 1. Nạp học liệu (data.csv)</label>
@@ -35,7 +33,7 @@
             <span id="termStatus">Chưa nạp</span>
             <div class="import-hint">
                 <strong>Cấu trúc cột:</strong><br />
-                • A: thuật ngữ (zh) · B: thuật ngữ (vi)
+                • A: zhongwen · B: tiengviet
             </div>
         </div>
         <div class="import-box">
@@ -44,87 +42,125 @@
             <span id="quizStatus">Chưa nạp</span>
             <div class="import-hint">
                 <strong>Cấu trúc cột:</strong><br />
-                • A–E: câu hỏi &amp; phương án · F: đáp án (0–3)
+                • A: Câu hỏi ZH · B..E: Đáp án A..D<br />
+                • F: Số đáp án đúng (0..3) · G: Dịch nghĩa/Gợi ý
             </div>
         </div>
     </div>
 
-    <!-- Thanh tab -->
-    <div class="tab-bar">
-        <button class="tab-btn active" data-tab="tab-original">📄 1. Nguyên văn</button>
-        <button class="tab-btn" data-tab="tab-summary">📘 2. Tóm tắt</button>
-        <button class="tab-btn" data-tab="tab-notes">📒 3. Ghi chú</button>
-        <button class="tab-btn" data-tab="tab-terms">📚 4. Thuật ngữ</button>
-        <button class="tab-btn" data-tab="tab-quiz">📝 5. Luyện tập</button>
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab="tab-original">📄 Nguyên Văn</button>
+        <button class="tab-btn" data-tab="tab-summary">🎯 Trích Yếu Trọng Tâm</button>
+        <button class="tab-btn" data-tab="tab-terms">📚 Thuật Ngữ / Từ Vựng</button>
+        <button class="tab-btn" data-tab="tab-quiz">📝 Luyện Trắc Nghiệm</button>
+        <button class="tab-btn" data-tab="tab-notes">✍️ Kho Ghi Chú (Notes)</button>
     </div>
 
-    <!-- Nội dung các tab -->
     <div id="tab-original" class="tab-content active">
-        <h2>📄 Nguyên văn đối chiếu Trung – Việt</h2>
-        <p class="tab-hint">💡 Bôi đen một cụm từ bất kỳ trong văn bản để kích hoạt Popup trích xuất ghi chú nhanh.</p>
-        <div id="originalContainer">
-            <p class="empty-message">Vui lòng nạp file "data.csv" ở trên để hiển thị nội dung nguyên văn…</p>
+        <div class="card">
+            <div class="card-header-tip">💡 Mẹo: Bôi đen (Highlight) bất kỳ cụm từ hoặc đoạn văn bản nào bên dưới để tạo ghi chú và bình luận nhanh.</div>
+            <div id="originalContainer" class="bilingual-container">
+                <p class="empty-message">📭 Chưa có dữ liệu học liệu. Vui lòng chọn và nạp tệp data.csv ở phía trên.</p>
+            </div>
         </div>
     </div>
 
     <div id="tab-summary" class="tab-content">
-        <h2>📘 Tóm tắt nội dung cốt lõi</h2>
         <div id="summaryContainer">
-            <p class="empty-message">Hệ thống sẽ tự động trích lọc tóm tắt sau khi bạn nạp học liệu.</p>
+            <p class="empty-message">📭 Chưa có dữ liệu trích yếu. Vui lòng nạp học liệu để hệ thống tự động trích xuất các câu dài trọng tâm.</p>
         </div>
     </div>
 
-    <div id="tab-notes" class="tab-content">
-        <h2>📒 Nhật ký trích xuất highlight</h2>
-        <div id="notesList"></div>
-    </div>
-
     <div id="tab-terms" class="tab-content">
-        <h2>📚 Danh mục thuật ngữ chuyên ngành</h2>
         <div id="termsContainer">
-            <p class="empty-message">Vui lòng nạp file "terms.csv" để hiển thị danh mục thuật ngữ.</p>
+            <p class="empty-message">📭 Chưa có dữ liệu thuật ngữ. Vui lòng chọn và nạp tệp terms.csv ở phía trên.</p>
         </div>
     </div>
 
     <div id="tab-quiz" class="tab-content">
-        <h2>📝 Trắc nghiệm luyện tập</h2>
-        <div class="quiz-controls">
-            <button id="shuffleBtn">🔀 Trộn câu hỏi</button>
-            <button id="resetQuizBtn">🔄 Làm lại</button>
-            <button id="checkAnswersBtn" class="btn-primary">✔️ Nộp bài &amp; Chấm điểm</button>
-            <span class="quiz-progress" id="quizProgress">Đã trả lời: 0/0</span>
-        </div>
+        <div class="quiz-layout">
+            <div class="quiz-main">
+                <div class="quiz-toolbar">
+                    <div class="quiz-progress-wrapper">
+                        Tiến độ bài làm: <span id="quizProgress" class="badge">✅ 0/0</span>
+                    </div>
+                    <div class="quiz-actions-btns">
+                        <button id="shuffleBtn" class="btn-secondary">🔀 Xáo trộn câu hỏi</button>
+                        <button id="resetQuizBtn" class="btn-secondary">🔄 Làm lại từ đầu</button>
+                    </div>
+                </div>
 
-        <div class="section-nav" id="quizSectionNav"></div>
-        <div id="quizContainer">
-            <p class="empty-message">Vui lòng nạp file "quiz.csv" để bắt đầu luyện tập.</p>
-        </div>
+                <div id="quizSectionNav" class="quiz-sec-nav"></div>
 
-        <div id="answer-section" style="display: none; background: #fae1e6; padding: 1.2rem; border-radius: 8px; margin-top: 1.5rem;">
-            <h3>📊 Bảng kiểm tra đáp án</h3>
-            <div id="answers-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap:0.5rem; background:white; padding:0.8rem; border-radius:6px; font-size:0.88rem; margin-top:0.5rem;"></div>
-        </div>
+                <div id="quizContainer">
+                    <p class="empty-message">📭 Chưa có câu hỏi trắc nghiệm. Vui lòng chọn và nạp tệp quiz.csv ở phía trên.</p>
+                </div>
 
-        <div class="chart-container">
-            <h3>📊 Lịch sử làm bài (5 lần gần nhất)</h3>
-            <div id="chartRows"></div>
-            <div class="avg-score" id="avgScoreDisplay">Điểm trung bình: -- / 100</div>
-            <button id="resetStatsBtn" class="btn-secondary">🔄 Xóa lịch sử</button>
+                <div class="quiz-submit-bar">
+                    <button id="checkAnswersBtn" class="btn-primary">📊 Nộp bài &amp; Chấm điểm</button>
+                </div>
+
+                <div id="answer-section" class="answer-section" style="display: none;">
+                    <h3>📊 Kết Quả Chi Tiết</h3>
+                    <div id="answers-list"></div>
+                </div>
+            </div>
+
+            <div class="quiz-sidebar">
+                <div class="card">
+                    <div class="chart-header">
+                        <h3>📈 Hiệu Suất 5 Lần Gần Nhất</h3>
+                        <button id="resetStatsBtn" class="btn-text-danger" title="Xóa lịch sử điểm">🗑️</button>
+                    </div>
+                    <div id="avgScoreDisplay" class="avg-score">📊 Trung bình: 0/100</div>
+                    
+                    <div class="chart-container" id="chartRows">
+                        </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="footer-note">
-        ✦ Font: American Typewriter · Bảng màu: Soft Pink Pastel ✦
+    <div id="tab-notes" class="tab-content">
+        <div class="card">
+            <div class="notes-filter-bar">
+                <div class="view-modes">
+                    <button class="view-btn active" data-view="grid">📱 Dạng Lưới</button>
+                    <button class="view-btn" data-view="list">📃 Dạng Danh Sách Tóm Tắt</button>
+                    <button class="view-btn" data-view="original">📄 Chế Độ Tập Trung Nguyên Văn</button>
+                    <button class="view-btn" data-view="detailed">🔍 Xem Chi Tiết Toàn Bộ</button>
+                </div>
+            </div>
+
+            <div class="bulk-actions-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0; padding: 0.8rem; background: var(--card-bg, #fffbfb); border: 1px solid #f2dae0; border-radius: 8px;">
+                <div class="bulk-left" style="display: flex; gap: 0.5rem;">
+                    <button id="selectAllNotes" class="btn-secondary" style="font-size: 0.88rem; padding: 0.4rem 0.8rem;">✅ Chọn tất cả</button>
+                    <button id="deleteSelectedNotes" class="btn-danger" style="font-size: 0.88rem; padding: 0.4rem 0.8rem; background: #bd4f60; color: white; border: none; border-radius: 4px; cursor: pointer;" disabled>🗑️ Xóa đã chọn (0)</button>
+                </div>
+                <div class="bulk-right" style="display: flex; gap: 0.5rem;">
+                    <button id="groupByBlock" class="btn-secondary" style="font-size: 0.88rem; padding: 0.4rem 0.8rem;">📍 Nhóm theo Đoạn</button>
+                    <button id="exportNotesCSV" class="btn-primary" style="font-size: 0.88rem; padding: 0.4rem 0.8rem; background: #4d2d35; color: white;">📤 Xuất dữ liệu CSV</button>
+                </div>
+            </div>
+
+            <div id="notesList" class="notes-grid-container">
+                <p class="empty-message">📭 Chưa có ghi chú nào được lưu.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-clear-zone">
+        <button id="clearAllCacheBtn" class="btn-danger-outline">⚠️ Xóa toàn bộ dữ liệu lưu trữ (Clear Cache System)</button>
     </div>
 </div>
 
-<!-- Popup ghi chú -->
-<div class="note-popup" id="notePopup">
+<div class="note-popup" id="notePopup" style="display: none;">
     <div class="popup-header">
-        <span class="popup-title">📝 Lưu kiến thức trích xuất</span>
-        <button class="popup-close" id="closePopupBtn">×</button>
+        <span>🖊️ Thêm Ghi Chú / Nhận Xét Nhanh</span>
+        <button class="popup-close-btn" id="closePopupBtn">✕</button>
     </div>
-    <div class="selected-text-preview" id="selectedTextPreview">Chưa có văn bản được chọn</div>
+    <div class="selected-text-preview" id="selectedTextPreview">“Nội dung văn bản được trích xuất...”</div>
+    
     <div class="color-options" id="colorOptions">
         <span class="active" data-color="yellow" style="background:#fff1a1;"></span>
         <span data-color="green" style="background:#c3ebd0;"></span>
@@ -139,10 +175,8 @@
     <div class="block-info" id="selectedBlockInfo">Đoạn: --</div>
 </div>
 
-<!-- Sidebar toggle -->
 <button class="sidebar-toggle-btn" id="sidebarToggleBtn">📂 HỌC LIỆU ĐÃ NẠP</button>
 
-<!-- Sidebar -->
 <div class="progress-sidebar" id="progressSidebar">
     <h3>📚 Kho Tiến Trình</h3>
     <div class="sidebar-sub">Click vào tên file để khôi phục bài học dở dang.</div>
@@ -155,8 +189,6 @@
 
     <div class="sidebar-sec-title">📝 Trắc nghiệm</div>
     <div id="historyQuizList" class="sidebar-list"></div>
-
-    <button id="clearAllCacheBtn" class="btn-danger">🗑 Xóa sạch bộ nhớ tạm</button>
 </div>
 
 <script src="script.js"></script>
